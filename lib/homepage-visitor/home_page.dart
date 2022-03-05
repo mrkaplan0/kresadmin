@@ -94,19 +94,7 @@ class _HomePageState extends State<HomePage> {
                   child: GestureDetector(
                     child: Container(
                         child: Image.asset("assets/images/gallery7.png")),
-                    onTap: () {
-                      final UserModel _userModel =
-                          Provider.of<UserModel>(context, listen: false);
-
-                      if (_userModel.users!.studentMap != null) {
-                        var student =
-                            Student.fromMap(_userModel.users!.studentMap!);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => StudentPage(student)));
-                      }
-                    },
+                    onTap: () {},
                   ),
                 ),
                 SizedBox(

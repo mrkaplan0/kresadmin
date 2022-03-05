@@ -8,121 +8,201 @@ import 'package:kresadmin/models/user.dart';
 import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
-  final String ogrNo;
-
-  RegisterPage(this.ogrNo);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  late String _email, _sifre, _telefon;
-  String _buttonText = "Kaydol";
-  final _formKey = GlobalKey<FormState>();
+  late String _email, _sifre, _telefon, _username, _kresAdi;
+
+  final _formKeyAdmin = GlobalKey<FormState>();
+  final _formKeyTeacher = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final UserModel _userModel = Provider.of<UserModel>(context);
-    return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: backgroundColor,
-        ),
-        resizeToAvoidBottomInset: true,
-        backgroundColor: backgroundColor,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Kaydol",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5!
-                  .copyWith(fontWeight: FontWeight.bold),
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                "Kaydol",
+                style: TextStyle(fontSize: 24),
+                textAlign: TextAlign.center,
+              ),
+              flexibleSpace: Container(
+                color: Colors.orangeAccent.shade100,
+              ),
+              centerTitle: true,
+              bottom: const TabBar(tabs: [
+                Tab(
+                  icon: Icon(Icons.school),
+                  text: "Öğretmen",
+                ),
+                Tab(
+                  icon: Icon(Icons.supervisor_account),
+                  text: "Yönetici",
+                ),
+              ]),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            _userModel.state == ViewState.idle
-                ? SingleChildScrollView(
-                    child: Form(
-                      key: _formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            veliTelefonTextForm(context),
-                            SizedBox(
-                              height: kdefaultPadding,
-                            ),
-                            emailTextForm(context),
-                            SizedBox(
-                              height: kdefaultPadding,
-                            ),
-                            ogrIDTextForm(context),
-                            SizedBox(
-                              height: kdefaultPadding,
-                            ),
-                            SocialLoginButton(
-                              btnText: _buttonText,
-                              btnColor: Theme.of(context).primaryColor,
-                              onPressed: () => _formSubmit(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : Center(
-                    child: CircularProgressIndicator(),
-                  ),
-          ],
-        ));
+            resizeToAvoidBottomInset: true,
+            backgroundColor: backgroundColor,
+            body: TabBarView(children: [
+              teacherForm(context, _userModel),
+              adminForm(context, _userModel)
+            ])));
   }
 
-  Widget veliTelefonTextForm(BuildContext context) {
+  Widget adminForm(BuildContext context, UserModel _userModel) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        _userModel.state == ViewState.idle
+            ? SingleChildScrollView(
+                child: Form(
+                  key: _formKeyAdmin,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        kresAdiTextForm(),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        usernameTextForm(),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        phoneTextForm(),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        emailTextForm(context),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        passwordTextForm(),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        SocialLoginButton(
+                          btnText: "Kaydol",
+                          btnColor: Theme.of(context).primaryColor,
+                          onPressed: () => _formSubmit(context, _formKeyAdmin),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : const Center(
+                child: CircularProgressIndicator(),
+              ),
+      ],
+    );
+  }
+
+  Widget teacherForm(BuildContext context, UserModel _userModel) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Kaydol",
+          style: Theme.of(context)
+              .textTheme
+              .headline5!
+              .copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        _userModel.state == ViewState.idle
+            ? SingleChildScrollView(
+                child: Form(
+                  key: _formKeyTeacher,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        phoneTextForm(),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        emailTextForm(context),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        passwordTextForm(),
+                        const SizedBox(
+                          height: kdefaultPadding,
+                        ),
+                        SocialLoginButton(
+                          btnText: "Kaydol",
+                          btnColor: Theme.of(context).primaryColor,
+                          onPressed: () =>
+                              _formSubmit(context, _formKeyTeacher),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : const Center(
+                child: CircularProgressIndicator(),
+              ),
+      ],
+    );
+  }
+
+  Widget phoneTextForm() {
     return TextFormField(
       keyboardType: TextInputType.phone,
       initialValue: '123454546',
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Cep Telefonu',
           hintText: 'Cep no giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Icon(Icons.person),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            child: Icon(Icons.phone_outlined),
           )),
       onSaved: (String? tel) {
         _telefon = tel!;
       },
       validator: (String? tel) {
-        if (tel!.length < 1) return 'Veli telefonu boş geçilemez!';
+        if (tel!.isEmpty) return 'Telefon boş geçilemez!';
+        return null;
       },
     );
   }
 
-  Widget ogrIDTextForm(BuildContext context) {
+  Widget passwordTextForm() {
     return TextFormField(
       initialValue: "123456",
       //obscureText: true,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Şifre',
           hintText: 'Şifrenizi giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.lock_outline_rounded),
           )),
       onSaved: (String? gelenSifre) {
         _sifre = gelenSifre!;
       },
-      validator: (String? ogrNo) {
-        if (ogrNo!.length < 1)
-          return 'Öğrenci numaranız olmadan kayıt olunamaz!';
+      validator: (String? pass) {
+        if (pass!.isEmpty) return 'Şifre alanı boş bırakılamaz!';
+        return null;
       },
     );
   }
@@ -134,14 +214,15 @@ class _RegisterPageState extends State<RegisterPage> {
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'E-mail',
           hintText: 'E-Mailinizi giriniz...',
           errorText: _userModel.emailHataMesaj != null
               ? _userModel.emailHataMesaj
               : null,
-          suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+          suffixIcon: const Padding(
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.mail_outline_rounded),
           )),
       onSaved: (String? gelenMail) {
@@ -150,16 +231,50 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  _formSubmit(BuildContext context) async {
+  Widget usernameTextForm() {
+    return TextFormField(
+      decoration: const InputDecoration(
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          labelText: 'Ad Soyad',
+          hintText: 'Ad Soyad giriniz...',
+          suffixIcon: Padding(
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            child: Icon(Icons.person_outline),
+          )),
+      onSaved: (String? username) {
+        _username = username!;
+      },
+    );
+  }
+
+  Widget kresAdiTextForm() {
+    return TextFormField(
+      decoration: const InputDecoration(
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          labelText: 'Kreş Adı',
+          hintText: 'Kreş Adı giriniz...',
+          suffixIcon: Padding(
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            child: Icon(Icons.school_outlined),
+          )),
+      onSaved: (String? kresAdi) {
+        _kresAdi = kresAdi!;
+      },
+    );
+  }
+
+  _formSubmit(BuildContext context, GlobalKey<FormState> formkey) async {
     final _userModel = Provider.of<UserModel>(context, listen: false);
 
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    if (formkey.currentState!.validate()) {
+      formkey.currentState!.save();
       try {
         MyUser? _olusturulanUser =
-            await _userModel.createUserEmailAndPassword(_email, widget.ogrNo);
+            await _userModel.createUserEmailAndPassword(_email, _sifre);
         if (_olusturulanUser != null) {
-          print("Giriş yapan Kullanıcı $_olusturulanUser");
+          debugPrint("Giriş yapan Kullanıcı $_olusturulanUser");
           Navigator.popAndPushNamed(context, '/LandingPage');
         }
       } catch (e) {

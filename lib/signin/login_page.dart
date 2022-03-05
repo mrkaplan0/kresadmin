@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/signin/email_login.dart';
-import 'package:kresadmin/signin/research_student_pre_register.dart';
+import 'package:kresadmin/signin/register_page.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image(
+          const Image(
             image: AssetImage('assets/images/splash.png'),
           ),
-          SizedBox(height: 100),
-          Image(
+          const SizedBox(height: 100),
+          const Image(
             alignment: Alignment.topCenter,
             image: AssetImage('assets/images/logo.png'),
           ),
-          SizedBox(
+          const SizedBox(
             height: 250,
           ),
           Padding(
@@ -33,13 +35,13 @@ class LoginPage extends StatelessWidget {
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ResearchStudent(),
+                          builder: (context) => const RegisterPage(),
                           fullscreenDialog: true),
                     ),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.orangeAccent.shade100,
                     ),
-                    child: Text("Kaydol"),
+                    child: const Text("Kaydol"),
                   ),
                 ),
                 Padding(

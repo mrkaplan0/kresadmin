@@ -10,23 +10,21 @@ import 'package:kresadmin/services/storage_service.dart';
 
 import '../locator.dart';
 
-enum AppMode { DEBUG, RELEASE }
-
 class UserRepository implements AuthBase {
-  FirebaseAuthService _firebaseAuthService = locator<FirebaseAuthService>();
-  FirestoreDBService _firestoreDBService = locator<FirestoreDBService>();
-  FirebaseStorageService _firebaseStorageService =
+  final FirebaseAuthService _firebaseAuthService =
+      locator<FirebaseAuthService>();
+  final FirestoreDBService _firestoreDBService = locator<FirestoreDBService>();
+  final FirebaseStorageService _firebaseStorageService =
       locator<FirebaseStorageService>();
-
-  var appMode = AppMode.RELEASE;
 
   @override
   Future<MyUser?> currentUser() async {
     var _user = await _firebaseAuthService.currentUser();
-    if (_user != null)
+    if (_user != null) {
       return await _firestoreDBService.readUser(_user.userID!);
-    else
+    } else {
       return null;
+    }
   }
 
   @override
@@ -51,14 +49,12 @@ class UserRepository implements AuthBase {
     MyUser _user =
         await _firebaseAuthService.createUserEmailAndPassword(email, sifre);
 
-    //TODO: buraya şifreye göre position güncellemesi eklenecek gerçi telefon girişine
-    Student stu = await _firestoreDBService.getStudent(sifre);
-    _user.studentMap = stu.toMap();
     bool _sonuc = await _firestoreDBService.saveUser(_user);
     if (_sonuc) {
       return await _firestoreDBService.readUser(_user.userID!);
-    } else
+    } else {
       return null;
+    }
   }
 
   @override
@@ -66,8 +62,9 @@ class UserRepository implements AuthBase {
     bool checkResult = await _firestoreDBService.checkOgrIDisUseable(student);
     if (checkResult == true) {
       return await _firestoreDBService.saveStudent(student);
-    } else
+    } else {
       return await _firestoreDBService.saveStudent(student);
+    }
   }
 
   @override
@@ -75,8 +72,9 @@ class UserRepository implements AuthBase {
       String fileType, File yuklenecekDosya) async {
     var url = await _firebaseStorageService.uploadPhoto(
         ogrID, ogrAdi, fileType, yuklenecekDosya);
-    if (url.length > 0)
+    if (url.isNotEmpty) {
       await _firestoreDBService.updateOgrProfilePhoto(ogrID, url);
+    }
     return url;
   }
 
