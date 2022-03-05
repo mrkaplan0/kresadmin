@@ -1,0 +1,113 @@
+{
+  "project_info": {
+    "project_number": "453059819040",
+    "project_id": "kres-app",
+    "storage_bucket": "kres-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453059819040:android:cef2bc230504fd6f1fee45",
+        "android_client_info": {
+          "package_name": "com.example.kresadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453059819040-q717mtdq2f5vcbcbcats814uff4ged3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQCKqlXOIsjm9O9BpHhdBmD7Fyey6omwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453059819040-q717mtdq2f5vcbcbcats814uff4ged3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453059819040:android:2d948340ab0a00941fee45",
+        "android_client_info": {
+          "package_name": "com.example.krestakipapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453059819040-c813kua6e3qdqjuhk9ukuhj38s1i02ju.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.krestakipapp",
+            "certificate_hash": "e79daf75500db50f5030f63f7dc707ddf454d9b9"
+          }
+        },
+        {
+          "client_id": "453059819040-q717mtdq2f5vcbcbcats814uff4ged3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQCKqlXOIsjm9O9BpHhdBmD7Fyey6omwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453059819040-q717mtdq2f5vcbcbcats814uff4ged3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453059819040:android:ef45a151543d33191fee45",
+        "android_client_info": {
+          "package_name": "com.example.krestakipappadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453059819040-jdcvheogphqb8vulog94qcq0m8i3m07r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.krestakipappadmin",
+            "certificate_hash": "e79daf75500db50f5030f63f7dc707ddf454d9b9"
+          }
+        },
+        {
+          "client_id": "453059819040-q717mtdq2f5vcbcbcats814uff4ged3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQCKqlXOIsjm9O9BpHhdBmD7Fyey6omwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453059819040-q717mtdq2f5vcbcbcats814uff4ged3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
