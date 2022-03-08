@@ -20,7 +20,7 @@ class MyUser {
       'username': username,
       'phone': phone,
       'kresAdi': kresAdi,
-      'kresCode;': kresCode,
+      'kresCode': kresCode,
       'isAdmin': isAdmin ?? false,
       'position': position ?? 'visitor',
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),

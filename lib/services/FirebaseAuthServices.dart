@@ -199,4 +199,22 @@ class FirebaseAuthService implements AuthBase {
     // TODO: implement getAnnouncements
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> updateUser(MyUser user) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> deleteUser(MyUser user) async {
+    await _auth.currentUser?.delete();
+    return true;
+  }
+
+  @override
+  Future<String> queryKresList(String kresCode) async {
+    // TODO: implement getKresList
+    throw UnimplementedError();
+  }
 }

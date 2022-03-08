@@ -20,7 +20,7 @@ class LandingPage extends StatelessWidget {
         switch (_userModel.users!.position) {
           case 'Admin':
             return const AdminSettings();
-          case 'Öğretmen':
+          case 'Teacher':
             return const TeacherHomePage();
           case 'visitor':
             return HomePage();

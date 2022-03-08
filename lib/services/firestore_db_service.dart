@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/models/teacher.dart';
@@ -6,7 +7,7 @@ import 'package:kresadmin/models/user.dart';
 import 'base/database_base.dart';
 
 class FirestoreDBService implements DBBase {
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Future<bool> saveUser(MyUser users) async {
@@ -39,16 +40,88 @@ class FirestoreDBService implements DBBase {
     return _okunanUserNesnesi;
   }
 
+  @override
+  Future<bool> updateUser(MyUser user) async {
+    bool updateResult = true;
+    try {
+      if (user.isAdmin == true) {
+        int kresCode = await createKresCode();
+        kresCode != 0
+            ? user.kresCode = kresCode.toString()
+            : updateResult = false;
+        bool r = await createAdminAndKres(user);
+        r == false ? updateResult = false : null;
+      }
+      await _firestore
+          .collection("Users")
+          .doc(user.userID)
+          .set(user.toMap(), SetOptions(merge: true));
+      return updateResult;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<int> createKresCode() async {
+    int kresCode = 0;
+    DocumentSnapshot kc =
+        await _firestore.collection("KresCode").doc("KresCode").get();
+    Map<String, dynamic> map = kc.data()! as Map<String, dynamic>;
+    kresCode = ++map["KresCode"];
+    await _firestore
+        .collection("KresCode")
+        .doc("KresCode")
+        .set({"KresCode": kresCode});
+    return kresCode;
+  }
+
+  Future<bool> createAdminAndKres(MyUser user) async {
+    await _firestore
+        .collection("Kresler")
+        .doc(user.kresCode! + '_' + user.kresAdi!)
+        .set({"kresCode": user.kresCode, "kresAdi": user.kresAdi},
+            SetOptions(merge: true));
+    await _firestore
+        .collection("Kresler")
+        .doc(user.kresCode! + '_' + user.kresAdi!)
+        .collection(user.kresAdi!)
+        .doc(user.kresAdi)
+        .set({"kresCode": user.kresCode, "kresAdi": user.kresAdi},
+            SetOptions(merge: true));
+
+    await _firestore.collection("Admins").doc(user.kresCode).set(user.toMap());
+
+    return true;
+  }
+
   checkOgrIDisUseable(Student student) async {
     QuerySnapshot stuIsSaved = await _firestore
         .collection("Student")
         .where('ogrID', isEqualTo: student.ogrID)
         .get();
 
-    if (stuIsSaved.docs.length > 0)
+    if (stuIsSaved.docs.isNotEmpty) {
       return true;
-    else
+    } else {
       return false;
+    }
+  }
+
+  @override
+  Future<String> queryKresList(String kresCode) async {
+    QuerySnapshot checkKresCode = await _firestore
+        .collection("Kresler")
+        .where('kresCode', isEqualTo: kresCode)
+        .get();
+
+    if (checkKresCode.docs.isNotEmpty) {
+      debugPrint(checkKresCode.docs.first.data().toString());
+      Map<String, dynamic> map =
+          checkKresCode.docs.first.data() as Map<String, dynamic>;
+      return map['kresAdi'].toString();
+    } else {
+      return '';
+    }
   }
 
   @override
@@ -118,17 +191,17 @@ class FirestoreDBService implements DBBase {
   }
 
   updateOgrProfilePhoto(String ogrID, String url) async {
-    if (ogrID.length < 7)
+    if (ogrID.length < 7) {
       await _firestore
           .collection("Student")
           .doc(ogrID)
           .update({'fotoUrl': url});
-    else
-      //teacher ID, min 5 haneli olacak şekilde planladım.
+    } else {
       await _firestore
           .collection("Teacher")
           .doc(ogrID)
           .update({'fotoUrl': url});
+    }
   }
 
   @override

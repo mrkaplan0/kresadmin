@@ -11,7 +11,7 @@ import 'package:kresadmin/services/base/auth_base.dart';
 enum ViewState { idle, busy }
 
 class UserModel with ChangeNotifier implements AuthBase {
-  UserRepository _userRepository = locator<UserRepository>();
+  final UserRepository _userRepository = locator<UserRepository>();
   MyUser? _users;
 
   String? emailHataMesaj;
@@ -68,6 +68,21 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
+  Future<bool> updateUser(MyUser user) async {
+    try {
+      state = ViewState.busy;
+      bool sonuc = await _userRepository.updateUser(user);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model update user error :" + e.toString());
+      return false;
+    } finally {
+      state = ViewState.idle;
+    }
+  }
+
+  @override
   Future<MyUser?> signingWithEmailAndPassword(
       String email, String sifre) async {
     try {
@@ -111,9 +126,33 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<MyUser?> signingWithAnonymously() {
-    // TODO: implement signingWithAnonymously
-    throw UnimplementedError();
+  Future<bool> deleteUser(MyUser user) async {
+    try {
+      state = ViewState.busy;
+      bool sonuc = await _userRepository.deleteUser(user);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model delete hata :" + e.toString());
+      return false;
+    } finally {
+      state = ViewState.idle;
+    }
+  }
+
+  @override
+  Future<String> queryKresList(String kresCode) async {
+    try {
+      state = ViewState.busy;
+      var sonuc = await _userRepository.queryKresList(kresCode);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model query kres hata :" + e.toString());
+      return "HATA:" + e.toString();
+    } finally {
+      state = ViewState.idle;
+    }
   }
 
   @override

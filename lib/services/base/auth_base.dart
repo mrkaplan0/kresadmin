@@ -7,13 +7,15 @@ import 'package:kresadmin/models/user.dart';
 abstract class AuthBase {
   Future<MyUser?> currentUser();
 
-  Future<MyUser?> signingWithAnonymously();
-
   Future<MyUser?> signingWithEmailAndPassword(String email, String sifre);
 
   Future<MyUser?> createUserEmailAndPassword(String email, String sifre);
 
   Future<bool> signOut();
+  Future<bool> updateUser(MyUser user);
+  Future<bool> deleteUser(MyUser user);
+  Future<String> queryKresList(String kresCode);
+
   Future<bool> ogrNoControl(String ogrNo);
 
   Future<bool> saveStudent(Student student);

@@ -33,6 +33,11 @@ class UserRepository implements AuthBase {
   }
 
   @override
+  Future<bool> updateUser(MyUser user) async {
+    return await _firestoreDBService.updateUser(user);
+  }
+
+  @override
   Future<MyUser?> signingWithAnonymously() async {
     return await _firebaseAuthService.signingWithAnonymously();
   }
@@ -55,6 +60,18 @@ class UserRepository implements AuthBase {
     } else {
       return null;
     }
+  }
+
+  @override
+  Future<bool> deleteUser(MyUser user) async {
+    bool _sonuc = await _firebaseAuthService.deleteUser(user);
+
+    return _sonuc;
+  }
+
+  @override
+  Future<String> queryKresList(String kresCode) async {
+    return await _firestoreDBService.queryKresList(kresCode);
   }
 
   @override

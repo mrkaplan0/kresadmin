@@ -6,7 +6,9 @@ import 'package:kresadmin/models/user.dart';
 abstract class DBBase {
   Future<bool> saveUser(MyUser users);
   Future<MyUser> readUser(String userId);
+  Future<bool> updateUser(MyUser user);
   Future<bool> ogrNoControl(String ogrNo);
+  Future<String> queryKresList(String kresCode);
   Future<bool> saveStudent(Student student);
   Future<bool> deleteStudent(Student student);
   Stream<List<Student>> getStudents();
