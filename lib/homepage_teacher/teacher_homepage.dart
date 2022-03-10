@@ -51,7 +51,6 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                     crossAxisSpacing: 5),
                 children: [
                   MenuItems(
-                    itemColor: itemColor2,
                     itemText: ' Öğrenci Listesi',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -60,7 +59,6 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                     icon: Icons.school_rounded,
                   ),
                   MenuItems(
-                    itemColor: Colors.orangeAccent,
                     itemText: 'Bildirim Gönder',
                     onPress: () {},
                     icon: Icons.person,

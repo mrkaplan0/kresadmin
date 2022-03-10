@@ -7,7 +7,6 @@ import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
 import 'package:kresadmin/constants.dart';
 import 'package:provider/provider.dart';
-import '../../constants.dart';
 
 class AddTeacherPhoto extends StatefulWidget {
   final Teacher teacher;
@@ -139,8 +138,13 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
   uploadProfilePhoto(XFile? photo) async {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     File file = File(photo!.path);
-    var url = await _userModel.uploadOgrProfilePhoto(widget.teacher.teacherID,
-        widget.teacher.adiSoyadi, "profil_foto", file);
+    var url = await _userModel.uploadOgrProfilePhoto(
+        _userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!,
+        widget.teacher.teacherID,
+        widget.teacher.adiSoyadi,
+        "profil_foto",
+        file);
 
     if (url != null) {
       widget.teacher.fotoUrl = url;
@@ -153,14 +157,16 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     try {
       if (widget.teacher.fotoUrl != null) {
-        bool sonuc = await _userModel.saveTeacher(widget.teacher);
+        //TODO: düzenlenecek bölüm.
+        /* bool sonuc = await _userModel.saveTeacher(_userModel.users!.kresCode!,
+            _userModel.users!.kresAdi!, widget.teacher);
 
         if (sonuc == true) {
           Navigator.pushNamedAndRemoveUntil(
               context, '/LandingPage', (Route<dynamic> route) => false);
           Get.snackbar('Başarılı', 'Öğretmen kaydedildi.',
               snackPosition: SnackPosition.BOTTOM);
-        }
+        }*/
       } else {
         Get.snackbar('Hata', 'Lütfen profil fotosu ekleyin.',
             snackPosition: SnackPosition.BOTTOM, colorText: Colors.red);

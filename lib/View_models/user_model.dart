@@ -156,10 +156,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> saveStudent(Student student) async {
+  Future<bool> saveStudent(
+      String kresCode, String kresAdi, Student student) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.saveStudent(student);
+      bool sonuc =
+          await _userRepository.saveStudent(kresCode, kresAdi, student);
 
       return sonuc;
     } catch (e) {
@@ -171,10 +173,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> deleteStudent(Student student) async {
+  Future<bool> deleteStudent(
+      String kresCode, String kresAdi, Student student) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.deleteStudent(student);
+      bool sonuc =
+          await _userRepository.deleteStudent(kresCode, kresAdi, student);
 
       return sonuc;
     } catch (e) {
@@ -186,12 +190,17 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<String> uploadOgrProfilePhoto(String ogrID, String ogrAdi,
-      String fileType, File yuklenecekDosya) async {
+  Future<String> uploadOgrProfilePhoto(
+      String kresCode,
+      String kresAdi,
+      String ogrID,
+      String ogrAdi,
+      String fileType,
+      File yuklenecekDosya) async {
     try {
       state = ViewState.busy;
       return await _userRepository.uploadOgrProfilePhoto(
-          ogrID, ogrAdi, fileType, yuklenecekDosya);
+          kresCode, kresAdi, ogrID, ogrAdi, fileType, yuklenecekDosya);
     } catch (e) {
       debugPrint("User Model profil photo hata :" + e.toString());
       return '';
@@ -201,37 +210,27 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Stream<List<Student>> getStudents() {
+  Stream<List<Student>> getStudents(
+    String kresCode,
+    String kresAdi,
+  ) {
     try {
-      var sonuc = _userRepository.getStudents();
+      var sonuc = _userRepository.getStudents(kresCode, kresAdi);
 
       return sonuc;
     } catch (e) {
       debugPrint("User Model getStudent hata :" + e.toString());
-      return Stream.empty();
+      return const Stream.empty();
     }
   }
 
   @override
-  Future<bool> saveTeacher(Teacher teacher) async {
+  Future<bool> deleteTeacher(
+      String kresCode, String kresAdi, Teacher teacher) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.saveTeacher(teacher);
-
-      return sonuc;
-    } catch (e) {
-      debugPrint("User Model saveteacher hata :" + e.toString());
-      return false;
-    } finally {
-      state = ViewState.idle;
-    }
-  }
-
-  @override
-  Future<bool> deleteTeacher(Teacher teacher) async {
-    try {
-      state = ViewState.busy;
-      bool sonuc = await _userRepository.deleteTeacher(teacher);
+      bool sonuc =
+          await _userRepository.deleteTeacher(kresCode, kresAdi, teacher);
 
       return sonuc;
     } catch (e) {
@@ -243,9 +242,9 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Stream<List<Teacher>> getTeachers() {
+  Stream<List<Teacher>> getTeachers(String kresCode, String kresAdi) {
     try {
-      var sonuc = _userRepository.getTeachers();
+      var sonuc = _userRepository.getTeachers(kresCode, kresAdi);
 
       return sonuc;
     } catch (e) {
@@ -270,19 +269,23 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<List<Student>> getStudentFuture() async {
+  Future<List<Student>> getStudentFuture(
+      String kresCode, String kresAdi) async {
     try {
-      List<Student> sonuc = await _userRepository.getStudentFuture();
+      List<Student> sonuc =
+          await _userRepository.getStudentFuture(kresCode, kresAdi);
 
       return sonuc;
     } finally {}
   }
 
   @override
-  Future<bool> addCriteria(String criteria) async {
+  Future<bool> addCriteria(
+      String kresCode, String kresAdi, String criteria) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.addCriteria(criteria);
+      bool sonuc =
+          await _userRepository.addCriteria(kresCode, kresAdi, criteria);
 
       return sonuc;
     } catch (e) {
@@ -294,10 +297,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> deleteCriteria(String criteria) async {
+  Future<bool> deleteCriteria(
+      String kresCode, String kresAdi, String criteria) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.deleteCriteria(criteria);
+      bool sonuc =
+          await _userRepository.deleteCriteria(kresCode, kresAdi, criteria);
 
       return sonuc;
     } catch (e) {
@@ -309,9 +314,9 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<List<String>> getCriteria() async {
+  Future<List<String>> getCriteria(String kresCode, String kresAdi) async {
     try {
-      var sonuc = await _userRepository.getCriteria();
+      var sonuc = await _userRepository.getCriteria(kresCode, kresAdi);
 
       return sonuc;
     } catch (e) {
@@ -323,10 +328,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> deletePhoto(String ogrID, String fotoUrl) async {
+  Future<bool> deletePhoto(
+      String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.deletePhoto(ogrID, fotoUrl);
+      bool sonuc =
+          await _userRepository.deletePhoto(kresCode, kresAdi, ogrID, fotoUrl);
 
       return sonuc;
     } catch (e) {
@@ -338,12 +345,17 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<String> uploadPhotoToGallery(String ogrID, String ogrAdi,
-      String fileType, File yuklenecekDosya) async {
+  Future<String> uploadPhotoToGallery(
+      String kresCode,
+      String kresAdi,
+      String ogrID,
+      String ogrAdi,
+      String fileType,
+      File yuklenecekDosya) async {
     try {
       state = ViewState.busy;
       String sonuc = await _userRepository.uploadPhotoToGallery(
-          ogrID, ogrAdi, fileType, yuklenecekDosya);
+          kresCode, kresAdi, ogrID, ogrAdi, fileType, yuklenecekDosya);
 
       return sonuc;
     } catch (e) {
@@ -355,9 +367,10 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getRatings(String ogrID) async {
+  Future<List<Map<String, dynamic>>> getRatings(
+      String kresCode, String kresAdi, String ogrID) async {
     try {
-      return await _userRepository.getRatings(ogrID);
+      return await _userRepository.getRatings(kresCode, kresAdi, ogrID);
     } catch (e) {
       debugPrint("User Model criter getir hata :" + e.toString());
       return List.empty();
@@ -365,12 +378,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> saveRatings(String ogrID, Map<String, dynamic> ratings,
-      bool showPhotoMainPage) async {
+  Future<bool> saveRatings(String kresCode, String kresAdi, String ogrID,
+      Map<String, dynamic> ratings, bool showPhotoMainPage) async {
     try {
       state = ViewState.busy;
-      bool sonuc =
-          await _userRepository.saveRatings(ogrID, ratings, showPhotoMainPage);
+      bool sonuc = await _userRepository.saveRatings(
+          kresCode, kresAdi, ogrID, ratings, showPhotoMainPage);
 
       return sonuc;
     } catch (e) {
@@ -382,9 +395,13 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<List<Photo>> getPhotoToMainGallery() async {
+  Future<List<Photo>> getPhotoToMainGallery(
+      String kresCode, String kresAdi) async {
     try {
-      var sonuc = await _userRepository.getPhotoToMainGallery();
+      var sonuc = await _userRepository.getPhotoToMainGallery(
+        kresCode,
+        kresAdi,
+      );
 
       return sonuc;
     } catch (e) {
@@ -394,10 +411,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> savePhotoToMainGallery(Photo myPhoto) async {
+  Future<bool> savePhotoToMainGallery(
+      String kresCode, String kresAdi, Photo myPhoto) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.savePhotoToMainGallery(myPhoto);
+      bool sonuc = await _userRepository.savePhotoToMainGallery(
+          kresCode, kresAdi, myPhoto);
 
       return sonuc;
     } catch (e) {
@@ -409,9 +428,11 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<List<Photo>> getPhotoToSpecialGallery(String ogrID) async {
+  Future<List<Photo>> getPhotoToSpecialGallery(
+      String kresCode, String kresAdi, String ogrID) async {
     try {
-      var sonuc = await _userRepository.getPhotoToSpecialGallery(ogrID);
+      var sonuc = await _userRepository.getPhotoToSpecialGallery(
+          kresCode, kresAdi, ogrID);
 
       return sonuc;
     } catch (e) {
@@ -421,10 +442,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> savePhotoToSpecialGallery(Photo myPhoto) async {
+  Future<bool> savePhotoToSpecialGallery(
+      String kresCode, String kresAdi, Photo myPhoto) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.savePhotoToSpecialGallery(myPhoto);
+      bool sonuc = await _userRepository.savePhotoToSpecialGallery(
+          kresCode, kresAdi, myPhoto);
 
       return sonuc;
     } catch (e) {
@@ -436,9 +459,10 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> addAnnouncement(Map<String, dynamic> map) async {
+  Future<bool> addAnnouncement(
+      String kresCode, String kresAdi, Map<String, dynamic> map) async {
     try {
-      var sonuc = await _userRepository.addAnnouncement(map);
+      var sonuc = await _userRepository.addAnnouncement(kresCode, kresAdi, map);
 
       return sonuc;
     } catch (e) {
@@ -448,9 +472,10 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getAnnouncements() async {
+  Future<List<Map<String, dynamic>>> getAnnouncements(
+      String kresCode, String kresAdi) async {
     try {
-      var sonuc = await _userRepository.getAnnouncements();
+      var sonuc = await _userRepository.getAnnouncements(kresCode, kresAdi);
 
       return sonuc;
     } catch (e) {

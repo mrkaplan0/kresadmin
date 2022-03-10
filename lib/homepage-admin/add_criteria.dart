@@ -91,7 +91,8 @@ class _AddCriteriaState extends State<AddCriteria> {
         child: CriteriaWidget(
           dataList[i],
           () async {
-            await _userModel.addCriteria(dataList[i]);
+            await _userModel.addCriteria(_userModel.users!.kresCode!,
+                _userModel.users!.kresAdi!, dataList[i]);
             setState(() {});
           },
         ),
@@ -114,7 +115,8 @@ class _AddCriteriaState extends State<AddCriteria> {
     return InkWell(
       onTap: () async {
         if (kriterController.text.length > 0) {
-          var sonuc = await _userModel.addCriteria(criteria);
+          var sonuc = await _userModel.addCriteria(_userModel.users!.kresCode!,
+              _userModel.users!.kresAdi!, criteria);
           if (sonuc) {
             kriterController.clear();
             FocusScope.of(context).unfocus();
@@ -142,7 +144,8 @@ class _AddCriteriaState extends State<AddCriteria> {
   Widget dynamicCriteriaList() {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return FutureBuilder<List<String>>(
-        future: _userModel.getCriteria(),
+        future: _userModel.getCriteria(
+            _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
         builder: (context, sonuc) {
           if (sonuc.hasData) {
             var criteriaList = sonuc.data!;
@@ -188,7 +191,8 @@ class _AddCriteriaState extends State<AddCriteria> {
   deleteCriteria(BuildContext context, String criteria) async {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
 
-    var sonuc = await _userModel.deleteCriteria(criteria);
+    var sonuc = await _userModel.deleteCriteria(
+        _userModel.users!.kresCode!, _userModel.users!.kresAdi!, criteria);
 
     if (sonuc == true) {
       setState(() {});

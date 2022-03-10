@@ -22,7 +22,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    _userModel.getPhotoToMainGallery().then((value) {
+    _userModel
+        .getPhotoToMainGallery(
+            _userModel.users!.kresCode!, _userModel.users!.kresAdi!)
+        .then((value) {
       setState(() {
         album = value;
       });

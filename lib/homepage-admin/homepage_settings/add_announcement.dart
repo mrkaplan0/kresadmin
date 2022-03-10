@@ -121,7 +121,8 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
         'Duyuru Tarihi': formattedTime
       };
 
-      var sonuc = await _userModel.addAnnouncement(announcement);
+      var sonuc = await _userModel.addAnnouncement(_userModel.users!.kresCode!,
+          _userModel.users!.kresAdi!, announcement);
 
       if (sonuc) Navigator.pop(context);
       Get.snackbar('Başarılı', 'Duyuru Eklendi.',

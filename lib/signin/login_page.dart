@@ -9,73 +9,77 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          const Image(
-            image: AssetImage('assets/images/splash.png'),
-          ),
-          const SizedBox(height: 100),
-          const Image(
-            alignment: Alignment.topCenter,
-            image: AssetImage('assets/images/logo.png'),
-          ),
-          const SizedBox(
-            height: 250,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 70,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterPage(),
-                          fullscreenDialog: true),
-                    ),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent.shade100,
-                    ),
-                    child: const Text("Kaydol"),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: kdefaultPadding),
-                  child: SizedBox(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/splash.png'), fit: BoxFit.fill),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            const SizedBox(height: 100),
+            const Image(
+              alignment: Alignment.topCenter,
+              image: AssetImage('assets/images/logo.png'),
+            ),
+            const SizedBox(
+              height: 250,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
                     width: double.infinity,
                     height: 70,
                     child: ElevatedButton(
                       onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EmailLogin(),
-                              fullscreenDialog: true)),
-                      style: TextButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor:
-                            Colors.orangeAccent.shade100.withOpacity(0.1),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.orangeAccent.shade100),
-                        ),
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage(),
+                            fullscreenDialog: true),
                       ),
-                      child: Text(
-                        "Giriş Yap",
-                        style: TextStyle(color: Colors.orangeAccent.shade200),
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent.shade100,
+                      ),
+                      child: const Text("Kaydol"),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: kdefaultPadding),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 70,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EmailLogin(),
+                                fullscreenDialog: true)),
+                        style: TextButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor:
+                              Colors.orangeAccent.shade100.withOpacity(0.1),
+                          shape: RoundedRectangleBorder(
+                            side:
+                                BorderSide(color: Colors.orangeAccent.shade100),
+                          ),
+                        ),
+                        child: Text(
+                          "Giriş Yap",
+                          style: TextStyle(color: Colors.orangeAccent.shade200),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 200),
-              ],
+                  const SizedBox(height: 200),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

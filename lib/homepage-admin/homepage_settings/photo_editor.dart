@@ -34,7 +34,9 @@ class _PhotoEditorState extends State<PhotoEditor> {
   void initState() {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     super.initState();
-    _userModel.getStudents().listen((event) {
+    _userModel
+        .getStudents(_userModel.users!.kresCode!, _userModel.users!.kresAdi!)
+        .listen((event) {
       studentList = event;
     });
     if (widget.student != null) _tagStudent = true;
@@ -460,8 +462,13 @@ class _PhotoEditorState extends State<PhotoEditor> {
         ogrID = widget.student!.ogrID;
       else
         ogrID = selectedStudent!.ogrID;
-      photoUrl =
-          await _userModel.uploadPhotoToGallery(ogrID, '', 'Gallery', image);
+      photoUrl = await _userModel.uploadPhotoToGallery(
+          _userModel.users!.kresCode!,
+          _userModel.users!.kresAdi!,
+          ogrID,
+          '',
+          'Gallery',
+          image);
       myPhoto = Photo(
           photoUrl: photoUrl,
           time: DateTime.now().toString(),
@@ -470,14 +477,20 @@ class _PhotoEditorState extends State<PhotoEditor> {
               : null,
           ogrID: ogrID,
           isShowed: _showPhotoMainPage);
-      bool sonuc = await _userModel.savePhotoToSpecialGallery(myPhoto);
+      bool sonuc = await _userModel.savePhotoToSpecialGallery(
+          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, myPhoto);
       if (sonuc == true) {
         Navigator.pop(context);
         Navigator.pop(context);
       }
     } else {
-      photoUrl =
-          await _userModel.uploadPhotoToGallery('Main', '', 'Gallery', image);
+      photoUrl = await _userModel.uploadPhotoToGallery(
+          _userModel.users!.kresCode!,
+          _userModel.users!.kresAdi!,
+          'Main',
+          '',
+          'Gallery',
+          image);
       myPhoto = Photo(
           photoUrl: photoUrl,
           time: DateTime.now().toString(),
@@ -486,7 +499,8 @@ class _PhotoEditorState extends State<PhotoEditor> {
               : null,
           isShowed: _showPhotoMainPage);
     }
-    bool sonuc = await _userModel.savePhotoToMainGallery(myPhoto);
+    bool sonuc = await _userModel.savePhotoToMainGallery(
+        _userModel.users!.kresCode!, _userModel.users!.kresAdi!, myPhoto);
 
     if (sonuc == true) {
       Navigator.pop(context);

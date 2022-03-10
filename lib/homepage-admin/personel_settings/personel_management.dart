@@ -25,15 +25,10 @@ class PersonelManagement extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              GridView(
+              ListView(
                 shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.85,
-                    crossAxisSpacing: 5),
                 children: [
                   MenuItems(
-                    itemColor: itemColor4,
                     itemText: ' Öğretmen Ekle',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -42,7 +37,6 @@ class PersonelManagement extends StatelessWidget {
                     icon: Icons.person_add_alt_1_rounded,
                   ),
                   MenuItems(
-                    itemColor: itemColor2,
                     itemText: 'Öğretmen Listesi',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -51,7 +45,6 @@ class PersonelManagement extends StatelessWidget {
                     icon: Icons.people_alt_rounded,
                   ),
                   MenuItems(
-                    itemColor: itemColor3,
                     itemText: 'Bildirim Gönder',
                     onPress: () {},
                     icon: Icons.person,

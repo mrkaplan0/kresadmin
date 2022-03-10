@@ -7,6 +7,7 @@ class Teacher {
   String? kresCode;
   String? sinifi;
   String? fotoUrl;
+  bool? authorisation;
 
   Teacher(
       {required this.teacherID,
@@ -16,7 +17,8 @@ class Teacher {
       this.kresAdi,
       this.kresCode,
       this.sinifi,
-      this.fotoUrl});
+      this.fotoUrl,
+      this.authorisation});
 
   Map<String, dynamic> toMap() {
     return {
@@ -28,6 +30,7 @@ class Teacher {
       'kresCode': kresCode,
       'sinifi': sinifi ?? 'A',
       'fotoUrl': fotoUrl,
+      'authorisation': authorisation ?? false,
     };
   }
 
@@ -39,10 +42,11 @@ class Teacher {
         kresAdi = map['kresAdi'],
         kresCode = map['kresCode'],
         sinifi = map['sinifi'],
-        fotoUrl = map['fotoUrl'];
+        fotoUrl = map['fotoUrl'],
+        authorisation = map['authorisation'];
 
   @override
   String toString() {
-    return 'Teacher {teacherID: $teacherID, adiSoyadi: $adiSoyadi, telefonNo: $telefonNo, position: $position, sinifi: $sinifi, fotoUrl: $fotoUrl}';
+    return 'Teacher {teacherID: $teacherID, adiSoyadi: $adiSoyadi, telefonNo: $telefonNo, position: $position, kresAdi: $kresAdi, kresCode: $kresCode, sinifi: $sinifi, fotoUrl: $fotoUrl, authorisation: $authorisation}';
   }
 }

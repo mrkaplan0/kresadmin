@@ -1,4 +1,6 @@
 class Student {
+  String? kresAdi;
+  String? kresCode;
   String ogrID;
   String adiSoyadi;
   String? dogumTarihi;
@@ -9,7 +11,9 @@ class Student {
   String? fotoUrl;
 
   Student(
-      {required this.ogrID,
+      {this.kresAdi,
+      this.kresCode,
+      required this.ogrID,
       required this.adiSoyadi,
       this.dogumTarihi,
       this.cinsiyet,
@@ -20,6 +24,8 @@ class Student {
 
   Map<String, dynamic> toMap() {
     return {
+      'kresAdi': kresAdi,
+      'kresCode': kresCode,
       'ogrID': ogrID,
       'adiSoyadi': adiSoyadi,
       'dogumTarihi': dogumTarihi,
@@ -32,7 +38,9 @@ class Student {
   }
 
   Student.fromMap(Map<String, dynamic> map)
-      : ogrID = map['ogrID'],
+      : kresAdi = map['kresAdi'],
+        kresCode = map['kresCode'],
+        ogrID = map['ogrID'],
         adiSoyadi = map['adiSoyadi'],
         dogumTarihi = map['dogumTarihi'],
         cinsiyet = map['cinsiyet'],
@@ -43,6 +51,6 @@ class Student {
 
   @override
   String toString() {
-    return 'Student {ogrID: $ogrID, adiSoyadi: $adiSoyadi, dogumTarihi: $dogumTarihi, cinsiyet: $cinsiyet, veliAdiSoyadi: $veliAdiSoyadi, veliTelefonNo: $veliTelefonNo, sinifi: $sinifi, fotoUrl: $fotoUrl}';
+    return 'Student {kresAdi: $kresAdi, kresCode: $kresCode, ogrID: $ogrID, adiSoyadi: $adiSoyadi, dogumTarihi: $dogumTarihi, cinsiyet: $cinsiyet, veliAdiSoyadi: $veliAdiSoyadi, veliTelefonNo: $veliTelefonNo, sinifi: $sinifi, fotoUrl: $fotoUrl}';
   }
 }

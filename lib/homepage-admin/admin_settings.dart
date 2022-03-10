@@ -22,21 +22,20 @@ class _AdminSettingsState extends State<AdminSettings> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Merhaba ${_userModel.users!.kresAdi};",
+          "Yönetim Paneli",
           style: Theme.of(context)
               .textTheme
               .headline5!
               .copyWith(fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
         actions: [
           TextButton.icon(
             style: ButtonStyle(
               foregroundColor: MaterialStateProperty.all(Colors.black),
             ),
             onPressed: () => _cikisyap(context),
-            icon: Icon(Icons.logout),
-            label: Text("Çıkış"),
+            icon: const Icon(Icons.logout),
+            label: const Text("Çıkış"),
           ),
         ],
       ),
@@ -46,26 +45,25 @@ class _AdminSettingsState extends State<AdminSettings> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              GridView(
+              infoKres(context, _userModel),
+              const SizedBox(
+                height: 35,
+              ),
+              ListView(
                 shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.85,
-                    crossAxisSpacing: 5),
                 children: [
                   MenuItems(
-                    itemColor: itemColor1,
                     itemText: 'Personel İşlemleri',
                     onPress: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => PersonelManagement()));
+                              builder: (context) =>
+                                  const PersonelManagement()));
                     },
                     icon: Icons.person,
                   ),
                   MenuItems(
-                    itemColor: itemColor3,
                     itemText: ' Öğrenci İşlemleri',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -74,26 +72,23 @@ class _AdminSettingsState extends State<AdminSettings> {
                     icon: Icons.school_rounded,
                   ),
                   MenuItems(
-                    itemColor: itemColor4,
                     itemText: 'Kriter Ekle',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddCriteria()));
+                          builder: (context) => const AddCriteria()));
                     },
                     icon: Icons.star_half_rounded,
                   ),
                   MenuItems(
-                    itemColor: itemColor2,
                     itemText: 'Bildirim Gönder',
                     onPress: () {},
                     icon: Icons.phone_android_outlined,
                   ),
                   MenuItems(
-                    itemColor: itemColor1,
                     itemText: 'Anasayfa İşlemleri',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => HomeSettings()));
+                          builder: (context) => const HomeSettings()));
                     },
                     icon: Icons.person,
                   ),
@@ -102,6 +97,78 @@ class _AdminSettingsState extends State<AdminSettings> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget infoKres(BuildContext context, UserModel _userModel) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(6),
+      height: 150,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black12, width: 1.5),
+          borderRadius: const BorderRadius.all(Radius.circular(8))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              text: "Kreş Kodu :   ",
+              children: [
+                TextSpan(
+                  text: "${_userModel.users!.kresCode}",
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18),
+                ),
+              ],
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: "Kreş Adı    :   ",
+              children: [
+                TextSpan(
+                  text: "${_userModel.users!.kresAdi}",
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18),
+                ),
+              ],
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: "Yönetici     :   ",
+              children: [
+                TextSpan(
+                  text: "${_userModel.users!.username}",
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18),
+                ),
+              ],
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+            ),
+          ),
+        ],
       ),
     );
   }

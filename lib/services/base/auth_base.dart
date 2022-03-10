@@ -18,29 +18,34 @@ abstract class AuthBase {
 
   Future<bool> ogrNoControl(String ogrNo);
 
-  Future<bool> saveStudent(Student student);
-  Future<bool> deleteStudent(Student student);
-  Stream<List<Student>> getStudents();
-  Future<List<Student>> getStudentFuture();
-  Future<String> uploadOgrProfilePhoto(
+  Future<bool> saveStudent(String kresCode, String kresAdi, Student student);
+  Future<bool> deleteStudent(String kresCode, String kresAdi, Student student);
+  Stream<List<Student>> getStudents(String kresCode, String kresAdi);
+  Future<List<Student>> getStudentFuture(String kresCode, String kresAdi);
+  Future<String> uploadOgrProfilePhoto(String kresCode, String kresAdi,
       String ogrID, String ogrAdi, String fileType, File yuklenecekDosya);
-
-  Future<bool> saveTeacher(Teacher teacher);
-  Future<bool> deleteTeacher(Teacher teacher);
-  Stream<List<Teacher>> getTeachers();
-  Future<bool> addCriteria(String criteria);
-  Future<List<String>> getCriteria();
-  Future<bool> deleteCriteria(String criteria);
-  Future<String> uploadPhotoToGallery(
+  Future<bool> deleteTeacher(String kresCode, String kresAdi, Teacher teacher);
+  Stream<List<Teacher>> getTeachers(String kresCode, String kresAdi);
+  Future<bool> addCriteria(String kresCode, String kresAdi, String criteria);
+  Future<List<String>> getCriteria(String kresCode, String kresAdi);
+  Future<bool> deleteCriteria(String kresCode, String kresAdi, String criteria);
+  Future<String> uploadPhotoToGallery(String kresCode, String kresAdi,
       String ogrID, String ogrAdi, String fileType, File yuklenecekDosya);
-  Future<bool> deletePhoto(String ogrID, String fotoUrl);
-  Future<bool> saveRatings(
-      String ogrID, Map<String, dynamic> ratings, bool showPhotoMainPage);
-  Future<List<Map<String, dynamic>>> getRatings(String ogrID);
-  Future<bool> savePhotoToMainGallery(Photo myPhoto);
-  Future<bool> savePhotoToSpecialGallery(Photo myPhoto);
-  Future<List<Photo>> getPhotoToMainGallery();
-  Future<List<Photo>> getPhotoToSpecialGallery(String ogrID);
-  Future<bool> addAnnouncement(Map<String, dynamic> map);
-  Future<List<Map<String, dynamic>>> getAnnouncements();
+  Future<bool> deletePhoto(
+      String kresCode, String kresAdi, String ogrID, String fotoUrl);
+  Future<bool> saveRatings(String kresCode, String kresAdi, String ogrID,
+      Map<String, dynamic> ratings, bool showPhotoMainPage);
+  Future<List<Map<String, dynamic>>> getRatings(
+      String kresCode, String kresAdi, String ogrID);
+  Future<bool> savePhotoToMainGallery(
+      String kresCode, String kresAdi, Photo myPhoto);
+  Future<bool> savePhotoToSpecialGallery(
+      String kresCode, String kresAdi, Photo myPhoto);
+  Future<List<Photo>> getPhotoToMainGallery(String kresCode, String kresAdi);
+  Future<List<Photo>> getPhotoToSpecialGallery(
+      String kresCode, String kresAdi, String ogrID);
+  Future<bool> addAnnouncement(
+      String kresCode, String kresAdi, Map<String, dynamic> map);
+  Future<List<Map<String, dynamic>>> getAnnouncements(
+      String kresCode, String kresAdi);
 }

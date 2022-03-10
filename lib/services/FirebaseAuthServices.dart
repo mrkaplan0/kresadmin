@@ -66,44 +66,50 @@ class FirebaseAuthService implements AuthBase {
   }
 
   @override
-  Future<String> uploadOgrProfilePhoto(
+  Future<String> uploadOgrProfilePhoto(String kresCode, String kresAdi,
       String ogrID, String ogrAdi, String fileType, File yuklenecekDosya) {
     // TODO: implement uploadOgrProfilePhoto
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> saveStudent(Student student) {
+  Future<bool> saveStudent(String kresCode, String kresAdi, Student student) {
     // TODO: implement saveStudent
     throw UnimplementedError();
   }
 
   @override
-  Stream<List<Student>> getStudents() {
+  Stream<List<Student>> getStudents(
+    String kresCode,
+    String kresAdi,
+  ) {
     // TODO: implement getStudents
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> deleteStudent(Student student) {
+  Future<bool> deleteStudent(String kresCode, String kresAdi, Student student) {
     // TODO: implement deleteStudent
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> deleteTeacher(Teacher teacher) {
+  Future<bool> deleteTeacher(String kresCode, String kresAdi, Teacher teacher) {
     // TODO: implement deleteTeacher
     throw UnimplementedError();
   }
 
   @override
-  Stream<List<Teacher>> getTeachers() {
+  Stream<List<Teacher>> getTeachers(
+    String kresCode,
+    String kresAdi,
+  ) {
     // TODO: implement getTeachers
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> saveTeacher(Teacher teacher) {
+  Future<bool> saveTeacher(String kresCode, String kresAdi, Teacher teacher) {
     // TODO: implement saveTeacher
     throw UnimplementedError();
   }
@@ -115,87 +121,104 @@ class FirebaseAuthService implements AuthBase {
   }
 
   @override
-  Future<List<Student>> getStudentFuture() async {
+  Future<List<Student>> getStudentFuture(
+    String kresCode,
+    String kresAdi,
+  ) async {
     // TODO: implement getStudentFuture
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> addCriteria(String criteria) {
+  Future<bool> addCriteria(String kresCode, String kresAdi, String criteria) {
     // TODO: implement addCriteria
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> deleteCriteria(String criteria) {
+  Future<bool> deleteCriteria(
+      String kresCode, String kresAdi, String criteria) {
     // TODO: implement deleteCriteria
     throw UnimplementedError();
   }
 
   @override
-  Future<List<String>> getCriteria() {
+  Future<List<String>> getCriteria(
+    String kresCode,
+    String kresAdi,
+  ) {
     // TODO: implement getCriteria
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> deletePhoto(String ogrID, String fotoUrl) {
+  Future<bool> deletePhoto(
+      String kresCode, String kresAdi, String ogrID, String fotoUrl) {
     // TODO: implement deletePhoto
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getRatings(String ogrID) {
+  Future<List<Map<String, dynamic>>> getRatings(
+      String kresCode, String kresAdi, String ogrID) {
     // TODO: implement getRatings
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> saveRatings(
-      String ogrID, Map<String, dynamic> ratings, bool showPhotoMainPage) {
+  Future<bool> saveRatings(String kresCode, String kresAdi, String ogrID,
+      Map<String, dynamic> ratings, bool showPhotoMainPage) {
     // TODO: implement saveRatings
     throw UnimplementedError();
   }
 
   @override
-  Future<String> uploadPhotoToGallery(
+  Future<String> uploadPhotoToGallery(String kresCode, String kresAdi,
       String ogrID, String ogrAdi, String fileType, File yuklenecekDosya) {
     // TODO: implement uploadPhotoToGallery
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Photo>> getPhotoToMainGallery() {
+  Future<List<Photo>> getPhotoToMainGallery(
+    String kresCode,
+    String kresAdi,
+  ) {
     // TODO: implement getPhotoToMainGallery
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> savePhotoToMainGallery(Photo myPhoto) {
+  Future<bool> savePhotoToMainGallery(
+      String kresCode, String kresAdi, Photo myPhoto) {
     // TODO: implement savePhotoToMainGallery
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Photo>> getPhotoToSpecialGallery(String ogrID) {
+  Future<List<Photo>> getPhotoToSpecialGallery(
+      String kresCode, String kresAdi, String ogrID) {
     // TODO: implement getPhotoToSpecialGallery
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> savePhotoToSpecialGallery(Photo myPhoto) {
+  Future<bool> savePhotoToSpecialGallery(
+      String kresCode, String kresAdi, Photo myPhoto) {
     // TODO: implement savePhotoToSpecialGallery
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> addAnnouncement(Map<String, dynamic> map) {
+  Future<bool> addAnnouncement(
+      String kresCode, String kresAdi, Map<String, dynamic> map) {
     // TODO: implement addAnnouncement
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getAnnouncements() {
+  Future<List<Map<String, dynamic>>> getAnnouncements(
+      String kresCode, String kresAdi) {
     // TODO: implement getAnnouncements
     throw UnimplementedError();
   }

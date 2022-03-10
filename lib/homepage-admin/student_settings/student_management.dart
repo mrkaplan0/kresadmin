@@ -36,15 +36,10 @@ class _StudentManagementState extends State<StudentManagement> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              GridView(
+              ListView(
                 shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.85,
-                    crossAxisSpacing: 5),
                 children: [
                   MenuItems(
-                    itemColor: itemColor4,
                     itemText: ' Öğrenci Ekle',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -53,7 +48,6 @@ class _StudentManagementState extends State<StudentManagement> {
                     icon: Icons.person_add_alt_1_rounded,
                   ),
                   MenuItems(
-                    itemColor: itemColor2,
                     itemText: 'Öğrenci Listesi',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -62,14 +56,14 @@ class _StudentManagementState extends State<StudentManagement> {
                     icon: Icons.school_rounded,
                   ),
                   MenuItems(
-                    itemColor: itemColor3,
                     itemText: 'Hızlı Değerlendirme',
                     onPress: () async {
                       final UserModel _userModel =
                           Provider.of<UserModel>(context, listen: false);
 
                       await _userModel
-                          .getStudentFuture()
+                          .getStudentFuture(_userModel.users!.kresCode!,
+                              _userModel.users!.kresAdi!)
                           .then((value) => stuList = value);
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => FastRating(stuList!)));

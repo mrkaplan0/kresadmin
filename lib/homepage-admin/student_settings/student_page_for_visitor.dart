@@ -171,14 +171,15 @@ class _StudentPageState extends State<StudentPage> {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     final DateFormat formatter = DateFormat('dd-MM-yyyy');
 //bugün değerlendirme yapılmamışsa,Son 4 gün içinde değerlendirme yapılmışsa al, göster.
-    allRatings = await _userModel.getRatings(widget.student.ogrID);
+    allRatings = await _userModel.getRatings(_userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!, widget.student.ogrID);
     String formattedTime = formatter.format(dateTime);
 
     var ss = allRatings
         .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
 
     if (ss.isEmpty) {
-      DateTime d1 = dateTime.subtract(Duration(days: 1));
+      DateTime d1 = dateTime.subtract(const Duration(days: 1));
       String formattedTime = formatter.format(d1);
       var tt = allRatings
           .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
@@ -274,6 +275,9 @@ class _StudentPageState extends State<StudentPage> {
 
   Future getIndividualPhotos() async {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    album = await _userModel.getPhotoToSpecialGallery(widget.student.ogrID);
+    album = await _userModel.getPhotoToSpecialGallery(
+        _userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!,
+        widget.student.ogrID);
   }
 }

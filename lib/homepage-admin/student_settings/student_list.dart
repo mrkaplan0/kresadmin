@@ -45,7 +45,8 @@ class _StudentListPageState extends State<StudentListPage> {
     return Expanded(
       child: Container(
         child: StreamBuilder<List<Student>>(
-          stream: _userModel.getStudents(),
+          stream: _userModel.getStudents(
+              _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
           builder: (context, sonuc) {
             if (sonuc.hasData) {
               List<Student> ogrList = sonuc.data!;
@@ -158,7 +159,10 @@ class _StudentListPageState extends State<StudentListPage> {
                 ElevatedButton(
                   onPressed: () async {
                     try {
-                      bool sonuc = await _userModel.deleteStudent(stu);
+                      bool sonuc = await _userModel.deleteStudent(
+                          _userModel.users!.kresCode!,
+                          _userModel.users!.kresAdi!,
+                          stu);
 
                       if (sonuc == true) {
                         Navigator.of(context).pop();
@@ -237,7 +241,12 @@ class _StudentListPageState extends State<StudentListPage> {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     File file = File(photo!.path);
     var url = await _userModel.uploadOgrProfilePhoto(
-        student.ogrID, student.adiSoyadi, "profil_foto", file);
+        _userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!,
+        student.ogrID,
+        student.adiSoyadi,
+        "profil_foto",
+        file);
 
     if (url != null) {
       student.fotoUrl = url;

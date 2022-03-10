@@ -38,7 +38,8 @@ class _StudentRatingState extends State<StudentRating> {
   Widget dynamicCriteriaList() {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return FutureBuilder<List<String>>(
-        future: _userModel.getCriteria(),
+        future: _userModel.getCriteria(
+            _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
         builder: (context, sonuc) {
           if (sonuc.hasData) {
             var criteriaList = sonuc.data!;
@@ -245,7 +246,11 @@ class _StudentRatingState extends State<StudentRating> {
     }
 
     bool ss = await _userModel.saveRatings(
-        widget.student.ogrID, ratingMap, _showPhotoMainPage);
+        _userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!,
+        widget.student.ogrID,
+        ratingMap,
+        _showPhotoMainPage);
 
     if (ss == true) {
       Get.snackbar("Başarılı", "Değerlendirme Kaydedildi");

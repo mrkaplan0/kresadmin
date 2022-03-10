@@ -126,7 +126,6 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(
             height: kdefaultPadding,
           ),
-          kresCodeTextForm(context),
           Form(
             key: _formKeyTeacher,
             child: Padding(
@@ -134,6 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  kresAdiTextForm(kresAdi: _kresAdi),
                   const SizedBox(
                     height: kdefaultPadding,
                   ),
@@ -191,12 +191,19 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: IconButton(
                   icon: const Icon(Icons.arrow_forward_rounded),
                   onPressed: () async {
-                    _controller.text =
-                        await _userModel.queryKresList(_controller.text);
-                    debugPrint(_controller.text);
+                    _kresAdi = await _userModel.queryKresList(_controller.text);
+                    debugPrint(_kresAdi);
 
-                    //TODO: controller boşsa uyarı verdir.
-                    _controller.text.isNotEmpty ? checkKresCode = true : false;
+                    if (_kresAdi.isNotEmpty) {
+                      checkKresCode = true;
+                    } else {
+                      Get.defaultDialog(
+                          title: 'HATA',
+                          middleText:
+                              "Kreş Kodu yanlış! Lütfen tekrar deneyin.");
+
+                      checkKresCode = false;
+                    }
                     setState(() {});
                   },
                 ),
@@ -295,8 +302,10 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget kresAdiTextForm() {
+  Widget kresAdiTextForm({String? kresAdi}) {
     return TextFormField(
+      initialValue: kresAdi,
+      readOnly: kresAdi != null ? true : false,
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -313,18 +322,20 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget kresCodeTextForm(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      autofocus: true,
-      decoration: const InputDecoration(
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          labelText: 'Kreş Kodu',
-          hintText: 'Kreş Kodu giriniz...',
-          suffixIcon: Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Icon(Icons.school_outlined),
-          )),
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0),
+      child: TextFormField(
+        controller: _controller,
+        autofocus: true,
+        decoration: const InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            labelText: 'Kreş Kodu',
+            suffixIcon: Padding(
+              padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+              child: Icon(Icons.school_outlined),
+            )),
+      ),
     );
   }
 
@@ -348,6 +359,8 @@ class _RegisterPageState extends State<RegisterPage> {
           } else {
             _olusturulanUser.position = 'Teacher';
             _olusturulanUser.isAdmin = false;
+            _olusturulanUser.kresCode = _controller.text;
+            _olusturulanUser.kresAdi = _kresAdi;
           }
           bool result = await _userModel.updateUser(_olusturulanUser);
 

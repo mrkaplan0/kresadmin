@@ -15,7 +15,7 @@ class AddStudent extends StatefulWidget {
   _AddStudentState createState() => _AddStudentState();
 }
 
-enum CinsiyetSecimi { Erkek, Kiz }
+enum CinsiyetSecimi { erkek, kiz }
 
 class _AddStudentState extends State<AddStudent> {
   String? _ogrAdiSoyadi,
@@ -27,11 +27,11 @@ class _AddStudentState extends State<AddStudent> {
       _ogrID;
 
   bool _checkBoxValue = false;
-  String _buttonText = "Kaydet";
+  final String _buttonText = "Kaydet";
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _dateController;
 
-  CinsiyetSecimi _cinsiyetSecimi = CinsiyetSecimi.Erkek;
+  CinsiyetSecimi _cinsiyetSecimi = CinsiyetSecimi.erkek;
   int val = -1;
 
   @override
@@ -50,7 +50,7 @@ class _AddStudentState extends State<AddStudent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Öğrenci Ekle',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 24),
@@ -68,17 +68,17 @@ class _AddStudentState extends State<AddStudent> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 CheckboxListTile(
                   onChanged: (value) => _onChange(value),
                   value: _checkBoxValue,
-                  title: Text("Öğrenci noyu manuel ekleyeceğim."),
+                  title: const Text("Öğrenci noyu manuel ekleyeceğim."),
                 ),
                 if (_checkBoxValue == true) ...[ogrIDTextForm(context)],
                 if (_checkBoxValue == false) ...[
-                  Align(
+                  const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "      Aksi durumda öğrenci numarası otomatik olarak verilmektedir.",
@@ -90,44 +90,44 @@ class _AddStudentState extends State<AddStudent> {
                     ),
                   ),
                 ],
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 adiSoyadiTextForm(context),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 dogumtarihiFormField(context),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 RadioListTile<CinsiyetSecimi>(
-                  value: CinsiyetSecimi.Erkek,
+                  value: CinsiyetSecimi.erkek,
                   groupValue: _cinsiyetSecimi,
                   onChanged: (CinsiyetSecimi? value) {
                     setState(() {
                       _cinsiyetSecimi = value!;
                     });
                   },
-                  title: Text("Erkek"),
+                  title: const Text("Erkek"),
                 ),
                 RadioListTile<CinsiyetSecimi>(
-                  value: CinsiyetSecimi.Kiz,
+                  value: CinsiyetSecimi.kiz,
                   groupValue: _cinsiyetSecimi,
                   onChanged: (CinsiyetSecimi? value) {
                     setState(() {
                       _cinsiyetSecimi = value!;
                     });
                   },
-                  title: Text("Kız"),
+                  title: const Text("Kız"),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 veliAdiSoyadiTextForm(context),
-                SizedBox(height: kdefaultPadding),
+                const SizedBox(height: kdefaultPadding),
                 veliTelefonNoTextForm(context),
-                SizedBox(height: kdefaultPadding),
+                const SizedBox(height: kdefaultPadding),
                 SocialLoginButton(
                     btnText: _buttonText,
                     btnColor: Theme.of(context).primaryColor,
@@ -143,40 +143,40 @@ class _AddStudentState extends State<AddStudent> {
   Widget adiSoyadiTextForm(BuildContext context) {
     return TextFormField(
       initialValue: 'Ömer Kaplan',
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Öğrenci Adı',
           hintText: 'Ad Soyad giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.person),
           )),
       onSaved: (String? ogrAdi) {
         _ogrAdiSoyadi = ogrAdi!;
       },
       validator: (String? ogrAdi) {
-        if (ogrAdi!.length < 1) return 'Öğrenci adı boş geçilemez!';
+        if (ogrAdi!.isEmpty) return 'Öğrenci adı boş geçilemez!';
       },
     );
   }
 
   Widget ogrIDTextForm(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Öğrenci No',
           hintText: 'Öğrenci No giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.format_list_numbered_rounded),
           )),
       onSaved: (String? ogrID) {
         _ogrID = ogrID!;
       },
       validator: (String? ogrAdi) {
-        if (ogrAdi!.length < 1) return 'Öğrenci No boş geçilemez!';
+        if (ogrAdi!.isEmpty) return 'Öğrenci No boş geçilemez!';
       },
     );
   }
@@ -184,20 +184,20 @@ class _AddStudentState extends State<AddStudent> {
   Widget veliAdiSoyadiTextForm(BuildContext context) {
     return TextFormField(
       initialValue: 'Ömer Kaplan',
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Veli Adı',
           hintText: 'Ad Soyad giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.person),
           )),
       onSaved: (String? veliAdi) {
         _veliAdiSoyadi = veliAdi!;
       },
       validator: (String? ogrAdi) {
-        if (ogrAdi!.length < 1) return 'Veli adı boş geçilemez!';
+        if (ogrAdi!.isEmpty) return 'Veli adı boş geçilemez!';
       },
     );
   }
@@ -205,20 +205,20 @@ class _AddStudentState extends State<AddStudent> {
   Widget veliTelefonNoTextForm(BuildContext context) {
     return TextFormField(
       initialValue: '3203942830',
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Veli Telefonu',
           hintText: 'Telefon No giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.person),
           )),
       onSaved: (String? velitel) {
         _veliTelefonNo = velitel!;
       },
       validator: (String? _veliTelefonNo) {
-        if (_veliTelefonNo!.length < 1) return 'Veli telefonu boş geçilemez!';
+        if (_veliTelefonNo!.isEmpty) return 'Veli telefonu boş geçilemez!';
       },
     );
   }
@@ -228,17 +228,17 @@ class _AddStudentState extends State<AddStudent> {
       controller: _dateController,
       //initialValue: _dogumTarihi,
       keyboardType: TextInputType.datetime,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Doğum Tarihi',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.date_range_rounded),
           )),
       onTap: () async {
         DateTime time = DateTime.now();
-        FocusScope.of(context).requestFocus(new FocusNode());
+        FocusScope.of(context).requestFocus(FocusNode());
 
         DateTime? picked = await showDatePicker(
             context: context,
@@ -279,20 +279,28 @@ class _AddStudentState extends State<AddStudent> {
         _ogrID = newID.toString();
       }
 
-      if (_cinsiyetSecimi == CinsiyetSecimi.Erkek)
+      if (_cinsiyetSecimi == CinsiyetSecimi.erkek) {
         _cinsiyet = 'Erkek';
-      else
+      } else {
         _cinsiyet = 'Kız';
+      }
       Student newStu = Student(
+          kresCode: _userModel.users!.kresCode,
+          kresAdi: _userModel.users!.kresAdi,
           ogrID: _ogrID!,
           adiSoyadi: _ogrAdiSoyadi!,
           dogumTarihi: _dogumTarihi,
           cinsiyet: _cinsiyet,
           veliAdiSoyadi: _veliAdiSoyadi,
+          veliTelefonNo: _veliTelefonNo,
           sinifi: _sinifi);
-      bool sonuc = await _userModel.saveStudent(newStu);
+      bool sonuc = await _userModel.saveStudent(
+          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, newStu);
 
       if (sonuc == true) {
+        Navigator.pop(context);
+        Get.snackbar('Kayıt Başarılı', 'Öğrenci kaydedildi.',
+            snackPosition: SnackPosition.BOTTOM);
       } else {
         Get.snackbar('Hata', 'Öğrenci kaydedilirken hata oluştu.',
             colorText: Colors.red, snackPosition: SnackPosition.BOTTOM);

@@ -181,7 +181,8 @@ class _FastRatingState extends State<FastRating> {
   Widget dynamicCriteriaList() {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return FutureBuilder<List<String>>(
-        future: _userModel.getCriteria(),
+        future: _userModel.getCriteria(
+            _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
         builder: (context, sonuc) {
           if (sonuc.hasData) {
             var criteriaList = sonuc.data!;
@@ -275,8 +276,8 @@ class _FastRatingState extends State<FastRating> {
       ratingMap.addAll({'Özel Not': specialNoteController.text});
     }
 
-    bool ss =
-        await _userModel.saveRatings(stu.ogrID, ratingMap, _showPhotoMainPage);
+    bool ss = await _userModel.saveRatings(_userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!, stu.ogrID, ratingMap, _showPhotoMainPage);
 
     if (ss == true) {
       specialNoteController.clear();

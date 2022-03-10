@@ -75,18 +75,24 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<bool> saveStudent(Student student) async {
+  Future<bool> saveStudent(
+      String kresCode, String kresAdi, Student student) async {
     bool checkResult = await _firestoreDBService.checkOgrIDisUseable(student);
     if (checkResult == true) {
-      return await _firestoreDBService.saveStudent(student);
+      return await _firestoreDBService.saveStudent(kresCode, kresAdi, student);
     } else {
-      return await _firestoreDBService.saveStudent(student);
+      return await _firestoreDBService.saveStudent(kresCode, kresAdi, student);
     }
   }
 
   @override
-  Future<String> uploadOgrProfilePhoto(String ogrID, String ogrAdi,
-      String fileType, File yuklenecekDosya) async {
+  Future<String> uploadOgrProfilePhoto(
+      String kresCode,
+      String kresAdi,
+      String ogrID,
+      String ogrAdi,
+      String fileType,
+      File yuklenecekDosya) async {
     var url = await _firebaseStorageService.uploadPhoto(
         ogrID, ogrAdi, fileType, yuklenecekDosya);
     if (url.isNotEmpty) {
@@ -96,70 +102,77 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Stream<List<Student>> getStudents() {
-    return _firestoreDBService.getStudents();
+  Stream<List<Student>> getStudents(String kresCode, String kresAdi) {
+    return _firestoreDBService.getStudents(kresCode, kresAdi);
   }
 
   @override
-  Future<List<Student>> getStudentFuture() async {
-    return await _firestoreDBService.getStudentsFuture();
+  Future<List<Student>> getStudentFuture(
+      String kresCode, String kresAdi) async {
+    return await _firestoreDBService.getStudentsFuture(kresCode, kresAdi);
   }
 
   @override
-  Future<bool> deleteStudent(Student student) async {
-    return await _firestoreDBService.deleteStudent(student);
+  Future<bool> deleteStudent(
+      String kresCode, String kresAdi, Student student) async {
+    return await _firestoreDBService.deleteStudent(kresCode, kresAdi, student);
   }
 
   @override
-  Future<bool> saveTeacher(Teacher teacher) async {
-    return await _firestoreDBService.saveTeacher(teacher);
+  Future<bool> deleteTeacher(
+      String kresCode, String kresAdi, Teacher teacher) async {
+    return await _firestoreDBService.deleteTeacher(kresCode, kresAdi, teacher);
   }
 
   @override
-  Future<bool> deleteTeacher(Teacher teacher) async {
-    return await _firestoreDBService.deleteTeacher(teacher);
-  }
-
-  @override
-  Stream<List<Teacher>> getTeachers() {
-    return _firestoreDBService.getTeachers();
+  Stream<List<Teacher>> getTeachers(String kresCode, String kresAdi) {
+    return _firestoreDBService.getTeachers(kresCode, kresAdi);
   }
 
   @override
   Future<bool> ogrNoControl(String ogrNo) async {
-    return await _firestoreDBService.ogrNoControl(ogrNo);
+    return false;
   }
 
   @override
-  Future<bool> addCriteria(String criteria) async {
-    return await _firestoreDBService.addCriteria(criteria);
+  Future<bool> addCriteria(
+      String kresCode, String kresAdi, String criteria) async {
+    return await _firestoreDBService.addCriteria(kresCode, kresAdi, criteria);
   }
 
   @override
-  Future<bool> deleteCriteria(String criteria) async {
-    return await _firestoreDBService.deleteCriteria(criteria);
+  Future<bool> deleteCriteria(
+      String kresCode, String kresAdi, String criteria) async {
+    return await _firestoreDBService.deleteCriteria(
+        kresCode, kresAdi, criteria);
   }
 
   @override
-  Future<List<String>> getCriteria() async {
-    return await _firestoreDBService.getCriteria();
+  Future<List<String>> getCriteria(String kresCode, String kresAdi) async {
+    return await _firestoreDBService.getCriteria(kresCode, kresAdi);
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getRatings(String ogrID) async {
-    return await _firestoreDBService.getRatings(ogrID);
+  Future<List<Map<String, dynamic>>> getRatings(
+      String kresCode, String kresAdi, String ogrID) async {
+    return await _firestoreDBService.getRatings(kresCode, kresAdi, ogrID);
   }
 
   @override
-  Future<bool> saveRatings(String ogrID, Map<String, dynamic> ratings,
-      bool showPhotoMainPage) async {
+  Future<bool> saveRatings(String kresCode, String kresAdi, String ogrID,
+      Map<String, dynamic> ratings, bool showPhotoMainPage) async {
     return await _firestoreDBService.saveRatings(
-        ogrID, ratings, showPhotoMainPage);
+        kresCode, kresAdi, ogrID, ratings, showPhotoMainPage);
   }
 
   @override
-  Future<String> uploadPhotoToGallery(String ogrID, String ogrAdi,
-      String fileType, File yuklenecekDosya) async {
+  Future<String> uploadPhotoToGallery(
+      String kresCode,
+      String kresAdi,
+      String ogrID,
+      String ogrAdi,
+      String fileType,
+      File yuklenecekDosya) async {
     var url = await _firebaseStorageService.uploadPhoto(
         ogrID, ogrAdi, fileType, yuklenecekDosya);
 
@@ -167,43 +180,54 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<bool> deletePhoto(String ogrID, String fotoUrl) async {
+  Future<bool> deletePhoto(
+      String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
     bool b = false;
     bool sonuc = await _firebaseStorageService.deletePhoto(ogrID, fotoUrl);
     if (sonuc == true) {
-      bool result = await _firestoreDBService.deletePhoto(ogrID, fotoUrl);
+      bool result = await _firestoreDBService.deletePhoto(
+          kresCode, kresAdi, ogrID, fotoUrl);
       b = result;
     }
     return b;
   }
 
   @override
-  Future<List<Photo>> getPhotoToMainGallery() async {
-    return await _firestoreDBService.getPhotoToMainGallery();
+  Future<List<Photo>> getPhotoToMainGallery(
+      String kresCode, String kresAdi) async {
+    return await _firestoreDBService.getPhotoToMainGallery(kresCode, kresAdi);
   }
 
   @override
-  Future<bool> savePhotoToMainGallery(Photo myPhoto) async {
-    return await _firestoreDBService.savePhotoToMainGallery(myPhoto);
+  Future<bool> savePhotoToMainGallery(
+      String kresCode, String kresAdi, Photo myPhoto) async {
+    return await _firestoreDBService.savePhotoToMainGallery(
+        kresCode, kresAdi, myPhoto);
   }
 
   @override
-  Future<List<Photo>> getPhotoToSpecialGallery(String ogrID) async {
-    return await _firestoreDBService.getPhotoToSpecialGallery(ogrID);
+  Future<List<Photo>> getPhotoToSpecialGallery(
+      String kresCode, String kresAdi, String ogrID) async {
+    return await _firestoreDBService.getPhotoToSpecialGallery(
+        kresCode, kresAdi, ogrID);
   }
 
   @override
-  Future<bool> savePhotoToSpecialGallery(Photo myPhoto) async {
-    return await _firestoreDBService.savePhotoToSpecialGallery(myPhoto);
+  Future<bool> savePhotoToSpecialGallery(
+      String kresCode, String kresAdi, Photo myPhoto) async {
+    return await _firestoreDBService.savePhotoToSpecialGallery(
+        kresCode, kresAdi, myPhoto);
   }
 
   @override
-  Future<bool> addAnnouncement(Map<String, dynamic> map) async {
-    return await _firestoreDBService.addAnnouncement(map);
+  Future<bool> addAnnouncement(
+      String kresCode, String kresAdi, Map<String, dynamic> map) async {
+    return await _firestoreDBService.addAnnouncement(kresCode, kresAdi, map);
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getAnnouncements() async {
-    return await _firestoreDBService.getAnnouncements();
+  Future<List<Map<String, dynamic>>> getAnnouncements(
+      String kresCode, String kresAdi) async {
+    return await _firestoreDBService.getAnnouncements(kresCode, kresAdi);
   }
 }

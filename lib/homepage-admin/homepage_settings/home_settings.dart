@@ -28,15 +28,10 @@ class HomeSettings extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              GridView(
+              ListView(
                 shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.85,
-                    crossAxisSpacing: 5),
                 children: [
                   MenuItems(
-                    itemColor: itemColor1,
                     itemText: 'Galeriyi Düzenle',
                     onPress: () {
                       Navigator.push(
@@ -47,7 +42,6 @@ class HomeSettings extends StatelessWidget {
                     icon: Icons.person,
                   ),
                   MenuItems(
-                    itemColor: itemColor3,
                     itemText: ' Duyuru Ekle',
                     onPress: () {
                       Navigator.push(
@@ -58,7 +52,6 @@ class HomeSettings extends StatelessWidget {
                     icon: Icons.school_rounded,
                   ),
                   MenuItems(
-                    itemColor: itemColor4,
                     itemText: 'Anasayfa',
                     onPress: () {
                       Navigator.push(context,

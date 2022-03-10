@@ -152,7 +152,8 @@ class _AddTeacherState extends State<AddTeacher> {
             telefonNo: _teachTelefon,
             sinifi: _sinifi);
 
-        bool sonuc = await _userModel.saveTeacher(teacher);
+        /*   bool sonuc = await _userModel.saveTeacher(
+            _userModel.users!.kresCode!, _userModel.users!.kresAdi!, teacher);
 
         if (sonuc == true) {
           Navigator.push(
@@ -161,7 +162,7 @@ class _AddTeacherState extends State<AddTeacher> {
                   builder: (context) => AddTeacherPhoto(teacher)));
           Get.snackbar('Başarılı', 'Öğretmen kaydedildi.',
               snackPosition: SnackPosition.BOTTOM);
-        }
+        }*/
       } catch (e) {
         Get.snackbar('Hata', 'Öğretmen kaydedilirken hata oluştu.',
             colorText: Colors.red, snackPosition: SnackPosition.BOTTOM);
@@ -259,7 +260,12 @@ class _AddTeacherState extends State<AddTeacher> {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     File file = File(photo!.path);
     var url = await _userModel.uploadOgrProfilePhoto(
-        _teachID!, _teachAdiSoyadi!, "profil_foto", file);
+        _userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!,
+        _teachID!,
+        _teachAdiSoyadi!,
+        "profil_foto",
+        file);
 
     if (url != null) {
       _fotoUrl = url;

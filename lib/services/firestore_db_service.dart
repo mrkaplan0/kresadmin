@@ -15,8 +15,8 @@ class FirestoreDBService implements DBBase {
         .collection("Users")
         .doc(users.userID)
         .set(users.toMap())
-        .then((value) => print("User Kaydedildi."))
-        .catchError((error) => print("Kullanıcı kayıt hatası: $error"));
+        .then((value) => debugPrint("User Kaydedildi."))
+        .catchError((error) => debugPrint("Kullanıcı kayıt hatası: $error"));
 
     DocumentSnapshot _okunanUser =
         await _firestore.doc('Users/${users.userID}').get();
@@ -24,7 +24,7 @@ class FirestoreDBService implements DBBase {
     Map<String, dynamic> map = _okunanUser.data() as Map<String, dynamic>;
     MyUser _okunanUserNesnesi = MyUser.fromMap(map);
 
-    print("Okunan user nesnesi" + _okunanUserNesnesi.toString());
+    debugPrint("Okunan user nesnesi" + _okunanUserNesnesi.toString());
 
     return true;
   }
@@ -36,7 +36,7 @@ class FirestoreDBService implements DBBase {
     Map<String, dynamic> map = _okunanUser.data() as Map<String, dynamic>;
     MyUser _okunanUserNesnesi = MyUser.fromMap(map);
 
-    print("Okunan user nesnesi" + map.toString());
+    debugPrint("Okunan user nesnesi" + map.toString());
     return _okunanUserNesnesi;
   }
 
@@ -44,13 +44,30 @@ class FirestoreDBService implements DBBase {
   Future<bool> updateUser(MyUser user) async {
     bool updateResult = true;
     try {
-      if (user.isAdmin == true) {
+      if (user.position == "Admin") {
         int kresCode = await createKresCode();
         kresCode != 0
             ? user.kresCode = kresCode.toString()
             : updateResult = false;
         bool r = await createAdminAndKres(user);
         r == false ? updateResult = false : null;
+      } else if (user.position == "Teacher") {
+        Teacher t = Teacher(
+            teacherID: user.userID!,
+            adiSoyadi: user.username!,
+            telefonNo: user.phone,
+            position: user.position,
+            kresAdi: user.kresAdi,
+            kresCode: user.kresCode,
+            authorisation: false);
+        await _firestore
+            .collection("Kresler")
+            .doc(user.kresCode! + '_' + user.kresAdi!)
+            .collection(user.kresAdi!)
+            .doc(user.kresAdi)
+            .collection("Teachers")
+            .doc(t.teacherID)
+            .set(t.toMap(), SetOptions(merge: true));
       }
       await _firestore
           .collection("Users")
@@ -125,50 +142,67 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> saveStudent(Student student) async {
+  Future<bool> saveStudent(
+      String kresCode, String kresAdi, Student student) async {
     await _firestore
-        .collection("Student")
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Students")
         .doc(student.ogrID)
         .set(student.toMap(), SetOptions(merge: true))
-        .then((value) => print("Öğrenci Kaydedildi."))
-        .catchError((error) => print("Öğrenci kayıt hatası: $error"));
+        .then((value) => debugPrint("Öğrenci Kaydedildi."))
+        .catchError((error) => debugPrint("Öğrenci kayıt hatası: $error"));
     return true;
   }
 
   @override
-  Future<bool> deleteStudent(Student student) async {
+  Future<bool> deleteStudent(
+      String kresCode, String kresAdi, Student student) async {
     await _firestore
-        .collection("Student")
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Students")
         .doc(student.ogrID)
         .delete()
-        .then((value) => print("Öğrenci silindi."))
-        .catchError((error) => print("Öğrenci silme hatası: $error"));
-    await _firestore
-        .collection("Veli")
-        .doc(student.ogrID)
-        .delete()
-        .then((value) => print("veli silindi."))
-        .catchError((error) => print("Öğrenci silme hatası: $error"));
+        .then((value) => debugPrint("Öğrenci silindi."))
+        .catchError((error) => debugPrint("Öğrenci silme hatası: $error"));
 
     return true;
   }
 
   @override
-  Future<Student> getStudent(String ogrNo) async {
-    DocumentSnapshot docSnapshot =
-        await _firestore.collection('Student').doc(ogrNo).get();
+  Future<Student> getStudent(
+      String kresCode, String kresAdi, String ogrNo) async {
+    DocumentSnapshot docSnapshot = await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Students')
+        .doc(ogrNo)
+        .get();
 
     Student student =
         Student.fromMap(docSnapshot.data()! as Map<String, dynamic>);
 
-    print(student);
+    debugPrint(student.toString());
 
     return student;
   }
 
   @override
-  Stream<List<Student>> getStudents() {
-    var snapShot = _firestore.collection('Student').snapshots();
+  Stream<List<Student>> getStudents(String kresCode, String kresAdi) {
+    var snapShot = _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Students')
+        .snapshots();
     Stream<List<Student>> stuList = snapShot.map((ogrList) => ogrList.docs
         .map((student) => Student.fromMap(student.data()))
         .toList());
@@ -176,12 +210,19 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<List<Student>> getStudentsFuture() async {
-    QuerySnapshot querySnapshot = await _firestore.collection('Student').get();
+  Future<List<Student>> getStudentsFuture(
+      String kresCode, String kresAdi) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Students')
+        .get();
     List<Student> list = [];
 
     for (DocumentSnapshot tekOgr in querySnapshot.docs) {
-      print(tekOgr.data()! as Map<String, dynamic>);
+      debugPrint((tekOgr.data()! as Map<String, dynamic>).toString());
       Student eklenecekStu =
           Student.fromMap(tekOgr.data()! as Map<String, dynamic>);
       list.add(eklenecekStu);
@@ -193,7 +234,7 @@ class FirestoreDBService implements DBBase {
   updateOgrProfilePhoto(String ogrID, String url) async {
     if (ogrID.length < 7) {
       await _firestore
-          .collection("Student")
+          .collection("Students")
           .doc(ogrID)
           .update({'fotoUrl': url});
     } else {
@@ -205,25 +246,28 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> saveTeacher(Teacher teacher) async {
+  Future<bool> deleteTeacher(
+      String kresCode, String kresAdi, Teacher teacher) async {
     await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
         .collection("Teacher")
         .doc(teacher.teacherID)
-        .set(teacher.toMap(), SetOptions(merge: true))
-        .then((value) => print("örtmen Kaydedildi."))
-        .catchError((error) => print("örtmen kayıt hatası: $error"));
+        .delete();
     return true;
   }
 
   @override
-  Future<bool> deleteTeacher(Teacher teacher) async {
-    await _firestore.collection("Teacher").doc(teacher.teacherID).delete();
-    return true;
-  }
-
-  @override
-  Stream<List<Teacher>> getTeachers() {
-    var snapShot = _firestore.collection('Teacher').snapshots();
+  Stream<List<Teacher>> getTeachers(String kresCode, String kresAdi) {
+    var snapShot = _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Teacher')
+        .snapshots();
 
     return snapShot.map((ogrList) => ogrList.docs
         .map((teacher) => Teacher.fromMap(teacher.data()))
@@ -231,69 +275,65 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> ogrNoControl(String ogrNo) async {
-    if (ogrNo.length < 8) {
-      QuerySnapshot stuIsSaved = await _firestore
-          .collection("Student")
-          .where('ogrID', isEqualTo: ogrNo)
-          .get();
-
-      if (stuIsSaved.docs.length > 0)
-        return true;
-      else
-        return false;
-    } else {
-      QuerySnapshot stuIsSaved = await _firestore
-          .collection("Teacher")
-          .where('teacherID', isEqualTo: ogrNo)
-          .get();
-      print('teacher kontrol');
-      if (stuIsSaved.docs.length > 0)
-        return true;
-      else
-        return false;
-    }
-  }
-
-  @override
-  Future<bool> addCriteria(String criteria) async {
+  Future<bool> addCriteria(
+      String kresCode, String kresAdi, String criteria) async {
     await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
         .collection("Criteria")
         .doc("Criteria")
         .set({criteria: criteria}, SetOptions(merge: true))
-        .then((value) => print("kriter Kaydedildi."))
-        .catchError((error) => print("kriter kayıt hatası: $error"));
+        .then((value) => debugPrint("kriter Kaydedildi."))
+        .catchError((error) => debugPrint("kriter kayıt hatası: $error"));
     return true;
   }
 
   @override
-  Future<bool> deleteCriteria(String criteria) async {
+  Future<bool> deleteCriteria(
+      String kresCode, String kresAdi, String criteria) async {
     await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
         .collection("Criteria")
         .doc("Criteria")
         .set({criteria: FieldValue.delete()}, SetOptions(merge: true))
-        .then((value) => print("kriter silindi."))
-        .catchError((error) => print("kriter silme hatası: $error"));
+        .then((value) => debugPrint("kriter silindi."))
+        .catchError((error) => debugPrint("kriter silme hatası: $error"));
     return true;
   }
 
   @override
-  Future<List<String>> getCriteria() async {
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection("Criteria").doc("Criteria").get();
+  Future<List<String>> getCriteria(String kresCode, String kresAdi) async {
+    DocumentSnapshot documentSnapshot = await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Criteria")
+        .doc("Criteria")
+        .get();
 
     List<String> kriterList = [];
     Map<String, dynamic> map = documentSnapshot.data()! as Map<String, dynamic>;
-    map.values.forEach((element) {
+    for (var element in map.values) {
       kriterList.add(element.toString());
-    });
+    }
     return kriterList;
   }
 
   @override
-  Future<bool> uploadPhotoToGallery(String ogrID, String fotoUrl) async {
+  Future<bool> uploadPhotoToGallery(
+      String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
     await _firestore
-        .collection("Student")
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Students")
         .doc(ogrID)
         .collection("Gallery")
         .doc(ogrID)
@@ -303,40 +343,55 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> deletePhoto(String ogrID, String fotoUrl) async {
+  Future<bool> deletePhoto(
+      String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
     await _firestore
-        .collection("Student")
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Students")
         .doc(ogrID)
         .collection("Gallery")
         .doc(ogrID)
         .update({
       fotoUrl.substring(fotoUrl.indexOf('token=')): FieldValue.delete()
-    }).then((value) => print("Silindi."));
+    }).then((value) => debugPrint("Silindi."));
     return true;
   }
 
   @override
-  Future<bool> saveRatings(String ogrID, Map<String, dynamic> ratings,
-      bool showPhotoMainPage) async {
+  Future<bool> saveRatings(String kresCode, String kresAdi, String ogrID,
+      Map<String, dynamic> ratings, bool showPhotoMainPage) async {
     await _firestore
-        .collection("Student")
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Students")
         .doc(ogrID)
         .collection("Ratings")
         .doc(ratings['Son Değerlendirme'].toString())
         .set(ratings, SetOptions(merge: true));
     if (showPhotoMainPage == true && ratings['Fotoğraflar'] != null) {
-      for (int i = 0; i < ratings['Fotoğraflar'].length; i++)
+      for (int i = 0; i < ratings['Fotoğraflar'].length; i++) {
         await _firestore.collection('Main').doc('Gallery').set(
             {Timestamp.now().toString(): ratings['Fotoğraflar'][i]},
             SetOptions(merge: true));
+      }
     }
     return true;
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getRatings(String ogrID) async {
+  Future<List<Map<String, dynamic>>> getRatings(
+      String kresCode, String kresAdi, String ogrID) async {
     QuerySnapshot querySnapshot = await _firestore
-        .collection('Student')
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Students')
         .doc(ogrID)
         .collection("Ratings")
         .get();
@@ -350,15 +405,24 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> savePhotoToMainGallery(Photo myPhoto) async {
+  Future<bool> savePhotoToMainGallery(
+      String kresCode, String kresAdi, Photo myPhoto) async {
     await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
         .collection('Main')
         .doc('Gallery')
         .set({myPhoto.time: myPhoto.toMap()}, SetOptions(merge: true));
 
     if (myPhoto.ogrID != null) {
       await _firestore
-          .collection("Student")
+          .collection("Kresler")
+          .doc(kresCode + '_' + kresAdi)
+          .collection(kresAdi)
+          .doc(kresAdi)
+          .collection("Students")
           .doc(myPhoto.ogrID)
           .collection("Gallery")
           .doc(myPhoto.ogrID)
@@ -368,9 +432,16 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<List<Photo>> getPhotoToMainGallery() async {
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection('Main').doc('Gallery').get();
+  Future<List<Photo>> getPhotoToMainGallery(
+      String kresCode, String kresAdi) async {
+    DocumentSnapshot documentSnapshot = await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Main')
+        .doc('Gallery')
+        .get();
 
     List<Photo> photoList = [];
     Map<String, dynamic> map = documentSnapshot.data()! as Map<String, dynamic>;
@@ -378,14 +449,19 @@ class FirestoreDBService implements DBBase {
     for (Map<String, dynamic> map in map.values) {
       photoList.add(Photo.fromMap(map));
     }
-    print(photoList);
+    debugPrint(photoList.toString());
     return photoList;
   }
 
   @override
-  Future<List<Photo>> getPhotoToSpecialGallery(String ogrID) async {
+  Future<List<Photo>> getPhotoToSpecialGallery(
+      String kresCode, String kresAdi, String ogrID) async {
     DocumentSnapshot documentSnapshot = await _firestore
-        .collection("Student")
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Students")
         .doc(ogrID)
         .collection('Gallery')
         .doc(ogrID)
@@ -402,9 +478,14 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> savePhotoToSpecialGallery(Photo myPhoto) async {
+  Future<bool> savePhotoToSpecialGallery(
+      String kresCode, String kresAdi, Photo myPhoto) async {
     await _firestore
-        .collection("Student")
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Students")
         .doc(myPhoto.ogrID)
         .collection("Gallery")
         .doc(myPhoto.ogrID)
@@ -414,8 +495,13 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> addAnnouncement(Map<String, dynamic> map) async {
+  Future<bool> addAnnouncement(
+      String kresCode, String kresAdi, Map<String, dynamic> map) async {
     await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
         .collection("Announcement")
         .doc("Announcement")
         .set({map['Duyuru Başlığı']: map}, SetOptions(merge: true));
@@ -424,9 +510,18 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getAnnouncements() async {
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection("Announcement").doc("Announcement").get();
+  Future<List<Map<String, dynamic>>> getAnnouncements(
+    String kresCode,
+    String kresAdi,
+  ) async {
+    DocumentSnapshot documentSnapshot = await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Announcement")
+        .doc("Announcement")
+        .get();
     List<Map<String, dynamic>> duyuruList = [];
     Map<String, dynamic> maps =
         documentSnapshot.data()! as Map<String, dynamic>;
