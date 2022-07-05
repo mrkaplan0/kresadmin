@@ -38,11 +38,6 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<MyUser?> signingWithAnonymously() async {
-    return await _firebaseAuthService.signingWithAnonymously();
-  }
-
-  @override
   Future<MyUser> signingWithEmailAndPassword(String email, String sifre) async {
     MyUser _user =
         await _firebaseAuthService.signingWithEmailAndPassword(email, sifre);
@@ -94,9 +89,11 @@ class UserRepository implements AuthBase {
       String fileType,
       File yuklenecekDosya) async {
     var url = await _firebaseStorageService.uploadPhoto(
-        ogrID, ogrAdi, fileType, yuklenecekDosya);
+        kresCode, kresAdi, ogrID, fileType, yuklenecekDosya);
+    print(url);
     if (url.isNotEmpty) {
-      await _firestoreDBService.updateOgrProfilePhoto(ogrID, url);
+      await _firestoreDBService.updateOgrProfilePhoto(
+          kresCode, kresAdi, ogrID, url);
     }
     return url;
   }
@@ -130,8 +127,8 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<bool> ogrNoControl(String ogrNo) async {
-    return false;
+  Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID) async {
+    return await _firestoreDBService.queryOgrID(kresCode, kresAdi, ogrID);
   }
 
   @override
@@ -174,7 +171,7 @@ class UserRepository implements AuthBase {
       String fileType,
       File yuklenecekDosya) async {
     var url = await _firebaseStorageService.uploadPhoto(
-        ogrID, ogrAdi, fileType, yuklenecekDosya);
+        kresCode, kresAdi, ogrID, fileType, yuklenecekDosya);
 
     return url;
   }

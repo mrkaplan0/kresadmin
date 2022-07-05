@@ -111,7 +111,7 @@ class _StudentRatingState extends State<StudentRating> {
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat formatter = DateFormat('dd-MM-yyyy');
+    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
     final String formattedTime = formatter.format(dateTime);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -173,7 +173,7 @@ class _StudentRatingState extends State<StudentRating> {
                             style: TextStyle(fontSize: 24),
                           ),
                           Text("Öğrenci No: " + widget.student.ogrID),
-                          Text("Değerlendirme Tarihi: " + formattedTime)
+                          Text("Tarih: " + formattedTime)
                         ],
                       )
                     ],
@@ -225,13 +225,13 @@ class _StudentRatingState extends State<StudentRating> {
   Widget specialNoteTextForm(BuildContext context) {
     return TextFormField(
       controller: specialNoteController,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Özel Not',
           // hintText: 'Özel not giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.person),
           )),
       maxLines: 4,
@@ -240,7 +240,7 @@ class _StudentRatingState extends State<StudentRating> {
 
   saveRatings(String time) async {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    ratingMap.addAll({'Son Değerlendirme': time});
+    ratingMap.addAll({'Değerlendirme Tarihi': time});
     if (addSpecialNote == true && specialNoteController.text.isNotEmpty) {
       ratingMap.addAll({'Özel Not': specialNoteController.text});
     }

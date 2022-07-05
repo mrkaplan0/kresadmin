@@ -9,7 +9,7 @@ import 'package:kresadmin/models/user.dart';
 import 'package:kresadmin/services/base/auth_base.dart';
 
 class FirebaseAuthService implements AuthBase {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Future<MyUser?> currentUser() async {
@@ -38,17 +38,7 @@ class FirebaseAuthService implements AuthBase {
     }
   }
 
-  @override
-  Future<MyUser?> signingWithAnonymously() async {
-    try {
-      UserCredential sonuc = await _auth.signInAnonymously();
 
-      return _usersFromFirebase(sonuc.user!);
-    } catch (e) {
-      debugPrint("Hata SignAnonymously $e");
-      return null;
-    }
-  }
 
   @override
   Future<MyUser> signingWithEmailAndPassword(String email, String sifre) async {
@@ -105,18 +95,6 @@ class FirebaseAuthService implements AuthBase {
     String kresAdi,
   ) {
     // TODO: implement getTeachers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> saveTeacher(String kresCode, String kresAdi, Teacher teacher) {
-    // TODO: implement saveTeacher
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> ogrNoControl(String ogrNo) {
-    // TODO: implement ogrNoControl
     throw UnimplementedError();
   }
 
@@ -238,6 +216,12 @@ class FirebaseAuthService implements AuthBase {
   @override
   Future<String> queryKresList(String kresCode) async {
     // TODO: implement getKresList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID) {
+    // TODO: implement queryOgrID
     throw UnimplementedError();
   }
 }

@@ -9,6 +9,7 @@ abstract class AuthBase {
 
   Future<MyUser?> signingWithEmailAndPassword(String email, String sifre);
 
+
   Future<MyUser?> createUserEmailAndPassword(String email, String sifre);
 
   Future<bool> signOut();
@@ -16,7 +17,7 @@ abstract class AuthBase {
   Future<bool> deleteUser(MyUser user);
   Future<String> queryKresList(String kresCode);
 
-  Future<bool> ogrNoControl(String ogrNo);
+  Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID);
 
   Future<bool> saveStudent(String kresCode, String kresAdi, Student student);
   Future<bool> deleteStudent(String kresCode, String kresAdi, Student student);

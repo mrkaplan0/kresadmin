@@ -1,4 +1,5 @@
-import 'dart:convert';
+import 'dart:io';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 class PhotoEditor extends StatefulWidget {
   final Student? student;
 
-  PhotoEditor({this.student});
+  const PhotoEditor({this.student});
 
   @override
   _PhotoEditorState createState() => _PhotoEditorState();
@@ -57,7 +58,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
         actions: <Widget>[
           originalImage != null
               ? TextButton(
-                  child: Text(
+                  child: const Text(
                     'Önizleme ve Kaydet',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -77,14 +78,14 @@ class _PhotoEditorState extends State<PhotoEditor> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     SafeArea(child: buildImage()),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     CheckboxListTile(
                       activeColor: Colors.orangeAccent.shade100,
                       onChanged: (value) => _onChange(value),
                       value: _showPhotoMainPage,
-                      title: Text(
+                      title: const Text(
                         "Fotoğraf anasayfada gösterilsin.",
                         style: TextStyle(fontSize: 14),
                       ),
@@ -93,7 +94,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
                       activeColor: Colors.orangeAccent.shade100,
                       onChanged: (value) => _onChangeTagStudent(value),
                       value: _tagStudent,
-                      title: Text(
+                      title: const Text(
                         "Öğrenci Etiketle.",
                         style: TextStyle(fontSize: 14),
                       ),
@@ -106,7 +107,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
                       activeColor: Colors.orangeAccent.shade100,
                       onChanged: (value) => _onChangeSpecialNote(value),
                       value: _addSpecialNote,
-                      title: Text(
+                      title: const Text(
                         "Not ekle.",
                         style: TextStyle(fontSize: 14),
                       ),
@@ -141,9 +142,9 @@ class _PhotoEditorState extends State<PhotoEditor> {
           flex: 1,
           child: GestureDetector(
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 8),
               alignment: Alignment.center,
-              child: Text(
+              child: const Text(
                 "Fotoğraf Çek",
                 style: TextStyle(fontSize: 24),
               ),
@@ -156,16 +157,16 @@ class _PhotoEditorState extends State<PhotoEditor> {
             },
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 2,
         ),
         Expanded(
           flex: 1,
           child: GestureDetector(
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 8),
               alignment: Alignment.center,
-              child: Text(
+              child: const Text(
                 "Galeriden Yükle",
                 style: TextStyle(fontSize: 24),
               ),
@@ -201,7 +202,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
 
   Widget _buildFunctions() {
     return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
+      items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.flip),
           label: 'Çevir',
@@ -246,14 +247,10 @@ class _PhotoEditorState extends State<PhotoEditor> {
 
   Future<void> previewAndSave() async {
     try {
-      option.outputFormat = const OutputFormat.png();
-
-      print(const JsonEncoder.withIndent('  ').convert(option.toJson()));
+      option.outputFormat = const OutputFormat.jpeg(60);
 
       final File? result = await ImageEditor.editFileImageAndGetFile(
           file: editedImage!, imageEditorOption: option);
-
-      print('result.length = ${result?.length}');
 
       if (result == null) return;
 
@@ -313,67 +310,63 @@ class _PhotoEditorState extends State<PhotoEditor> {
     showDialog<void>(
       barrierDismissible: false,
       context: context,
-      builder: (BuildContext ctx) => Container(
-        child: Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.9),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: SizedBox.fromSize(
-                  size: const Size.square(300),
-                  child: Container(
-                    child: Image.file(image),
-                  ),
-                ),
+      builder: (BuildContext ctx) => Scaffold(
+        backgroundColor: Colors.black.withOpacity(0.9),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: SizedBox.fromSize(
+                size: const Size.square(300),
+                child: Image.file(image),
               ),
-              SizedBox(
-                height: 5,
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            if (_tagStudent == true && selectedStudent != null)
+              Text(
+                "Etiket: " + selectedStudent!.adiSoyadi,
+                style: const TextStyle(color: Colors.white),
               ),
-              if (_tagStudent == true && selectedStudent != null)
-                Text(
-                  "Etiket: " + selectedStudent!.adiSoyadi,
-                  style: TextStyle(color: Colors.white),
-                ),
-              if (_addSpecialNote == true &&
-                  specialNoteController.text.length > 0)
-                Text(
-                  "Not: " + specialNoteController.text,
-                  style: TextStyle(color: Colors.white),
-                ),
-              ButtonBar(
-                alignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                      width: 125,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            savePhoto(image);
-                          },
-                          child: Text("Kaydet"))),
-                  SizedBox(
+            if (_addSpecialNote == true &&
+                specialNoteController.text.isNotEmpty)
+              Text(
+                "Not: " + specialNoteController.text,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
                     width: 125,
                     child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
-
-                          option.reset();
-                          setState(() {});
+                          savePhoto(image);
                         },
-                        child: Text("İptal")),
-                  ),
-                ],
-              )
-            ],
-          ),
+                        child: const Text("Kaydet"))),
+                SizedBox(
+                  width: 125,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+
+                        option.reset();
+                        setState(() {});
+                      },
+                      child: const Text("İptal")),
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );
   }
 
   Future<void> _pickCamera() async {
-    final XFile? result =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    final XFile? result = await ImagePicker()
+        .pickImage(source: ImageSource.camera, imageQuality: 50);
 
     if (result == null) {
       //  showToast('The pick file is null');
@@ -386,17 +379,22 @@ class _PhotoEditorState extends State<PhotoEditor> {
   }
 
   Future<void> _pickGallery() async {
-    final XFile? result =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final XFile? result = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 50);
 
     if (result == null) {
       //  showToast('The pick file is null');
       return;
     }
-    print(result.path);
-    originalImage = editedImage = File(result.path);
 
-    setState(() {});
+    File ph = File(result.path);
+
+    originalImage = editedImage = ph;
+    if (editedImage != null) {
+      print("SALDŞLS");
+
+      setState(() {});
+    }
   }
 
   Widget tagStudentToPhoto() {
@@ -404,18 +402,18 @@ class _PhotoEditorState extends State<PhotoEditor> {
       focusColor: Colors.white,
       value: selectedStudent,
       //elevation: 5,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
       iconEnabledColor: Colors.black,
       items: studentList!.map<DropdownMenuItem<Student>>((Student value) {
         return DropdownMenuItem<Student>(
           value: value,
           child: Text(
             " ${value.adiSoyadi}",
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
           ),
         );
       }).toList(),
-      hint: Text(
+      hint: const Text(
         "Öğrenci seçiniz",
         style: TextStyle(color: Colors.black),
       ),
@@ -432,13 +430,13 @@ class _PhotoEditorState extends State<PhotoEditor> {
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
         controller: specialNoteController,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             floatingLabelBehavior: FloatingLabelBehavior.always,
             contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
             labelText: 'Özel Not',
             // hintText: 'Özel not giriniz...',
             suffixIcon: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+              padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
               child: Icon(Icons.notes_outlined),
             )),
         maxLines: 4,
@@ -458,10 +456,11 @@ class _PhotoEditorState extends State<PhotoEditor> {
     Photo myPhoto;
     if (selectedStudent != null || widget.student != null) {
       String? ogrID;
-      if (selectedStudent == null)
+      if (selectedStudent == null) {
         ogrID = widget.student!.ogrID;
-      else
+      } else {
         ogrID = selectedStudent!.ogrID;
+      }
       photoUrl = await _userModel.uploadPhotoToGallery(
           _userModel.users!.kresCode!,
           _userModel.users!.kresAdi!,
@@ -472,7 +471,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
       myPhoto = Photo(
           photoUrl: photoUrl,
           time: DateTime.now().toString(),
-          info: specialNoteController.text.length > 0
+          info: specialNoteController.text.isNotEmpty
               ? specialNoteController.text
               : null,
           ogrID: ogrID,
@@ -494,7 +493,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
       myPhoto = Photo(
           photoUrl: photoUrl,
           time: DateTime.now().toString(),
-          info: specialNoteController.text.length > 0
+          info: specialNoteController.text.isNotEmpty
               ? specialNoteController.text
               : null,
           isShowed: _showPhotoMainPage);

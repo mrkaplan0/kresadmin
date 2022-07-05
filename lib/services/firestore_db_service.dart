@@ -94,7 +94,7 @@ class FirestoreDBService implements DBBase {
 
   Future<bool> createAdminAndKres(MyUser user) async {
     await _firestore
-        .collection("Kresler")
+        .collection("KreslerChecking")
         .doc(user.kresCode! + '_' + user.kresAdi!)
         .set({"kresCode": user.kresCode, "kresAdi": user.kresAdi},
             SetOptions(merge: true));
@@ -127,7 +127,7 @@ class FirestoreDBService implements DBBase {
   @override
   Future<String> queryKresList(String kresCode) async {
     QuerySnapshot checkKresCode = await _firestore
-        .collection("Kresler")
+        .collection("KreslerChecking")
         .where('kresCode', isEqualTo: kresCode)
         .get();
 
@@ -139,6 +139,23 @@ class FirestoreDBService implements DBBase {
     } else {
       return '';
     }
+  }
+
+  @override
+  Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("KreslerChecking")
+        .doc(kresCode + '_' + kresAdi)
+        .collection("Students")
+        .get();
+    List<int> list = [];
+
+    for (DocumentSnapshot ogrID in querySnapshot.docs) {
+      Map<String, dynamic> map = ogrID.data()! as Map<String, dynamic>;
+      list.add(int.parse(map['ogrID']));
+    }
+    var r = list.contains(int.parse(ogrID));
+    return r;
   }
 
   @override
@@ -154,6 +171,15 @@ class FirestoreDBService implements DBBase {
         .set(student.toMap(), SetOptions(merge: true))
         .then((value) => debugPrint("Öğrenci Kaydedildi."))
         .catchError((error) => debugPrint("Öğrenci kayıt hatası: $error"));
+
+    await _firestore
+        .collection("KreslerChecking")
+        .doc(kresCode + '_' + kresAdi)
+        .collection("Students")
+        .doc(student.ogrID)
+        .set({
+      "ogrID": student.ogrID,
+    }, SetOptions(merge: true));
     return true;
   }
 
@@ -170,7 +196,14 @@ class FirestoreDBService implements DBBase {
         .delete()
         .then((value) => debugPrint("Öğrenci silindi."))
         .catchError((error) => debugPrint("Öğrenci silme hatası: $error"));
-
+    await _firestore
+        .collection("KreslerChecking")
+        .doc(kresCode + '_' + kresAdi)
+        .collection("Students")
+        .doc(student.ogrID)
+        .delete()
+        .then((value) => debugPrint("Öğrenci silindi."))
+        .catchError((error) => debugPrint("Öğrenci silme hatası: $error"));
     return true;
   }
 
@@ -231,18 +264,16 @@ class FirestoreDBService implements DBBase {
     return list;
   }
 
-  updateOgrProfilePhoto(String ogrID, String url) async {
-    if (ogrID.length < 7) {
-      await _firestore
-          .collection("Students")
-          .doc(ogrID)
-          .update({'fotoUrl': url});
-    } else {
-      await _firestore
-          .collection("Teacher")
-          .doc(ogrID)
-          .update({'fotoUrl': url});
-    }
+  updateOgrProfilePhoto(
+      String kresCode, String kresAdi, String ogrID, String url) async {
+    await _firestore
+        .collection("Kresler")
+        .doc(kresCode + '_' + kresAdi)
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Students')
+        .doc(ogrID)
+        .update({'fotoUrl': url});
   }
 
   @override
@@ -371,7 +402,7 @@ class FirestoreDBService implements DBBase {
         .collection("Students")
         .doc(ogrID)
         .collection("Ratings")
-        .doc(ratings['Son Değerlendirme'].toString())
+        .doc(ratings['Değerlendirme Tarihi'].toString())
         .set(ratings, SetOptions(merge: true));
     if (showPhotoMainPage == true && ratings['Fotoğraflar'] != null) {
       for (int i = 0; i < ratings['Fotoğraflar'].length; i++) {
@@ -529,6 +560,11 @@ class FirestoreDBService implements DBBase {
     for (Map<String, dynamic> map in maps.values) {
       duyuruList.add(map);
     }
+
+    duyuruList.sort((a, b) {
+      return DateTime.parse(b['Duyuru Tarihi'])
+          .compareTo(DateTime.parse(a['Duyuru Tarihi']));
+    });
     return duyuruList;
   }
 }

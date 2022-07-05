@@ -40,10 +40,11 @@ class UserModel with ChangeNotifier implements AuthBase {
     try {
       state = ViewState.busy;
       _users = await _userRepository.currentUser();
-      if (_users != null)
+      if (_users != null) {
         return _users;
-      else
+      } else {
         return null;
+      }
     } catch (e) {
       return null;
     } finally {
@@ -92,8 +93,9 @@ class UserModel with ChangeNotifier implements AuthBase {
             await _userRepository.signingWithEmailAndPassword(email, sifre);
 
         return _users;
-      } else
+      } else {
         return null;
+      }
     } finally {
       state = ViewState.idle;
     }
@@ -107,8 +109,9 @@ class UserModel with ChangeNotifier implements AuthBase {
         _users =
             (await _userRepository.createUserEmailAndPassword(email, sifre))!;
         return _users;
-      } else
+      } else {
         return null;
+      }
     } finally {
       state = ViewState.idle;
     }
@@ -120,8 +123,9 @@ class UserModel with ChangeNotifier implements AuthBase {
     if (!email.contains('@')) {
       emailHataMesaj = 'Geçerli bir email adresi girin.';
       sonuc = false;
-    } else
+    } else {
       emailHataMesaj = null;
+    }
     return sonuc;
   }
 
@@ -249,15 +253,15 @@ class UserModel with ChangeNotifier implements AuthBase {
       return sonuc;
     } catch (e) {
       debugPrint("User Model getteach hata :" + e.toString());
-      return Stream.empty();
+      return const Stream.empty();
     }
   }
 
   @override
-  Future<bool> ogrNoControl(String ogrNo) async {
+  Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.ogrNoControl(ogrNo);
+      bool sonuc = await _userRepository.queryOgrID(kresCode, kresAdi, ogrID);
 
       return sonuc;
     } catch (e) {
@@ -466,7 +470,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model savephoto hata :" + e.toString());
+      debugPrint("User Model addAnnouncement hata :" + e.toString());
       return false;
     }
   }

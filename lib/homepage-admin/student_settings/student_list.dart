@@ -72,10 +72,12 @@ class _StudentListPageState extends State<StudentListPage> {
                                     height: 50,
                                     width: 50,
                                     child: ogrList[i].fotoUrl == null
-                                        ? Center(child: Icon(Icons.person))
+                                        ? const Center(
+                                            child: Icon(Icons.person))
                                         : ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(40)),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(40)),
                                             child: Image.network(
                                                 ogrList[i].fotoUrl!,
                                                 fit: BoxFit.cover),
@@ -218,7 +220,7 @@ class _StudentListPageState extends State<StudentListPage> {
 
                       uploadProfilePhoto(photo, stu);
                     },
-                    child: Text("Foto Çek")),
+                    child: const Text("Foto Çek")),
                 ElevatedButton(
                     onPressed: () async {
                       Get.back();

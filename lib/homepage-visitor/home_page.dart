@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
 import 'package:kresadmin/constants.dart';
-import 'package:kresadmin/homepage-admin/student_settings/student_page_for_visitor.dart';
 import 'package:kresadmin/homepage-visitor/photo_gallery.dart';
 import 'package:kresadmin/models/photo.dart';
-import 'package:kresadmin/models/student.dart';
+
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,12 +33,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
           //centerTitle: true,
           automaticallyImplyLeading: false,
           title: Text(
-            "Pamuk Şekeri Anaokulu",
+            "${_userModel.users!.kresAdi}",
             style: Theme.of(context)
                 .textTheme
                 .headline6!
@@ -48,17 +48,17 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               onPressed: () => _cikisyap(context),
-              icon: Icon(Icons.logout),
+              icon: const Icon(Icons.logout),
             ),
           ]),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
             width: double.infinity,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 Padding(
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                               MaterialPageRoute(
                                   builder: (context) => PhotoGallery(album)));
                         },
-                        child: Text(
+                        child: const Text(
                           "Tümünü Gör",
                           style: TextStyle(color: Colors.black26),
                         ),
@@ -88,19 +88,18 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 photoGalleryWidget(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 14.0),
                   child: GestureDetector(
-                    child: Container(
-                        child: Image.asset("assets/images/gallery7.png")),
+                    child: Image.asset("assets/images/gallery7.png"),
                     onTap: () {},
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -120,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(right: 11.0),
                       child: TextButton(
                         onPressed: () {},
-                        child: Text(
+                        child: const Text(
                           "Tümünü Gör",
                           style: TextStyle(color: Colors.black26),
                         ),
@@ -128,10 +127,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15.0),
                   child: Text("31.10.2021 - Hoşgeldin Yeni Anasayfa!"),
                 ),
@@ -142,24 +141,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget photoGalleryWidget() {
-    if (album!.length > 0)
+    if (album!.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(left: 10.0, right: 15),
         child: Container(
           height: 160,
           child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 3,
+              itemCount: album!.length > 3 ? 3 : album!.length,
               itemBuilder: (context, i) {
                 return GestureDetector(
                   child: Stack(
                     children: [
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 6),
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
                         height: 130,
                         width: 180,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8)),
                           child: ExtendedImage.network(
                             album![i].photoUrl,
                             fit: BoxFit.cover,
@@ -169,11 +169,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 6),
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
                         height: 130,
                         width: 180,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(8)),
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
@@ -182,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                                   Colors.black12.withOpacity(0.3),
                                   Colors.black26.withOpacity(0.5),
                                 ],
-                                stops: [
+                                stops: const [
                                   0.4,
                                   0.8,
                                   1,
@@ -192,12 +193,12 @@ class _HomePageState extends State<HomePage> {
                           ? Positioned(
                               child: Text(
                                 album![i].info!,
-                                style: TextStyle(color: Colors.grey),
+                                style: const TextStyle(color: Colors.grey),
                               ),
                               bottom: 35,
                               left: 13,
                             )
-                          : Text(""),
+                          : const Text(""),
                     ],
                   ),
                   onTap: () {
@@ -211,13 +212,14 @@ class _HomePageState extends State<HomePage> {
               }),
         ),
       );
-    else
+    } else {
       return Padding(
         padding: const EdgeInsets.only(left: 14.0, right: 14),
         child: Container(
           height: 200,
         ),
       );
+    }
   }
 
   Future<bool> _cikisyap(BuildContext context) async {

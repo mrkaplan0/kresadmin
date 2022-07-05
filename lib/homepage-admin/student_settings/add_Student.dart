@@ -196,8 +196,8 @@ class _AddStudentState extends State<AddStudent> {
       onSaved: (String? veliAdi) {
         _veliAdiSoyadi = veliAdi!;
       },
-      validator: (String? ogrAdi) {
-        if (ogrAdi!.isEmpty) return 'Veli adı boş geçilemez!';
+      validator: (String? veliAdi) {
+        if (veliAdi!.isEmpty) return 'Veli adı boş geçilemez!';
       },
     );
   }
@@ -274,38 +274,67 @@ class _AddStudentState extends State<AddStudent> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      if (_checkBoxValue == false) {
-        int newID = Random().nextInt(9999);
-        _ogrID = newID.toString();
-      }
-
       if (_cinsiyetSecimi == CinsiyetSecimi.erkek) {
         _cinsiyet = 'Erkek';
       } else {
         _cinsiyet = 'Kız';
       }
-      Student newStu = Student(
-          kresCode: _userModel.users!.kresCode,
-          kresAdi: _userModel.users!.kresAdi,
-          ogrID: _ogrID!,
-          adiSoyadi: _ogrAdiSoyadi!,
-          dogumTarihi: _dogumTarihi,
-          cinsiyet: _cinsiyet,
-          veliAdiSoyadi: _veliAdiSoyadi,
-          veliTelefonNo: _veliTelefonNo,
-          sinifi: _sinifi);
-      bool sonuc = await _userModel.saveStudent(
-          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, newStu);
 
-      if (sonuc == true) {
-        Navigator.pop(context);
-        Get.snackbar('Kayıt Başarılı', 'Öğrenci kaydedildi.',
-            snackPosition: SnackPosition.BOTTOM);
-      } else {
-        Get.snackbar('Hata', 'Öğrenci kaydedilirken hata oluştu.',
-            colorText: Colors.red, snackPosition: SnackPosition.BOTTOM);
+      bool ogrIDControlResult = await controlOgrID(_userModel);
+//if ogrIDControlResult is false, it means ogrID is not match anything in database.
+      if (ogrIDControlResult == false) {
+        Student newStu = Student(
+            kresCode: _userModel.users!.kresCode,
+            kresAdi: _userModel.users!.kresAdi,
+            ogrID: _ogrID!,
+            adiSoyadi: _ogrAdiSoyadi!,
+            dogumTarihi: _dogumTarihi,
+            cinsiyet: _cinsiyet,
+            veliAdiSoyadi: _veliAdiSoyadi,
+            veliTelefonNo: _veliTelefonNo,
+            sinifi: _sinifi);
+        bool sonuc = await _userModel.saveStudent(
+            _userModel.users!.kresCode!, _userModel.users!.kresAdi!, newStu);
+
+        if (sonuc == true) {
+          Navigator.pop(context);
+          Get.snackbar('Kayıt Başarılı', 'Öğrenci kaydedildi.',
+              snackPosition: SnackPosition.BOTTOM);
+        } else {
+          Get.snackbar('Hata', 'Öğrenci kaydedilirken hata oluştu.',
+              colorText: Colors.red, snackPosition: SnackPosition.BOTTOM);
+        }
       }
     }
+  }
+
+  Future<bool> controlOgrID(UserModel _userModel) async {
+    bool r = true;
+
+    if (_checkBoxValue == false) {
+      for (int i = 0; i < 5; i++) {
+        //if r==false, it means we don't have 'newID' in our database.
+        int newID = Random().nextInt(9999);
+        r = await _userModel.queryOgrID(_userModel.users!.kresCode!,
+            _userModel.users!.kresAdi!, newID.toString());
+        _ogrID = newID.toString();
+        if (r == false) break;
+      }
+    } else {
+      r = await _userModel.queryOgrID(
+          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, _ogrID!);
+      if (r == true) {
+        Get.defaultDialog(
+            title: 'Hata',
+            middleText:
+                '$_ogrID nosu ile kayıtlı bir öğrenci var, devam edemezsiniz!',
+            onConfirm: () {
+              Navigator.pop(context);
+            },
+            barrierDismissible: false);
+      }
+    }
+    return r;
   }
 
   _onChange(bool? value) {

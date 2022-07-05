@@ -111,7 +111,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       DateTime dateTime = DateTime.now();
-      final DateFormat formatter = DateFormat('dd-MM-yyyy');
+      final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
 
       String formattedTime = formatter.format(dateTime);
 

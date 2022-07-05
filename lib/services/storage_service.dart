@@ -8,11 +8,15 @@ class FirebaseStorageService implements StorageBase {
   late Reference _storageReference;
 
   @override
-  Future<String> uploadPhoto(String ogrID, String ogrAdi, String fileType,
-      File yuklenecekDosya) async {
+  Future<String> uploadPhoto(String kresCode, String kresAdi, String ogrID,
+      String fileType, File yuklenecekDosya) async {
     DateTime now = DateTime.now();
-    _storageReference =
-        _firebaseStorage.ref().child(ogrID).child(fileType).child("$now.png");
+    _storageReference = _firebaseStorage
+        .ref()
+        .child(kresCode)
+        .child(ogrID)
+        .child(fileType)
+        .child("$now.jpeg");
     var uploadTask = _storageReference.putFile(yuklenecekDosya);
 
     var url = await (await uploadTask).ref.getDownloadURL();

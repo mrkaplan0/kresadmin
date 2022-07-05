@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:provider/provider.dart';
-import 'dart:ui';
 import 'package:intl/intl.dart';
 
 import '../../constants.dart';
@@ -50,9 +49,9 @@ class _FastRatingState extends State<FastRating> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hızlı Değerlendir"),
+        title: const Text("Hızlı Değerlendir"),
       ),
-      body: widget.stuList.length > 0
+      body: widget.stuList.isNotEmpty
           ? PageView.builder(
               controller: controller,
               itemBuilder: (context, position) {
@@ -67,7 +66,7 @@ class _FastRatingState extends State<FastRating> {
   }
 
   Widget ratingWidget(Student student) {
-    final DateFormat formatter = DateFormat('dd-MM-yyyy');
+    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
     final String formattedTime = formatter.format(dateTime);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -77,14 +76,14 @@ class _FastRatingState extends State<FastRating> {
           child: SafeArea(
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   width: double.infinity,
                   height: 100,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: itemColor3,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
@@ -94,31 +93,31 @@ class _FastRatingState extends State<FastRating> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.arrow_back_rounded,
                             color: Colors.black,
                             size: 28,
                           )),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
                       student.fotoUrl != null
-                          ? Container(
+                          ? SizedBox(
                               width: 80,
                               height: 80,
                               child: ClipRRect(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(40)),
+                                    const BorderRadius.all(Radius.circular(40)),
                                 child: Image.network(
                                   student.fotoUrl!,
                                   fit: BoxFit.fill,
                                 ),
                               ),
                             )
-                          : CircleAvatar(
+                          : const CircleAvatar(
                               child: Icon(Icons.person),
                             ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Column(
@@ -126,16 +125,16 @@ class _FastRatingState extends State<FastRating> {
                         children: [
                           Text(
                             student.adiSoyadi,
-                            style: TextStyle(fontSize: 24),
+                            style: const TextStyle(fontSize: 24),
                           ),
                           Text("Öğrenci No: " + student.ogrID),
-                          Text("Değerlendirme Tarihi: " + formattedTime)
+                          Text("Tarih: " + formattedTime)
                         ],
                       )
                     ],
                   ),
                 ),
-                SizedBox(height: kdefaultPadding),
+                const SizedBox(height: kdefaultPadding),
                 dynamicCriteriaList(),
                 if (addSpecialNote == true) specialNoteTextForm(context),
                 ButtonBar(
@@ -148,10 +147,10 @@ class _FastRatingState extends State<FastRating> {
                               : addSpecialNote = false;
                           setState(() {});
                         },
-                        child: Text("Özel Not Ekle")),
+                        child: const Text("Özel Not Ekle")),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 SizedBox(
@@ -164,10 +163,10 @@ class _FastRatingState extends State<FastRating> {
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.orangeAccent.shade100,
                     ),
-                    child: Text("Değerlendirmeyi Kaydet"),
+                    child: const Text("Değerlendirmeyi Kaydet"),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 )
               ],
@@ -186,7 +185,7 @@ class _FastRatingState extends State<FastRating> {
         builder: (context, sonuc) {
           if (sonuc.hasData) {
             var criteriaList = sonuc.data!;
-            if (criteriaList.length > 0) {
+            if (criteriaList.isNotEmpty) {
               return ListView.builder(
                   shrinkWrap: true,
                   itemCount: criteriaList.length,
@@ -201,7 +200,7 @@ class _FastRatingState extends State<FastRating> {
                             Expanded(
                               child: Text(
                                 criteriaList[i],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.black,
                                 ),
                               ),
@@ -215,24 +214,23 @@ class _FastRatingState extends State<FastRating> {
                                 allowHalfRating: true,
                                 itemCount: 5,
                                 ratingWidget: RatingWidget(
-                                  full: Icon(
+                                  full: const Icon(
                                     Icons.star,
                                     color: Colors.amber,
                                   ),
-                                  half: Icon(
+                                  half: const Icon(
                                     Icons.star_half_rounded,
                                     color: Colors.amber,
                                   ),
-                                  empty: Icon(
+                                  empty: const Icon(
                                     Icons.star_border_rounded,
                                     color: Colors.amber,
                                   ),
                                 ),
                                 itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
                                 onRatingUpdate: (rating) {
-                                  ratingMap
-                                      .addAll({'${criteriaList[i]}': rating});
+                                  ratingMap.addAll({criteriaList[i]: rating});
                                 },
                               ),
                             ),
@@ -242,12 +240,12 @@ class _FastRatingState extends State<FastRating> {
                     );
                   });
             } else {
-              return Center(
+              return const Center(
                 child: Text("Kriter ekleyin."),
               );
             }
           } else
-            return Center(
+            return const Center(
               child: Text("Kriter ekleyin."),
             );
         });
@@ -256,13 +254,13 @@ class _FastRatingState extends State<FastRating> {
   Widget specialNoteTextForm(BuildContext context) {
     return TextFormField(
       controller: specialNoteController,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Özel Not',
           // hintText: 'Özel not giriniz...',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.person),
           )),
       maxLines: 4,
@@ -271,7 +269,7 @@ class _FastRatingState extends State<FastRating> {
 
   saveRatings(Student stu, String time) async {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    ratingMap.addAll({'Son Değerlendirme': time});
+    ratingMap.addAll({'Değerlendirme Tarihi': time});
     if (addSpecialNote == true && specialNoteController.text.isNotEmpty) {
       ratingMap.addAll({'Özel Not': specialNoteController.text});
     }
@@ -284,7 +282,7 @@ class _FastRatingState extends State<FastRating> {
 
       Get.snackbar("Başarılı", "(${stu.adiSoyadi}) Değerlendirme Kaydedildi");
       controller.nextPage(
-          duration: Duration(seconds: 1), curve: Curves.decelerate);
+          duration: const Duration(seconds: 1), curve: Curves.decelerate);
     }
   }
 }

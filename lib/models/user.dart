@@ -10,7 +10,7 @@ class MyUser {
   bool? isAdmin;
   String? position;
   DateTime? createdAt;
-
+  String? token;
   MyUser({required this.userID, required this.email, this.isAdmin});
 
   Map<String, dynamic> toMap() {
@@ -24,6 +24,7 @@ class MyUser {
       'isAdmin': isAdmin ?? false,
       'position': position ?? 'visitor',
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
+      'token': token,
     };
   }
 
@@ -36,7 +37,8 @@ class MyUser {
         kresCode = map['kresCode'],
         isAdmin = map['isAdmin'],
         position = map['position'],
-        createdAt = (map['createdAt'] as Timestamp).toDate();
+        createdAt = (map['createdAt'] as Timestamp).toDate(),
+        token = map['token'];
 
   @override
   String toString() {
