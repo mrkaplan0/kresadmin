@@ -9,7 +9,6 @@ abstract class AuthBase {
 
   Future<MyUser?> signingWithEmailAndPassword(String email, String sifre);
 
-
   Future<MyUser?> createUserEmailAndPassword(String email, String sifre);
 
   Future<bool> signOut();
@@ -49,4 +48,5 @@ abstract class AuthBase {
       String kresCode, String kresAdi, Map<String, dynamic> map);
   Future<List<Map<String, dynamic>>> getAnnouncements(
       String kresCode, String kresAdi);
+  Future<bool> sendNotificationToParent(String parentToken, String message);
 }

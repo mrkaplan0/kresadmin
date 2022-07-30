@@ -1,8 +1,10 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_editor/image_editor.dart' hide ImageSource;
+import 'package:flutter/services.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/constants.dart';
@@ -13,7 +15,7 @@ import 'package:provider/provider.dart';
 class PhotoEditor extends StatefulWidget {
   final Student? student;
 
-  const PhotoEditor({this.student});
+  PhotoEditor({Key? key, this.student}) : super(key: key);
 
   @override
   _PhotoEditorState createState() => _PhotoEditorState();
@@ -21,9 +23,9 @@ class PhotoEditor extends StatefulWidget {
 
 class _PhotoEditorState extends State<PhotoEditor> {
   final GlobalKey<ExtendedImageEditorState> editorKey = GlobalKey();
-  final ImageEditorOption option = ImageEditorOption();
-  int selectedIndex = 0;
-  File? originalImage, editedImage;
+
+  File? originalImage;
+  Uint8List? imageData, editedImage;
   List<Student>? studentList;
   Student? selectedStudent;
   late TextEditingController specialNoteController;
@@ -52,6 +54,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Foto Ekle'),
@@ -59,11 +62,11 @@ class _PhotoEditorState extends State<PhotoEditor> {
           originalImage != null
               ? TextButton(
                   child: const Text(
-                    'Önizleme ve Kaydet',
+                    'Kaydet',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () async {
-                    await previewAndSave();
+                    await savePhoto(editedImage);
                   },
                 )
               : Container(),
@@ -77,7 +80,32 @@ class _PhotoEditorState extends State<PhotoEditor> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SafeArea(child: buildImage()),
+                    // SafeArea(child: buildImage()),
+                    if (imageData != null)
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height / 3,
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: Image.memory(imageData!)),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      child: const Text("Düzenle"),
+                      onPressed: () async {
+                        editedImage = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageEditor(
+                              image: imageData,
+                            ),
+                          ),
+                        );
+
+                        // replace with edited image
+                        if (editedImage != null) {
+                          imageData = editedImage;
+                          setState(() {});
+                        }
+                      },
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -118,7 +146,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
               ),
             )
           : photoFrom(),
-      bottomNavigationBar: _buildFunctions(),
+      // bottomNavigationBar: _buildFunctions(),
     );
   }
 
@@ -185,7 +213,7 @@ class _PhotoEditorState extends State<PhotoEditor> {
 
   Widget buildImage() {
     return ExtendedImage.file(
-      editedImage!,
+      originalImage!,
       height: 300,
       width: 300,
       extendedImageEditorKey: editorKey,
@@ -200,201 +228,32 @@ class _PhotoEditorState extends State<PhotoEditor> {
     );
   }
 
-  Widget _buildFunctions() {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.flip),
-          label: 'Çevir',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.rotate_left),
-          label: 'Sola Döndür',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.rotate_right),
-          label: 'Sağa Döndür',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.crop),
-          label: 'Kırp',
-        ),
-      ],
-      onTap: (int index) {
-        switch (index) {
-          case 0:
-            flip();
-            break;
-          case 1:
-            rotate(false);
-            break;
-          case 2:
-            rotate(true);
-            break;
-          case 3:
-            crop();
-            break;
-        }
-        setState(() {
-          selectedIndex = index;
-        });
-      },
-      currentIndex: selectedIndex,
-      selectedItemColor: primarySwatch,
-      unselectedItemColor: primaryColor.shade100,
-    );
-  }
-
-  Future<void> previewAndSave() async {
-    try {
-      option.outputFormat = const OutputFormat.jpeg(60);
-
-      final File? result = await ImageEditor.editFileImageAndGetFile(
-          file: editedImage!, imageEditorOption: option);
-
-      if (result == null) return;
-
-      showPreviewDialog(result);
-    } catch (e) {
-      debugPrint("hata............................");
-    }
-  }
-
-  Future<void> crop([bool test = false]) async {
-    final ExtendedImageEditorState? state = editorKey.currentState;
-    if (state == null) {
-      return;
-    }
-    final EditActionDetails? action = editorKey.currentState!.editAction;
-    final bool flipHorizontal = action!.flipY;
-    final bool flipVertical = action.flipX;
-
-    try {
-      option.addOption(
-          FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
-      final Rect? rect = state.getCropRect();
-      if (rect == null) {
-        print('The crop rect is null.');
-        return;
-      }
-
-      option.addOption(ClipOption.fromRect(rect));
-    } catch (e) {
-      debugPrint("hata......................" + e.toString());
-
-      setState(() {
-        editedImage = originalImage;
-      });
-    }
-  }
-
-  void flip() {
-    final EditActionDetails? action = editorKey.currentState!.editAction;
-    editorKey.currentState?.flip();
-    final bool flipHorizontal = action!.flipY;
-    final bool flipVertical = action.flipX;
-    option.addOption(
-        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
-  }
-
-  void rotate(bool right) {
-    final EditActionDetails? action = editorKey.currentState!.editAction;
-    editorKey.currentState?.rotate(right: right);
-    final double radian = action!.rotateAngle;
-    if (action.hasRotateAngle) {
-      option.addOption(RotateOption(radian.toInt()));
-    }
-  }
-
-  void showPreviewDialog(File image) {
-    showDialog<void>(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext ctx) => Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.9),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: SizedBox.fromSize(
-                size: const Size.square(300),
-                child: Image.file(image),
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            if (_tagStudent == true && selectedStudent != null)
-              Text(
-                "Etiket: " + selectedStudent!.adiSoyadi,
-                style: const TextStyle(color: Colors.white),
-              ),
-            if (_addSpecialNote == true &&
-                specialNoteController.text.isNotEmpty)
-              Text(
-                "Not: " + specialNoteController.text,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ButtonBar(
-              alignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                    width: 125,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          savePhoto(image);
-                        },
-                        child: const Text("Kaydet"))),
-                SizedBox(
-                  width: 125,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-
-                        option.reset();
-                        setState(() {});
-                      },
-                      child: const Text("İptal")),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   Future<void> _pickCamera() async {
     final XFile? result = await ImagePicker()
-        .pickImage(source: ImageSource.camera, imageQuality: 50);
+        .pickImage(source: ImageSource.camera, imageQuality: 45);
 
     if (result == null) {
-      //  showToast('The pick file is null');
       return;
     }
-    print(result.path);
-    originalImage = editedImage = File(result.path);
+    originalImage = File(result.path);
 
-    setState(() {});
+    var data = await rootBundle.load(result.path);
+    setState(() {
+      imageData = data.buffer.asUint8List();
+    });
   }
 
   Future<void> _pickGallery() async {
     final XFile? result = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 50);
+        .pickImage(source: ImageSource.gallery, imageQuality: 45);
 
     if (result == null) {
-      //  showToast('The pick file is null');
       return;
     }
 
-    File ph = File(result.path);
-
-    originalImage = editedImage = ph;
-    if (editedImage != null) {
-      print("SALDŞLS");
-
-      setState(() {});
-    }
+    originalImage = File(result.path);
+    imageData = await originalImage!.readAsBytes();
+    setState(() {});
   }
 
   Widget tagStudentToPhoto() {
@@ -450,10 +309,16 @@ class _PhotoEditorState extends State<PhotoEditor> {
     });
   }
 
-  savePhoto(File image) async {
+  savePhoto(Uint8List? imagee) async {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     String photoUrl;
     Photo myPhoto;
+    File image;
+    if (imagee != null) {
+      image = File.fromRawPath(imagee);
+    } else {
+      image = originalImage!;
+    }
     if (selectedStudent != null || widget.student != null) {
       String? ogrID;
       if (selectedStudent == null) {
@@ -501,9 +366,17 @@ class _PhotoEditorState extends State<PhotoEditor> {
     bool sonuc = await _userModel.savePhotoToMainGallery(
         _userModel.users!.kresCode!, _userModel.users!.kresAdi!, myPhoto);
 
-    if (sonuc == true) {
-      Navigator.pop(context);
-      Navigator.pop(context);
+    if (sonuc == true && mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
     }
+  }
+
+  Widget showProgressIndicator() {
+    return const Scaffold(
+      backgroundColor: backgroundColor,
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }

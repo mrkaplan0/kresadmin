@@ -20,7 +20,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Duyuru Ekle',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 24),
@@ -38,18 +38,18 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 announcementTitleTextForm(context),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 announcementBodyTextForm(context),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 SocialLoginButton(
@@ -66,33 +66,34 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
 
   Widget announcementTitleTextForm(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Duyuru Başlığı',
           hintText: 'Duyuruyu kısaca tanımlayın.',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.text_fields_rounded),
           )),
       onSaved: (String? d) {
         announcementTitle = d!;
       },
       validator: (String? ogrAdi) {
-        if (ogrAdi!.length < 1) return 'Duyuru başlığını boş bıraktınız!';
+        if (ogrAdi!.isEmpty) return 'Duyuru başlığını boş bıraktınız!';
+        return null;
       },
     );
   }
 
   Widget announcementBodyTextForm(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'Duyuru',
           hintText: 'Duyuruyu ekleyin.',
           suffixIcon: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.textsms_rounded),
           )),
       minLines: 3,
@@ -101,7 +102,8 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
         announcementBody = d!;
       },
       validator: (String? ogrAdi) {
-        if (ogrAdi!.length < 1) return 'Duyuru ekleyin!';
+        if (ogrAdi!.isEmpty) return 'Duyuru ekleyin!';
+        return null;
       },
     );
   }

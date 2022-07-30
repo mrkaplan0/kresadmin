@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
@@ -8,9 +9,14 @@ import 'base/database_base.dart';
 
 class FirestoreDBService implements DBBase {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+
+  String? token;
 
   @override
   Future<bool> saveUser(MyUser users) async {
+    token = await _messaging.getToken();
+    users.token = token;
     await _firestore
         .collection("Users")
         .doc(users.userID)

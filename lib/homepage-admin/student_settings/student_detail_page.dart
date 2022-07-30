@@ -8,7 +8,8 @@ import 'package:kresadmin/models/student.dart';
 class StudentDetailPage extends StatefulWidget {
   final Student student;
 
-  StudentDetailPage(this.student);
+  // ignore: use_key_in_widget_constructors
+  const StudentDetailPage(this.student);
 
   @override
   _StudentDetailPageState createState() => _StudentDetailPageState();
@@ -21,7 +22,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Öğrenci Bilgi Ekranı"),
+        title: const Text("Öğrenci Bilgi Ekranı"),
         backgroundColor: backgroundColor,
       ),
       backgroundColor: backgroundColor,
@@ -29,13 +30,13 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 7,
             ),
             Align(
                 alignment: Alignment.topCenter,
                 child: StudentProfileWidget(widget.student)),
-            SizedBox(
+            const SizedBox(
               height: 90,
             ),
             Padding(
@@ -54,7 +55,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.orangeAccent.shade100,
                   ),
-                  child: Text("Değerlendirme Yap",
+                  child: const Text("Değerlendirme Yap",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -62,7 +63,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Padding(
@@ -82,7 +83,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.orangeAccent.shade100,
                   ),
-                  child: Text("Fotoğref Ekle",
+                  child: const Text("Fotoğref Ekle",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

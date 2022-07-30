@@ -87,7 +87,7 @@ class _AddTeacherState extends State<AddTeacher> {
           hintText: 'Sınıfını giriniz...',
           suffixIcon: Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Icon(Icons.class__rounded),
+            child: Icon(Icons.class_rounded),
           )),
       onSaved: (String? sinifi) {
         _sinifi = sinifi!;

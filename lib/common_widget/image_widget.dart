@@ -14,7 +14,7 @@ class ImageWidget extends StatelessWidget {
       child: Container(
           decoration: BoxDecoration(
             color: student.fotoUrl != null ? Colors.white : backgroundColor,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
 
           /// space from white container

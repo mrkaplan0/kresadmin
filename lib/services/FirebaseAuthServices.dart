@@ -38,8 +38,6 @@ class FirebaseAuthService implements AuthBase {
     }
   }
 
-
-
   @override
   Future<MyUser> signingWithEmailAndPassword(String email, String sifre) async {
     UserCredential sonuc =
@@ -222,6 +220,12 @@ class FirebaseAuthService implements AuthBase {
   @override
   Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID) {
     // TODO: implement queryOgrID
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> sendNotificationToParent(String parentToken, String message) {
+    // TODO: implement sendNotificationToParent
     throw UnimplementedError();
   }
 }

@@ -5,6 +5,7 @@ import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/homepage-admin/add_criteria.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/home_settings.dart';
 import 'package:kresadmin/homepage-admin/personel_settings/personel_management.dart';
+import 'package:kresadmin/homepage-admin/send_notification.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_management.dart';
 import 'package:provider/provider.dart';
 
@@ -81,7 +82,12 @@ class _AdminSettingsState extends State<AdminSettings> {
                   ),
                   MenuItems(
                     itemText: 'Bildirim Gönder',
-                    onPress: () {},
+                    onPress: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SendNotification()));
+                    },
                     icon: Icons.phone_android_outlined,
                   ),
                   MenuItems(

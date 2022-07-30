@@ -6,6 +6,7 @@ import 'package:kresadmin/models/user.dart';
 import 'package:kresadmin/services/FirebaseAuthServices.dart';
 import 'package:kresadmin/services/base/auth_base.dart';
 import 'package:kresadmin/services/firestore_db_service.dart';
+import 'package:kresadmin/services/sending_notification_service.dart';
 import 'package:kresadmin/services/storage_service.dart';
 
 import '../locator.dart';
@@ -16,6 +17,8 @@ class UserRepository implements AuthBase {
   final FirestoreDBService _firestoreDBService = locator<FirestoreDBService>();
   final FirebaseStorageService _firebaseStorageService =
       locator<FirebaseStorageService>();
+  final SendingNotificationService _sendingNotificationService =
+      locator<SendingNotificationService>();
 
   @override
   Future<MyUser?> currentUser() async {
@@ -226,5 +229,11 @@ class UserRepository implements AuthBase {
   Future<List<Map<String, dynamic>>> getAnnouncements(
       String kresCode, String kresAdi) async {
     return await _firestoreDBService.getAnnouncements(kresCode, kresAdi);
+  }
+
+  @override
+  Future<bool> sendNotificationToParent(String parentToken, String message) {
+    return _sendingNotificationService.sendNotificationToParent(
+        parentToken, message);
   }
 }

@@ -489,4 +489,18 @@ class UserModel with ChangeNotifier implements AuthBase {
       state = ViewState.idle;
     }
   }
+
+  @override
+  Future<bool> sendNotificationToParent(
+      String parentToken, String message) async {
+    try {
+      var sonuc =
+          await _userRepository.sendNotificationToParent(parentToken, message);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model sendNotification hata :" + e.toString());
+      return false;
+    }
+  }
 }
