@@ -22,6 +22,8 @@ class _AdminSettingsState extends State<AdminSettings> {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color(0xFFF68763),
+        centerTitle: true,
         title: Text(
           "Yönetim Paneli",
           style: Theme.of(context)
@@ -32,7 +34,7 @@ class _AdminSettingsState extends State<AdminSettings> {
         actions: [
           TextButton.icon(
             style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all(Colors.black),
+              foregroundColor: MaterialStateProperty.all(Colors.black38),
             ),
             onPressed: () => _cikisyap(context),
             icon: const Icon(Icons.logout),
@@ -41,64 +43,72 @@ class _AdminSettingsState extends State<AdminSettings> {
         ],
       ),
       resizeToAvoidBottomInset: true,
-      body: Padding(
-        padding: const EdgeInsets.all(kdefaultPadding),
-        child: SingleChildScrollView(
-          child: Column(
+      body: SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
             children: [
               infoKres(context, _userModel),
-              const SizedBox(
-                height: 35,
-              ),
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  MenuItems(
-                    itemText: 'Personel İşlemleri',
-                    onPress: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const PersonelManagement()));
-                    },
-                    icon: Icons.person,
+              Positioned(
+                top: 200,
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05,
+                bottom: MediaQuery.of(context).size.height * 0.00001,
+                child: GridView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
                   ),
-                  MenuItems(
-                    itemText: ' Öğrenci İşlemleri',
-                    onPress: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => StudentManagement()));
-                    },
-                    icon: Icons.school_rounded,
-                  ),
-                  MenuItems(
-                    itemText: 'Kriter Ekle',
-                    onPress: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const AddCriteria()));
-                    },
-                    icon: Icons.star_half_rounded,
-                  ),
-                  MenuItems(
-                    itemText: 'Bildirim Gönder',
-                    onPress: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SendNotification()));
-                    },
-                    icon: Icons.phone_android_outlined,
-                  ),
-                  MenuItems(
-                    itemText: 'Anasayfa İşlemleri',
-                    onPress: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const HomeSettings()));
-                    },
-                    icon: Icons.person,
-                  ),
-                ],
+                  shrinkWrap: true,
+                  children: [
+                    MenuItems(
+                      itemText: 'Personel İşlemleri',
+                      onPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const PersonelManagement()));
+                      },
+                      icon: Icons.person,
+                    ),
+                    MenuItems(
+                      itemText: ' Öğrenci İşlemleri',
+                      onPress: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => StudentManagement()));
+                      },
+                      icon: Icons.school_rounded,
+                    ),
+                    MenuItems(
+                      itemText: 'Kriter Ekle',
+                      onPress: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const AddCriteria()));
+                      },
+                      icon: Icons.star_half_rounded,
+                    ),
+                    MenuItems(
+                      itemText: 'Bildirim Gönder',
+                      onPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const SendNotification()));
+                      },
+                      icon: Icons.phone_android_outlined,
+                    ),
+                    MenuItems(
+                      itemText: 'Anasayfa İşlemleri',
+                      onPress: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const HomeSettings()));
+                      },
+                      icon: Icons.person,
+                    ),
+                  ],
+                ),
               )
             ],
           ),
@@ -109,72 +119,50 @@ class _AdminSettingsState extends State<AdminSettings> {
 
   Widget infoKres(BuildContext context, UserModel _userModel) {
     return Container(
-      padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.all(6),
-      height: 150,
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 45),
+      height: 230,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.black12, width: 1.5),
-          borderRadius: const BorderRadius.all(Radius.circular(8))),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            text: TextSpan(
-              text: "Kreş Kodu :   ",
-              children: [
-                TextSpan(
-                  text: "${_userModel.users!.kresCode}",
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 18),
-                ),
-              ],
-              style: const TextStyle(
+      decoration: const BoxDecoration(
+          color: Color(0xFFF68763),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(50))),
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(35),
+                bottomRight: Radius.circular(35))),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 15),
+            const Text(
+              "Kreş Kodu ve Adı",
+              style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 18),
             ),
-          ),
-          RichText(
-            text: TextSpan(
-              text: "Kreş Adı    :   ",
-              children: [
-                TextSpan(
-                  text: "${_userModel.users!.kresAdi}",
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 18),
-                ),
-              ],
-              style: const TextStyle(
+            const SizedBox(height: 10),
+            Text(
+              "${_userModel.users!.kresCode} - ${_userModel.users!.kresAdi}",
+              style: const TextStyle(color: Colors.black, fontSize: 18),
+            ),
+            const SizedBox(height: 35),
+            const Text(
+              "Yönetici",
+              style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 18),
             ),
-          ),
-          RichText(
-            text: TextSpan(
-              text: "Yönetici     :   ",
-              children: [
-                TextSpan(
-                  text: "${_userModel.users!.username}",
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 18),
-                ),
-              ],
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18),
+            const SizedBox(height: 10),
+            Text(
+              "${_userModel.users!.username}",
+              style: const TextStyle(color: Colors.black, fontSize: 18),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

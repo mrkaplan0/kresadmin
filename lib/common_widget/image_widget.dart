@@ -35,7 +35,7 @@ class ImageWidget extends StatelessWidget {
                     TextSpan(
                         text: student.veliAdiSoyadi!,
                         style: TextStyle(color: changeTextColor())),
-                    TextSpan(
+                    const TextSpan(
                         text: ' (Veli)',
                         style: TextStyle(color: Colors.grey, fontSize: 12))
                   ])),

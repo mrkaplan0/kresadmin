@@ -17,7 +17,7 @@ abstract class AuthBase {
   Future<String> queryKresList(String kresCode);
 
   Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID);
-
+  Future<String> takeNewOgrID(String kresCode, String kresAdi);
   Future<bool> saveStudent(String kresCode, String kresAdi, Student student);
   Future<bool> deleteStudent(String kresCode, String kresAdi, Student student);
   Stream<List<Student>> getStudents(String kresCode, String kresAdi);

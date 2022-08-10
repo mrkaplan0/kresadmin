@@ -12,7 +12,7 @@ class StudentManagement extends StatefulWidget {
   @override
   State<StudentManagement> createState() => _StudentManagementState();
 
-  StudentManagement();
+  const StudentManagement();
 }
 
 class _StudentManagementState extends State<StudentManagement> {
@@ -36,14 +36,17 @@ class _StudentManagementState extends State<StudentManagement> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ListView(
+              GridView(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
                 shrinkWrap: true,
                 children: [
                   MenuItems(
                     itemText: ' Öğrenci Ekle',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddStudent()));
+                          builder: (context) => const AddStudent()));
                     },
                     icon: Icons.person_add_alt_1_rounded,
                   ),

@@ -9,7 +9,7 @@ class StudentProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           // border: Border.all(color: Colors.orangeAccent.shade100),
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(17)),

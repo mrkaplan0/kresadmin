@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/models/teacher.dart';
@@ -75,7 +76,8 @@ class UserRepository implements AuthBase {
   @override
   Future<bool> saveStudent(
       String kresCode, String kresAdi, Student student) async {
-    bool checkResult = await _firestoreDBService.checkOgrIDisUseable(student);
+    bool checkResult = await _firestoreDBService.checkOgrIDisUseable(
+        kresCode, kresAdi, student);
     if (checkResult == true) {
       return await _firestoreDBService.saveStudent(kresCode, kresAdi, student);
     } else {
@@ -95,8 +97,12 @@ class UserRepository implements AuthBase {
         kresCode, kresAdi, ogrID, fileType, yuklenecekDosya);
     print(url);
     if (url.isNotEmpty) {
-      await _firestoreDBService.updateOgrProfilePhoto(
-          kresCode, kresAdi, ogrID, url);
+      try {
+        await _firestoreDBService.updateOgrProfilePhoto(
+            kresCode, kresAdi, ogrID, url);
+      } catch (e) {
+        debugPrint(" db de ogr yok!");
+      }
     }
     return url;
   }
@@ -232,8 +238,14 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<bool> sendNotificationToParent(String parentToken, String message) {
-    return _sendingNotificationService.sendNotificationToParent(
+  Future<bool> sendNotificationToParent(
+      String parentToken, String message) async {
+    return await _sendingNotificationService.sendNotificationToParent(
         parentToken, message);
+  }
+
+  @override
+  Future<String> takeNewOgrID(String kresCode, String kresAdi) async {
+    return await _firestoreDBService.takeNewOgrID(kresCode, kresAdi);
   }
 }

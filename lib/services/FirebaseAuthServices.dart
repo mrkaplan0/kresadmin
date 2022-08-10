@@ -228,4 +228,10 @@ class FirebaseAuthService implements AuthBase {
     // TODO: implement sendNotificationToParent
     throw UnimplementedError();
   }
+
+  @override
+  Future<String> takeNewOgrID(String kresCode, String kresAdi) {
+    // TODO: implement takeNewOgrID
+    throw UnimplementedError();
+  }
 }

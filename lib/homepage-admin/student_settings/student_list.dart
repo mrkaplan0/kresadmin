@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,16 +21,16 @@ class _StudentListPageState extends State<StudentListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Öğrenci Listesi",
           style: TextStyle(color: Colors.black),
         ),
       ),
       body: Container(
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: kdefaultPadding,
             ),
             studentListWidget(context)
@@ -43,102 +44,101 @@ class _StudentListPageState extends State<StudentListPage> {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
 
     return Expanded(
-      child: Container(
-        child: StreamBuilder<List<Student>>(
-          stream: _userModel.getStudents(
-              _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
-          builder: (context, sonuc) {
-            if (sonuc.hasData) {
-              List<Student> ogrList = sonuc.data!;
-              print(ogrList.toString());
-              if (ogrList.length > 0) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: ogrList.length,
-                    itemBuilder: (context, i) {
-                      return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 2,
-                            child: ListTile(
-                              leading: Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: primaryColor, width: 3),
-                                        shape: BoxShape.circle,
-                                        color: Colors.orangeAccent.shade100),
-                                    height: 50,
-                                    width: 50,
-                                    child: ogrList[i].fotoUrl == null
-                                        ? const Center(
-                                            child: Icon(Icons.person))
-                                        : ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(40)),
-                                            child: Image.network(
-                                                ogrList[i].fotoUrl!,
-                                                fit: BoxFit.cover),
+      child: StreamBuilder<List<Student>>(
+        stream: _userModel.getStudents(
+            _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
+        builder: (context, sonuc) {
+          if (sonuc.hasData) {
+            List<Student> ogrList = sonuc.data!;
+
+            if (ogrList.isNotEmpty) {
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: ogrList.length,
+                  itemBuilder: (context, i) {
+                    return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 2,
+                          child: ListTile(
+                            leading: Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: primaryColor, width: 3),
+                                      shape: BoxShape.circle,
+                                      color: Colors.orangeAccent.shade100),
+                                  height: 50,
+                                  width: 50,
+                                  child: ogrList[i].fotoUrl == null
+                                      ? const Center(child: Icon(Icons.person))
+                                      : ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(40)),
+                                          child: ExtendedImage.network(
+                                            ogrList[i].fotoUrl!,
+                                            fit: BoxFit.cover,
+                                            cache: true,
                                           ),
-                                  ),
-                                ],
-                              ),
-                              title: Text(ogrList[i].adiSoyadi),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text("Öğr. No: " + ogrList[i].ogrID),
-                                  Divider(
-                                    thickness: 2,
-                                  ),
-                                  Text("Sınıfı: " + ogrList[i].sinifi!),
-                                ],
-                              ),
-                              trailing: Container(
-                                padding: EdgeInsets.only(right: 5),
-                                width: 110,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.edit),
-                                      color: Colors.blueGrey,
-                                      onPressed: () {
-                                        _editPhotoWithDialog(ogrList[i]);
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.remove_circle),
-                                      color: Colors.red,
-                                      onPressed: () async {
-                                        _deletePersonelWithDialog(ogrList[i]);
-                                      },
-                                    ),
-                                  ],
+                                        ),
                                 ),
-                              ),
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          StudentDetailPage(ogrList[i]))),
+                              ],
                             ),
-                          ));
-                    });
-              } else {
-                return Center(
-                  child: Text("Lütfen Ayarlara Gidip Masa Değeri Giriniz"),
-                );
-              }
-            } else
-              return Center(
-                child: Text("Öğrenci listesi yok!"),
+                            title: Text(ogrList[i].adiSoyadi),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text("Öğr. No: " + ogrList[i].ogrID),
+                                const Divider(
+                                  thickness: 2,
+                                ),
+                                Text("Sınıfı: " + ogrList[i].sinifi!),
+                              ],
+                            ),
+                            trailing: Container(
+                              padding: const EdgeInsets.only(right: 5),
+                              width: 110,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    color: Colors.blueGrey,
+                                    onPressed: () {
+                                      _editPhotoWithDialog(ogrList[i]);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.remove_circle),
+                                    color: Colors.red,
+                                    onPressed: () async {
+                                      _deletePersonelWithDialog(ogrList[i]);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        StudentDetailPage(ogrList[i]))),
+                          ),
+                        ));
+                  });
+            } else {
+              return const Center(
+                child: Text("Lütfen Ayarlara Gidip Masa Değeri Giriniz"),
               );
-          },
-        ),
+            }
+          } else {
+            return const Center(
+              child: Text("Öğrenci listesi yok!"),
+            );
+          }
+        },
       ),
     );
   }
@@ -152,8 +152,8 @@ class _StudentListPageState extends State<StudentListPage> {
         return SimpleDialog(
           title: const Text('Personel Sil'),
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(' Kişiyi silmek istediğinizden emin misiniz?'),
             ),
             ButtonBar(
@@ -183,7 +183,7 @@ class _StudentListPageState extends State<StudentListPage> {
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.orangeAccent)),
-                  child: Text("Sil"),
+                  child: const Text("Sil"),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -192,7 +192,7 @@ class _StudentListPageState extends State<StudentListPage> {
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.blueGrey)),
-                  child: Text("İptal"),
+                  child: const Text("İptal"),
                 ),
               ],
             ),
@@ -230,7 +230,7 @@ class _StudentListPageState extends State<StudentListPage> {
 
                       uploadProfilePhoto(image, stu);
                     },
-                    child: Text("Galeriden Seç"))
+                    child: const Text("Galeriden Seç"))
               ],
             ),
           ],
@@ -253,7 +253,7 @@ class _StudentListPageState extends State<StudentListPage> {
     if (url != null) {
       student.fotoUrl = url;
 
-      print(url);
+      debugPrint(url);
     }
     setState(() {});
   }

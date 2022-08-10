@@ -117,7 +117,7 @@ class FirestoreDBService implements DBBase {
     return true;
   }
 
-  checkOgrIDisUseable(Student student) async {
+  checkOgrIDisUseable(String kresCode, String kresAdi, Student student) async {
     QuerySnapshot stuIsSaved = await _firestore
         .collection("Student")
         .where('ogrID', isEqualTo: student.ogrID)
@@ -162,6 +162,27 @@ class FirestoreDBService implements DBBase {
     }
     var r = list.contains(int.parse(ogrID));
     return r;
+  }
+
+  @override
+  Future<String> takeNewOgrID(String kresCode, String kresAdi) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("KreslerChecking")
+        .doc(kresCode + '_' + kresAdi)
+        .collection("Students")
+        .get();
+    List<int> list = [];
+
+    for (DocumentSnapshot ogrID in querySnapshot.docs) {
+      Map<String, dynamic> map = ogrID.data()! as Map<String, dynamic>;
+      list.add(int.parse(map['ogrID']));
+    }
+    int r = 0;
+    if (list.isNotEmpty) {
+      list.sort();
+      r = list.last;
+    }
+    return "${r + 1}";
   }
 
   @override

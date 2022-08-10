@@ -75,23 +75,23 @@ class _StudentPageState extends State<StudentPage> {
             Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   lastRating.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Text("Son Değerlendirme Tarihi:",
+                              const Text("Son Değerlendirme Tarihi:",
                                   style: TextStyle(
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold)),
                               Text(lastRating['Son Değerlendirme'].toString(),
-                                  style: TextStyle(fontSize: 18.0)),
+                                  style: const TextStyle(fontSize: 18.0)),
                             ],
                           ),
                         )
-                      : SizedBox(height: 10),
+                      : const SizedBox(height: 10),
                   lastRating.isNotEmpty ? lastRatingWidget() : Container(),
                   lastRating['Özel Not'] != null
                       ? Padding(
@@ -103,18 +103,18 @@ class _StudentPageState extends State<StudentPage> {
                         )
                       : Container(),
                   if (lastRating.isEmpty) ...[
-                    Text("Son 4 gün içinde değerlendirme yapılmadı.")
+                    const Text("Son 4 gün içinde değerlendirme yapılmadı.")
                   ],
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text("Kişisel Galeri",
                         style: TextStyle(
                             fontSize: 20.0, fontWeight: FontWeight.bold)),
                   ),
                   album.isNotEmpty
                       ? photoGalleryWidget()
-                      : Padding(
-                          padding: const EdgeInsets.all(8.0),
+                      : const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Text("Galeride henüz fotoğraf yok!"),
                         ),
                 ])
@@ -125,20 +125,20 @@ class _StudentPageState extends State<StudentPage> {
   }
 
   Widget photoGalleryWidget() {
-    if (album.length > 0)
+    if (album.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(left: 10.0, right: 15),
         child: GridView.builder(
           shrinkWrap: true,
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3),
           itemCount: album.length,
           itemBuilder: (context, i) {
             return GestureDetector(
               child: Container(
-                margin: EdgeInsets.all(6),
+                margin: const EdgeInsets.all(6),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
                   child: ExtendedImage.network(
                     album[i].photoUrl,
                     fit: BoxFit.cover,
@@ -158,13 +158,14 @@ class _StudentPageState extends State<StudentPage> {
           },
         ),
       );
-    else
+    } else {
       return Padding(
         padding: const EdgeInsets.only(left: 14.0, right: 14),
         child: Container(
           height: 200,
         ),
       );
+    }
   }
 
   Future getRatingsMethod() async {
@@ -184,17 +185,17 @@ class _StudentPageState extends State<StudentPage> {
       var tt = allRatings
           .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
       if (tt.isEmpty) {
-        DateTime d2 = dateTime.subtract(Duration(days: 2));
+        DateTime d2 = dateTime.subtract(const Duration(days: 2));
         String formattedTime = formatter.format(d2);
         var uu = allRatings
             .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
         if (uu.isEmpty) {
-          DateTime d3 = dateTime.subtract(Duration(days: 3));
+          DateTime d3 = dateTime.subtract(const Duration(days: 3));
           String formattedTime = formatter.format(d3);
           var vv = allRatings
               .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
           if (vv.isEmpty) {
-            DateTime d4 = dateTime.subtract(Duration(days: 4));
+            DateTime d4 = dateTime.subtract(const Duration(days: 4));
             String formattedTime = formatter.format(d4);
 
             var yy = allRatings
@@ -232,7 +233,7 @@ class _StudentPageState extends State<StudentPage> {
                     Expanded(
                       child: Text(
                         lastRating.keys.elementAt(i),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                         ),
                       ),
@@ -246,20 +247,21 @@ class _StudentPageState extends State<StudentPage> {
                         allowHalfRating: true,
                         itemCount: 5,
                         ratingWidget: RatingWidget(
-                          full: Icon(
+                          full: const Icon(
                             Icons.star,
                             color: Colors.amber,
                           ),
-                          half: Icon(
+                          half: const Icon(
                             Icons.star_half_rounded,
                             color: Colors.amber,
                           ),
-                          empty: Icon(
+                          empty: const Icon(
                             Icons.star_border_rounded,
                             color: Colors.amber,
                           ),
                         ),
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemPadding:
+                            const EdgeInsets.symmetric(horizontal: 4.0),
                         onRatingUpdate: (rating) {},
                       ),
                     ),
@@ -268,7 +270,7 @@ class _StudentPageState extends State<StudentPage> {
               ),
             );
           } else {
-            return SizedBox();
+            return const SizedBox();
           }
         });
   }

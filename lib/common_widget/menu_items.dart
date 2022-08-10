@@ -16,13 +16,30 @@ class MenuItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        tileColor: Colors.orangeAccent.shade100,
-        onTap: onPress,
-        title: Text(itemText),
-        trailing: Icon(icon),
-      ),
+    return Column(
+      children: [
+        GestureDetector(
+          child: Container(
+            width: 130,
+            height: 130,
+            decoration: const BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: 40,
+                ),
+                const SizedBox(height: 10),
+                Text(itemText)
+              ],
+            ),
+          ),
+          onTap: onPress,
+        )
+      ],
     );
   }
 }

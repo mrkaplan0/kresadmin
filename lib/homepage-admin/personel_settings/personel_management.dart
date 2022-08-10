@@ -25,7 +25,10 @@ class PersonelManagement extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ListView(
+              GridView(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
                 shrinkWrap: true,
                 children: [
                   MenuItems(

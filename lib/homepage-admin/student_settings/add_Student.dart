@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
 import 'package:kresadmin/constants.dart';
@@ -18,31 +20,36 @@ class AddStudent extends StatefulWidget {
 enum CinsiyetSecimi { erkek, kiz }
 
 class _AddStudentState extends State<AddStudent> {
+  final ImagePicker _picker = ImagePicker();
   String? _ogrAdiSoyadi,
       _dogumTarihi,
       _sinifi,
       _cinsiyet,
       _veliAdiSoyadi,
       _veliTelefonNo,
-      _ogrID;
+      _ogrID,
+      _url;
 
-  bool _checkBoxValue = false;
-  final String _buttonText = "Kaydet";
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _dateController;
+  late TextEditingController _dateController, _ogrIDController;
 
   CinsiyetSecimi _cinsiyetSecimi = CinsiyetSecimi.erkek;
-  int val = -1;
 
   @override
   void initState() {
+    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     super.initState();
     _dateController = TextEditingController();
+    _ogrIDController = TextEditingController();
+    _userModel
+        .takeNewOgrID(_userModel.users!.kresCode!, _userModel.users!.kresAdi!)
+        .then((value) => _ogrIDController.text = value);
   }
 
   @override
   void dispose() {
     _dateController.dispose();
+    _ogrIDController.dispose();
     super.dispose();
   }
 
@@ -71,25 +78,7 @@ class _AddStudentState extends State<AddStudent> {
                 const SizedBox(
                   height: kdefaultPadding,
                 ),
-                CheckboxListTile(
-                  onChanged: (value) => _onChange(value),
-                  value: _checkBoxValue,
-                  title: const Text("Öğrenci noyu manuel ekleyeceğim."),
-                ),
-                if (_checkBoxValue == true) ...[ogrIDTextForm(context)],
-                if (_checkBoxValue == false) ...[
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "      Aksi durumda öğrenci numarası otomatik olarak verilmektedir.",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ],
+                ogrIDTextForm(context),
                 const SizedBox(
                   height: 10,
                 ),
@@ -128,8 +117,20 @@ class _AddStudentState extends State<AddStudent> {
                 const SizedBox(height: kdefaultPadding),
                 veliTelefonNoTextForm(context),
                 const SizedBox(height: kdefaultPadding),
+                Card(
+                  shape: Border.all(color: Theme.of(context).primaryColor),
+                  child: ListTile(
+                    leading: const Icon(Icons.add_a_photo_outlined),
+                    title: const Text("Profil Fotosu Ekle"),
+                    onTap: () => _editPhotoWithDialog(),
+                  ),
+                ),
+                if (_url != null) ...[
+                  const Text('Profil Fotosu Başarıyla Eklendi.')
+                ],
+                const SizedBox(height: kdefaultPadding),
                 SocialLoginButton(
-                    btnText: _buttonText,
+                    btnText: "Kaydet",
                     btnColor: Theme.of(context).primaryColor,
                     onPressed: () => saveStudent(context)),
               ],
@@ -152,6 +153,9 @@ class _AddStudentState extends State<AddStudent> {
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Icon(Icons.person),
           )),
+      onChanged: (String? ogrAdi) {
+        _ogrAdiSoyadi = ogrAdi!;
+      },
       onSaved: (String? ogrAdi) {
         _ogrAdiSoyadi = ogrAdi!;
       },
@@ -163,6 +167,7 @@ class _AddStudentState extends State<AddStudent> {
 
   Widget ogrIDTextForm(BuildContext context) {
     return TextFormField(
+      controller: _ogrIDController,
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -280,66 +285,84 @@ class _AddStudentState extends State<AddStudent> {
         _cinsiyet = 'Kız';
       }
 
-      bool ogrIDControlResult = await controlOgrID(_userModel);
-//if ogrIDControlResult is false, it means ogrID is not match anything in database.
-      if (ogrIDControlResult == false) {
-        Student newStu = Student(
-            kresCode: _userModel.users!.kresCode,
-            kresAdi: _userModel.users!.kresAdi,
-            ogrID: _ogrID!,
-            adiSoyadi: _ogrAdiSoyadi!,
-            dogumTarihi: _dogumTarihi,
-            cinsiyet: _cinsiyet,
-            veliAdiSoyadi: _veliAdiSoyadi,
-            veliTelefonNo: _veliTelefonNo,
-            sinifi: _sinifi);
-        bool sonuc = await _userModel.saveStudent(
-            _userModel.users!.kresCode!, _userModel.users!.kresAdi!, newStu);
+      Student newStu = Student(
+          kresCode: _userModel.users!.kresCode,
+          kresAdi: _userModel.users!.kresAdi,
+          ogrID: _ogrID!,
+          adiSoyadi: _ogrAdiSoyadi!,
+          dogumTarihi: _dogumTarihi,
+          cinsiyet: _cinsiyet,
+          veliAdiSoyadi: _veliAdiSoyadi,
+          veliTelefonNo: _veliTelefonNo,
+          sinifi: _sinifi,
+          fotoUrl: _url ?? "");
+      bool sonuc = await _userModel.saveStudent(
+          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, newStu);
 
-        if (sonuc == true) {
-          Navigator.pop(context);
-          Get.snackbar('Kayıt Başarılı', 'Öğrenci kaydedildi.',
-              snackPosition: SnackPosition.BOTTOM);
-        } else {
-          Get.snackbar('Hata', 'Öğrenci kaydedilirken hata oluştu.',
-              colorText: Colors.red, snackPosition: SnackPosition.BOTTOM);
-        }
+      if (sonuc == true) {
+        Navigator.pop(context);
+        Get.snackbar('Kayıt Başarılı', 'Öğrenci kaydedildi.',
+            snackPosition: SnackPosition.BOTTOM);
+      } else {
+        Get.snackbar('Hata', 'Öğrenci kaydedilirken hata oluştu.',
+            colorText: Colors.red, snackPosition: SnackPosition.BOTTOM);
       }
     }
   }
 
-  Future<bool> controlOgrID(UserModel _userModel) async {
-    bool r = true;
+  Future<void> _editPhotoWithDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Text('Foto Ekle'),
+          children: [
+            ButtonBar(
+              children: [
+                ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      // Capture a photo
+                      final XFile? photo = await _picker.pickImage(
+                          source: ImageSource.camera, imageQuality: 35);
 
-    if (_checkBoxValue == false) {
-      for (int i = 0; i < 5; i++) {
-        //if r==false, it means we don't have 'newID' in our database.
-        int newID = Random().nextInt(9999);
-        r = await _userModel.queryOgrID(_userModel.users!.kresCode!,
-            _userModel.users!.kresAdi!, newID.toString());
-        _ogrID = newID.toString();
-        if (r == false) break;
-      }
-    } else {
-      r = await _userModel.queryOgrID(
-          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, _ogrID!);
-      if (r == true) {
-        Get.defaultDialog(
-            title: 'Hata',
-            middleText:
-                '$_ogrID nosu ile kayıtlı bir öğrenci var, devam edemezsiniz!',
-            onConfirm: () {
-              Navigator.pop(context);
-            },
-            barrierDismissible: false);
-      }
-    }
-    return r;
+                      uploadProfilePhoto(photo);
+                    },
+                    child: const Text("Foto Çek")),
+                ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      // Pick an image
+                      final XFile? image = await _picker.pickImage(
+                          source: ImageSource.gallery, imageQuality: 35);
+
+                      uploadProfilePhoto(image);
+                    },
+                    child: const Text("Galeriden Seç"))
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  _onChange(bool? value) {
-    setState(() {
-      _checkBoxValue = value!;
-    });
+  uploadProfilePhoto(XFile? photo) async {
+    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    File file = File(photo!.path);
+    var url = await _userModel.uploadOgrProfilePhoto(
+        _userModel.users!.kresCode!,
+        _userModel.users!.kresAdi!,
+        _ogrIDController.text,
+        _ogrAdiSoyadi!,
+        "profil_foto",
+        file);
+
+    if (url != null) {
+      _url = url;
+      debugPrint(_url);
+      debugPrint(url);
+    }
+    setState(() {});
   }
 }

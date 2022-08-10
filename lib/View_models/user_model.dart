@@ -503,4 +503,16 @@ class UserModel with ChangeNotifier implements AuthBase {
       return false;
     }
   }
+
+  @override
+  Future<String> takeNewOgrID(String kresCode, String kresAdi) async {
+    try {
+      var sonuc = await _userRepository.takeNewOgrID(kresCode, kresAdi);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model takeNewOgrID error:" + e.toString());
+      return "";
+    }
+  }
 }
