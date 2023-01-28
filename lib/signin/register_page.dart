@@ -354,6 +354,7 @@ class _RegisterPageState extends State<RegisterPage> {
           _olusturulanUser.phone = _phone;
 
           if (formkey == _formKeyAdmin) {
+           
             _olusturulanUser.position = 'Admin';
             _olusturulanUser.isAdmin = true;
           } else {
@@ -363,7 +364,7 @@ class _RegisterPageState extends State<RegisterPage> {
             _olusturulanUser.kresAdi = _kresAdi;
           }
           bool result = await _userModel.updateUser(_olusturulanUser);
-
+        
           if (result == true) {
             debugPrint("Giriş yapan Kullanıcı $_olusturulanUser");
             Navigator.popAndPushNamed(context, '/LandingPage');

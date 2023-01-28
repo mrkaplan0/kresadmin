@@ -6,6 +6,7 @@ class Teacher {
   String? kresAdi;
   String? kresCode;
   String? sinifi;
+  String? token;
   String? fotoUrl;
   bool? authorisation;
 
@@ -17,6 +18,7 @@ class Teacher {
       this.kresAdi,
       this.kresCode,
       this.sinifi,
+      this.token,
       this.fotoUrl,
       this.authorisation});
 
@@ -29,6 +31,7 @@ class Teacher {
       'kresAdi': kresAdi,
       'kresCode': kresCode,
       'sinifi': sinifi ?? 'A',
+      'token': token,
       'fotoUrl': fotoUrl,
       'authorisation': authorisation ?? false,
     };
@@ -42,6 +45,7 @@ class Teacher {
         kresAdi = map['kresAdi'],
         kresCode = map['kresCode'],
         sinifi = map['sinifi'],
+        token = map['token'],
         fotoUrl = map['fotoUrl'],
         authorisation = map['authorisation'];
 

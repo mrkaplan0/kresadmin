@@ -5,10 +5,12 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/constants.dart';
-import 'package:kresadmin/homepage-admin/student_settings/student_detail_page.dart';
+import 'package:kresadmin/homepage-admin/student_settings/student_page_for_visitor.dart';
+
 import 'package:kresadmin/models/student.dart';
 import 'package:provider/provider.dart';
 
+// ignore: use_key_in_widget_constructors
 class StudentListPage extends StatefulWidget {
   @override
   _StudentListPageState createState() => _StudentListPageState();
@@ -16,7 +18,7 @@ class StudentListPage extends StatefulWidget {
 
 class _StudentListPageState extends State<StudentListPage> {
   final ImagePicker _picker = ImagePicker();
-  @override
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +126,7 @@ class _StudentListPageState extends State<StudentListPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        StudentDetailPage(ogrList[i]))),
+                                        StudentPage(ogrList[i]))),
                           ),
                         ));
                   });

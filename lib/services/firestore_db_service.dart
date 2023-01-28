@@ -65,6 +65,7 @@ class FirestoreDBService implements DBBase {
             position: user.position,
             kresAdi: user.kresAdi,
             kresCode: user.kresCode,
+            token: token,
             authorisation: false);
         await _firestore
             .collection("Kresler")
@@ -99,18 +100,25 @@ class FirestoreDBService implements DBBase {
   }
 
   Future<bool> createAdminAndKres(MyUser user) async {
+    String? t = await _messaging.getToken();
     await _firestore
         .collection("KreslerChecking")
         .doc(user.kresCode! + '_' + user.kresAdi!)
-        .set({"kresCode": user.kresCode, "kresAdi": user.kresAdi},
-            SetOptions(merge: true));
+        .set({
+      "kresCode": user.kresCode,
+      "kresAdi": user.kresAdi,
+      "yoneticiToken": t
+    }, SetOptions(merge: true));
     await _firestore
         .collection("Kresler")
         .doc(user.kresCode! + '_' + user.kresAdi!)
         .collection(user.kresAdi!)
         .doc(user.kresAdi)
-        .set({"kresCode": user.kresCode, "kresAdi": user.kresAdi},
-            SetOptions(merge: true));
+        .set({
+      "kresCode": user.kresCode,
+      "kresAdi": user.kresAdi,
+      "yoneticiToken": t
+    }, SetOptions(merge: true));
 
     await _firestore.collection("Admins").doc(user.kresCode).set(user.toMap());
 
@@ -162,6 +170,19 @@ class FirestoreDBService implements DBBase {
     }
     var r = list.contains(int.parse(ogrID));
     return r;
+  }
+
+  @override
+  Future<String> getYoneticiToken(String kresCode, String kresAdi) async {
+    DocumentSnapshot documentSnapshot = await _firestore
+        .collection("KreslerChecking")
+        .doc(kresCode + '_' + kresAdi)
+        .get();
+
+    Map<String, dynamic> map = documentSnapshot.data()! as Map<String, dynamic>;
+    String tkn = map['yoneticiToken'];
+    debugPrint("db yön tokn : " + tkn);
+    return tkn;
   }
 
   @override
@@ -304,8 +325,23 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
+  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi, String teacherUserID) async{
+    await _firestore
+        .collection("Users")
+        .doc(teacherUserID)
+        .update({'isAdmin': true});
+
+    return true;
+  }
+
+  @override
   Future<bool> deleteTeacher(
       String kresCode, String kresAdi, Teacher teacher) async {
+    await _firestore
+        .collection("Users")
+        .doc(teacher.teacherID)
+        .update({'isAdmin': false});
+
     await _firestore
         .collection("Kresler")
         .doc(kresCode + '_' + kresAdi)
@@ -594,4 +630,6 @@ class FirestoreDBService implements DBBase {
     });
     return duyuruList;
   }
+
+
 }

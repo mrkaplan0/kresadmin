@@ -33,7 +33,7 @@ class MessagingService {
   static Stream<RemoteMessage> get onMessage => FirebaseMessaging.onMessage;
   static Stream<RemoteMessage> get onMessageOpenedApp =>
       FirebaseMessaging.onMessageOpenedApp;
-
+// TODO: Local Notification package will be updated.
   Future<void> initialize(SelectNotificationCallback onSelectNotification,
       BuildContext context, MyUser user) async {
     myContext = context;
@@ -67,10 +67,11 @@ class MessagingService {
       );
     }
     if (remoteMessage.data.isNotEmpty) {
-      if (remoteMessage.data.containsKey('gonderenUserID'))
+      if (remoteMessage.data.containsKey('gonderenUserID')) {
         await showDialogToYonetici(remoteMessage);
-      else
+      } else {
         await showDialogToPersonel(remoteMessage);
+      }
     }
   }
 
@@ -87,26 +88,22 @@ class MessagingService {
               ),
               ButtonBar(
                 children: [
-/*
+
                   ElevatedButton(
                     onPressed: () async {
                       try {
 
                         final UserModel _userModel =
                             Provider.of<UserModel>(context, listen: false);
-                        bool sonuc = await _firmModel.personelEkleVeSil(
-                            _userModel.users!.firma!,
-                            remoteMessage.data['gonderenUserID'],
-                            remoteMessage.data['gonderenUserEmail'],
-                            true);
+                        bool sonuc = await _userModel.updateTeacherAuthorisation(_userModel.users!.kresCode!, _userModel.users!.kresAdi!, remoteMessage.data['gonderenUserID'],);
 
                         if (sonuc == true) {
                           Navigator.of(context).pop();
-                          Get.snackbar('İşlem Tamam!', 'Kayıt Başarılı.',
+                          Get.snackbar('İşlem Tamam!', 'Kayıt Tamamlandı.',
                               snackPosition: SnackPosition.BOTTOM);
                           _sendingNotificationService
-                              .sendNotificationToPersonel(
-                                  remoteMessage.data['gönderenUserToken']);
+                              .sendNotificationToTeacher(
+                                  remoteMessage.data['gönderenUserToken'], " Kaydınız tamamlandı.");
                         } else {
                           Get.snackbar('HATA',
                               'Kayıt işlemi başarısız, lütfen tekrar deneyiniz.');
@@ -119,9 +116,9 @@ class MessagingService {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.orangeAccent)),
-                    child: Text("Kaydet"),
+                    child: const Text("Kaydet"),
                   ),
-*/
+
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -129,7 +126,7 @@ class MessagingService {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.blueGrey)),
-                    child: Text("İptal"),
+                    child: const Text("İptal"),
                   ),
                 ],
               ),
@@ -162,7 +159,7 @@ class MessagingService {
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.orangeAccent)),
-                  child: Text("Tamam"),
+                  child: const Text("Tamam"),
                 ),
               ),
             ],
@@ -192,27 +189,28 @@ class MessagingService {
       _handleMessage(initialMessage!);
     }
 
-    // Also handle any interaction when the app is in the background via a
+
     // Stream listener
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
   }
 
   void _handleMessage(RemoteMessage remoteMessage) async {
-    if (remoteMessage.data.containsKey('gonderenUserID'))
+    if (remoteMessage.data.containsKey('gonderenUserID')) {
       await showDialogToYonetici(remoteMessage);
-    else
+    } else {
       await showDialogToPersonel(remoteMessage);
+    }
   }
 
   static Future<void> _initializeLocalNotification(
     SelectNotificationCallback onSelectNotification,
   ) async {
-    final android = AndroidInitializationSettings(
+    const android = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
-    final ios = IOSInitializationSettings();
+    const ios = IOSInitializationSettings();
 
-    final initSetting = InitializationSettings(android: android, iOS: ios);
+    const initSetting = InitializationSettings(android: android, iOS: ios);
 
     await _localNotification.initialize(
       initSetting,

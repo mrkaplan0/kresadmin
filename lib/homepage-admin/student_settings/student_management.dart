@@ -59,7 +59,7 @@ class _StudentManagementState extends State<StudentManagement> {
                     icon: Icons.school_rounded,
                   ),
                   MenuItems(
-                    itemText: 'Hızlı Değerlendirme',
+                    itemText: '      Öğrenci \n Değerlendirme',
                     onPress: () async {
                       final UserModel _userModel =
                           Provider.of<UserModel>(context, listen: false);
@@ -71,7 +71,7 @@ class _StudentManagementState extends State<StudentManagement> {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => FastRating(stuList!)));
                     },
-                    icon: Icons.person,
+                    icon: Icons.star_rate_outlined,
                   ),
                 ],
               )

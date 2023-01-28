@@ -14,6 +14,7 @@ abstract class AuthBase {
   Future<bool> signOut();
   Future<bool> updateUser(MyUser user);
   Future<bool> deleteUser(MyUser user);
+  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi,String teacherUserID);
   Future<String> queryKresList(String kresCode);
 
   Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID);
@@ -49,4 +50,7 @@ abstract class AuthBase {
   Future<List<Map<String, dynamic>>> getAnnouncements(
       String kresCode, String kresAdi);
   Future<bool> sendNotificationToParent(String parentToken, String message);
+  Future<bool> sendNotificationToYonetici(
+      MyUser senderUser, String yoneticiToken);
+  Future<String> getYoneticiToken(String kresCode, String kresAdi);
 }

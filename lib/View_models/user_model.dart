@@ -515,4 +515,45 @@ class UserModel with ChangeNotifier implements AuthBase {
       return "";
     }
   }
+  
+  @override
+  Future<bool> sendNotificationToYonetici(MyUser senderUser,String yoneticiToken)  async {
+    try {
+      var sonuc =
+          await _userRepository.sendNotificationToYonetici(senderUser,yoneticiToken);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model sendNotification hata :" + e.toString());
+      return false;
+    }
+  }
+  
+  @override
+  Future<String> getYoneticiToken(String kresCode, String kresAdi) 
+   async {
+    try {
+      var sonuc =
+          await _userRepository.getYoneticiToken(kresCode, kresAdi);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model getYoneticiToken error :" + e.toString());
+      return '';
+    }
+  }
+
+  @override
+  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi, String teacherUserID)  async {
+    try {
+      var sonuc =
+      await _userRepository.updateTeacherAuthorisation(kresCode, kresAdi, teacherUserID);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model updateTeacherAuthorisation error :" + e.toString());
+      return false;
+    }
+
+  }
 }

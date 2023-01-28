@@ -27,7 +27,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // Create the initialization Future outside of `build`:
+
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
@@ -71,13 +71,13 @@ class MyApp extends StatelessWidget {
                   appBarTheme: const AppBarTheme(
                       backgroundColor: Colors.white, elevation: 0)),
               debugShowCheckedModeBanner: false,
-              home: LandingPage(),
+              home: const LandingPage(),
             ),
           );
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       },
     );
   }

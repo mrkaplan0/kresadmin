@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
 import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/add_announcement.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/photo_editor.dart';
 import 'package:kresadmin/homepage-visitor/home_page.dart';
-import 'package:kresadmin/models/photo.dart';
-import 'package:provider/provider.dart';
 
 class HomeSettings extends StatelessWidget {
   const HomeSettings({Key? key}) : super(key: key);

@@ -3,6 +3,7 @@ import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/homepage-admin/admin_settings.dart';
 import 'package:kresadmin/homepage-visitor/home_page.dart';
 import 'package:kresadmin/homepage_teacher/teacher_homepage.dart';
+import 'package:kresadmin/signin/teacher_approval_process.dart';
 import 'package:provider/provider.dart';
 import 'signin/login_page.dart';
 
@@ -16,12 +17,16 @@ class LandingPage extends StatelessWidget {
     if (_userModel.state == ViewState.idle) {
       if (_userModel.users == null) {
         return const LoginPage();
+      }
+      else if(_userModel.users!.isAdmin! ==false)
+      {
+        return  TeacherLandingPage( user:_userModel.users!);
       } else {
         switch (_userModel.users!.position) {
           case 'Admin':
             return const AdminSettings();
           case 'Teacher':
-            return const TeacherHomePage();
+            return  const TeacherHomePage();
           case 'visitor':
             return HomePage();
           default:

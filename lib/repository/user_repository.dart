@@ -63,6 +63,7 @@ class UserRepository implements AuthBase {
 
   @override
   Future<bool> deleteUser(MyUser user) async {
+    
     bool _sonuc = await _firebaseAuthService.deleteUser(user);
 
     return _sonuc;
@@ -247,5 +248,22 @@ class UserRepository implements AuthBase {
   @override
   Future<String> takeNewOgrID(String kresCode, String kresAdi) async {
     return await _firestoreDBService.takeNewOgrID(kresCode, kresAdi);
+  }
+
+  @override
+  Future<bool> sendNotificationToYonetici(
+      MyUser senderUser, String yoneticiToken) async {
+    return await _sendingNotificationService.sendNotificationToYonetici(
+        senderUser, yoneticiToken);
+  }
+
+  @override
+  Future<String> getYoneticiToken(String kresCode, String kresAdi) async {
+    return await _firestoreDBService.getYoneticiToken(kresCode, kresAdi);
+  }
+
+  @override
+  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi, String teacherUserID) async {
+    return await _firestoreDBService.updateTeacherAuthorisation(kresCode, kresAdi, teacherUserID);
   }
 }

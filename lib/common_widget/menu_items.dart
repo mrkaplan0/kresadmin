@@ -23,6 +23,7 @@ class MenuItems extends StatelessWidget {
             width: 130,
             height: 130,
             decoration: const BoxDecoration(
+                boxShadow: [BoxShadow(blurRadius: 0.8,spreadRadius:0.5,blurStyle: BlurStyle.outer)],
                 color: Colors.amber,
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             child: Column(
@@ -33,7 +34,7 @@ class MenuItems extends StatelessWidget {
                   size: 40,
                 ),
                 const SizedBox(height: 10),
-                Text(itemText)
+                Center(child: Text(itemText))
               ],
             ),
           ),

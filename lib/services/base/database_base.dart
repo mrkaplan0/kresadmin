@@ -7,6 +7,7 @@ abstract class DBBase {
   Future<bool> saveUser(MyUser users);
   Future<MyUser> readUser(String userId);
   Future<bool> updateUser(MyUser user);
+  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi,String teacherUserID);
   Future<String> queryKresList(String kresCode);
   Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID);
   Future<String> takeNewOgrID(String kresCode, String kresAdi);
@@ -40,4 +41,5 @@ abstract class DBBase {
       String kresCode, String kresAdi, Map<String, dynamic> map);
   Future<List<Map<String, dynamic>>> getAnnouncements(
       String kresCode, String kresAdi);
+  Future<String> getYoneticiToken(String kresCode, String kresAdi);
 }

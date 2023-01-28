@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 class StudentRating extends StatefulWidget {
   final Student student;
 
-  StudentRating(this.student);
+  const StudentRating(this.student);
 
   @override
   _StudentRatingState createState() => _StudentRatingState();
@@ -21,7 +21,7 @@ class _StudentRatingState extends State<StudentRating> {
   DateTime dateTime = DateTime.now();
   bool addSpecialNote = false;
   late TextEditingController specialNoteController;
-  bool _showPhotoMainPage = false;
+  final bool _showPhotoMainPage = false;
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _StudentRatingState extends State<StudentRating> {
         builder: (context, sonuc) {
           if (sonuc.hasData) {
             var criteriaList = sonuc.data!;
-            if (criteriaList.length > 0) {
+            if (criteriaList.isNotEmpty) {
               return ListView.builder(
                   shrinkWrap: true,
                   itemCount: criteriaList.length,
@@ -58,7 +58,7 @@ class _StudentRatingState extends State<StudentRating> {
                             Expanded(
                               child: Text(
                                 criteriaList[i],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.black,
                                 ),
                               ),
@@ -71,24 +71,24 @@ class _StudentRatingState extends State<StudentRating> {
                                 allowHalfRating: true,
                                 itemCount: 5,
                                 ratingWidget: RatingWidget(
-                                  full: Icon(
+                                  full: const Icon(
                                     Icons.star,
                                     color: Colors.amber,
                                   ),
-                                  half: Icon(
+                                  half: const Icon(
                                     Icons.star_half_rounded,
                                     color: Colors.amber,
                                   ),
-                                  empty: Icon(
+                                  empty: const Icon(
                                     Icons.star_border_rounded,
                                     color: Colors.amber,
                                   ),
                                 ),
                                 itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
                                 onRatingUpdate: (rating) {
                                   ratingMap
-                                      .addAll({'${criteriaList[i]}': rating});
+                                      .addAll({criteriaList[i]: rating});
                                 },
                               ),
                             ),
@@ -98,14 +98,15 @@ class _StudentRatingState extends State<StudentRating> {
                     );
                   });
             } else {
-              return Center(
+              return const Center(
                 child: Text("Kriter ekleyin."),
               );
             }
-          } else
-            return Center(
+          } else {
+            return const Center(
               child: Text("Kriter ekleyin."),
             );
+          }
         });
   }
 
@@ -121,14 +122,14 @@ class _StudentRatingState extends State<StudentRating> {
           child: SafeArea(
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   width: double.infinity,
                   height: 100,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: itemColor3,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
@@ -138,31 +139,31 @@ class _StudentRatingState extends State<StudentRating> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.arrow_back_rounded,
                             color: Colors.black,
                             size: 28,
                           )),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
                       widget.student.fotoUrl != null
-                          ? Container(
+                          ? SizedBox(
                               width: 80,
                               height: 80,
                               child: ClipRRect(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(40)),
+                                    const BorderRadius.all(Radius.circular(40)),
                                 child: Image.network(
                                   widget.student.fotoUrl!,
                                   fit: BoxFit.fill,
                                 ),
                               ),
                             )
-                          : CircleAvatar(
+                          : const CircleAvatar(
                               child: Icon(Icons.person),
                             ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Column(
@@ -170,7 +171,7 @@ class _StudentRatingState extends State<StudentRating> {
                         children: [
                           Text(
                             widget.student.adiSoyadi,
-                            style: TextStyle(fontSize: 24),
+                            style: const TextStyle(fontSize: 24),
                           ),
                           Text("Öğrenci No: " + widget.student.ogrID),
                           Text("Tarih: " + formattedTime)
@@ -179,7 +180,7 @@ class _StudentRatingState extends State<StudentRating> {
                     ],
                   ),
                 ),
-                SizedBox(height: kdefaultPadding),
+                const SizedBox(height: kdefaultPadding),
                 dynamicCriteriaList(),
                 if (addSpecialNote == true) specialNoteTextForm(context),
                 ButtonBar(
@@ -192,10 +193,10 @@ class _StudentRatingState extends State<StudentRating> {
                               : addSpecialNote = false;
                           setState(() {});
                         },
-                        child: Text("Özel Not Ekle")),
+                        child: const Text("Özel Not Ekle")),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 ),
                 SizedBox(
@@ -208,10 +209,10 @@ class _StudentRatingState extends State<StudentRating> {
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.orangeAccent.shade100,
                     ),
-                    child: Text("Değerlendirmeyi Kaydet"),
+                    child: const Text("Değerlendirmeyi Kaydet"),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: kdefaultPadding,
                 )
               ],

@@ -1,12 +1,16 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
+import 'package:kresadmin/common_widget/show_rating_details.dart';
+import 'package:kresadmin/common_widget/social_button.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/photo_editor.dart';
+import 'package:kresadmin/homepage-admin/student_settings/student_ratings_page.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class StudentPage extends StatefulWidget {
   final Student student;
@@ -21,7 +25,7 @@ class _StudentPageState extends State<StudentPage> {
   bool isExpanded = false;
   DateTime dateTime = DateTime.now();
   List<Map<String, dynamic>> allRatings = [];
-  Map<String, dynamic> lastRating = {};
+
   List<Photo> album = [];
 
   @override
@@ -38,73 +42,55 @@ class _StudentPageState extends State<StudentPage> {
         shrinkWrap: true,
         slivers: [
           SliverAppBar(
-            centerTitle: true,
-
-            expandedHeight: 250.0,
-            // floating: true,
-            stretch: true,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(widget.student.adiSoyadi,
-                    style: TextStyle(
-                      color: widget.student.fotoUrl != null
-                          ? Colors.white
-                          : Colors.black,
-                      fontSize: 16.0,
-                    )),
-                background: widget.student.fotoUrl != null
-                    ? ExtendedImage.network(
-                        widget.student.fotoUrl!,
-                        fit: BoxFit.cover,
-                        cache: true,
-                      )
-                    : Container(
-                        color: Colors.orangeAccent.shade200,
-                        child: Icon(
-                          Icons.person,
-                          size: 145,
-                          color: widget.student.cinsiyet == "Erkek"
-                              ? Colors.blue
-                              : Colors.pink,
-                        ),
-                      )),
-          ),
+              centerTitle: true,
+              expandedHeight: MediaQuery.of(context).size.height * 4 / 8,
+              //floating: true,
+              stretch: true,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: studentProfile(context))),
           SliverList(
               delegate: SliverChildListDelegate([
             Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(height: 15),
-                  lastRating.isNotEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              const Text("Son Değerlendirme Tarihi:",
-                                  style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold)),
-                              Text(lastRating['Son Değerlendirme'].toString(),
-                                  style: const TextStyle(fontSize: 18.0)),
-                            ],
-                          ),
-                        )
-                      : const SizedBox(height: 10),
-                  lastRating.isNotEmpty ? lastRatingWidget() : Container(),
-                  lastRating['Özel Not'] != null
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text("Özel Not: \n" +
-                                  lastRating['Özel Not'].toString())),
-                        )
-                      : Container(),
-                  if (lastRating.isEmpty) ...[
-                    const Text("Son 4 gün içinde değerlendirme yapılmadı.")
-                  ],
+                  SocialLoginButton(
+                          btnText: 'Değerlendir',
+                          btnColor: Theme.of(context).primaryColor,
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      StudentRating(widget.student),
+                                  fullscreenDialog: true)))
+                      .paddingSymmetric(horizontal: 10),
+
+                  const SizedBox(height: 15),
+                  SocialLoginButton(
+                      btnText: 'Foto Ekle',
+                      btnColor: Theme.of(context).primaryColor,
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PhotoEditor(student: widget.student),
+                              fullscreenDialog: true)))
+                      .paddingSymmetric(horizontal: 10),
+                  const SizedBox(height: 15),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text("Performans Değerlendirmeleri",
+                        style: TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold)),
+                  ),
+                  allRatings.isNotEmpty
+                      ? const SizedBox(height: 10)
+                      : const Text(
+                          "Henüz değerlendirme yok!",
+                        ),
+                  allRatings.isNotEmpty ? last3Ratings() : Container(),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text("Kişisel Galeri",
@@ -124,11 +110,127 @@ class _StudentPageState extends State<StudentPage> {
     );
   }
 
+  Widget studentProfile(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 28),
+        Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 4 / 8,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                color: Colors.amberAccent,
+                borderRadius:
+                    BorderRadius.only(bottomRight: Radius.elliptical(75, 55)),
+              ),
+              child: Stack(
+                children: [
+                  SizedBox.fromSize(
+                      child: stuProfileImage(context),
+                      size: Size(MediaQuery.of(context).size.width,
+                          MediaQuery.of(context).size.height * 3 / 8 + 45)),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Container(
+                      padding: const EdgeInsets.only(right: 12),
+                      height: MediaQuery.of(context).size.height * 1 / 8,
+                      width: MediaQuery.of(context).size.width + 2,
+                      decoration: BoxDecoration(
+                        color: ThemeData().scaffoldBackgroundColor,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.elliptical(70, 50)),
+                      ),
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 25.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                widget.student.adiSoyadi,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 26,
+                                ),
+                              ),
+                              RichText(
+                                  text: TextSpan(children: [
+                                const TextSpan(
+                                    text: '(Veli)  ',
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 12)),
+                                TextSpan(
+                                    text: widget.student.veliAdiSoyadi!,
+                                    style:
+                                        const TextStyle(color: Colors.black)),
+                              ])),
+                              RichText(
+                                  text: TextSpan(children: [
+                                TextSpan(
+                                    text: widget.student.dogumTarihi!,
+                                    style:
+                                        const TextStyle(color: Colors.black)),
+                                const TextSpan(text: '  '),
+                                TextSpan(
+                                    text: widget.student.cinsiyet!,
+                                    style: const TextStyle(color: Colors.black))
+                              ])),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget stuProfileImage(BuildContext context) => Container(
+        child: widget.student.fotoUrl != null
+            ? ExtendedImage.network(
+                widget.student.fotoUrl!,
+                fit: BoxFit.cover,
+                mode: ExtendedImageMode.gesture,
+                cache: true,
+              )
+            : const Center(
+                child: Icon(
+                Icons.person,
+                size: 250,
+                color: Colors.black45,
+              )),
+        decoration: const BoxDecoration(
+          borderRadius:
+              BorderRadius.only(bottomRight: Radius.elliptical(75, 55)),
+        ),
+      );
+
+  Widget studentProfileName() => Align(
+        alignment: Alignment.topRight,
+        child: Text(
+          widget.student.adiSoyadi,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 26,
+          ),
+        ),
+      );
+
   Widget photoGalleryWidget() {
     if (album.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(left: 10.0, right: 15),
         child: GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3),
@@ -170,109 +272,144 @@ class _StudentPageState extends State<StudentPage> {
 
   Future getRatingsMethod() async {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    final DateFormat formatter = DateFormat('dd-MM-yyyy');
-//bugün değerlendirme yapılmamışsa,Son 4 gün içinde değerlendirme yapılmışsa al, göster.
+
     allRatings = await _userModel.getRatings(_userModel.users!.kresCode!,
         _userModel.users!.kresAdi!, widget.student.ogrID);
-    String formattedTime = formatter.format(dateTime);
-
-    var ss = allRatings
-        .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
-
-    if (ss.isEmpty) {
-      DateTime d1 = dateTime.subtract(const Duration(days: 1));
-      String formattedTime = formatter.format(d1);
-      var tt = allRatings
-          .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
-      if (tt.isEmpty) {
-        DateTime d2 = dateTime.subtract(const Duration(days: 2));
-        String formattedTime = formatter.format(d2);
-        var uu = allRatings
-            .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
-        if (uu.isEmpty) {
-          DateTime d3 = dateTime.subtract(const Duration(days: 3));
-          String formattedTime = formatter.format(d3);
-          var vv = allRatings
-              .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
-          if (vv.isEmpty) {
-            DateTime d4 = dateTime.subtract(const Duration(days: 4));
-            String formattedTime = formatter.format(d4);
-
-            var yy = allRatings
-                .where((m) => m['Son Değerlendirme'].startsWith(formattedTime));
-            lastRating = yy.first;
-
-            print(lastRating.toString() + "444");
-          } else {
-            lastRating = vv.first;
-          }
-        } else {
-          lastRating = uu.first;
-        }
-      } else {
-        lastRating = tt.first;
-      }
-    } else {
-      lastRating = ss.first;
-    }
+    debugPrint(allRatings.toString());
   }
 
-  Widget lastRatingWidget() {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: lastRating.keys.length,
-        itemBuilder: (context, i) {
-          if (lastRating.keys.elementAt(i) != 'Son Değerlendirme' &&
-              lastRating.keys.elementAt(i) != 'Özel Not') {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
-              child: SizedBox(
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        lastRating.keys.elementAt(i),
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: RatingBar(
-                        initialRating: lastRating.values.elementAt(i),
-                        ignoreGestures: true,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        ratingWidget: RatingWidget(
-                          full: const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          half: const Icon(
-                            Icons.star_half_rounded,
-                            color: Colors.amber,
-                          ),
-                          empty: const Icon(
-                            Icons.star_border_rounded,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        itemPadding:
-                            const EdgeInsets.symmetric(horizontal: 4.0),
-                        onRatingUpdate: (rating) {},
-                      ),
-                    ),
-                  ],
+  Widget last3Ratings() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 15, left: 8),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height / 5,
+        child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3),
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: allRatings.length > 3 ? 3 : allRatings.length,
+            itemBuilder: (context, i) {
+              return GestureDetector(
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: singleRatingWidgetMini(allRatings[i]),
+                ),
+                onTap: () {
+                  _showRatingDetails(allRatings[i]);
+                },
+              );
+            }),
+      ),
+    );
+  }
+
+  Widget singleRatingWidgetMini(Map<String, dynamic> ratingDaily) {
+    String date =
+        ratingDaily['Değerlendirme Tarihi'].toString().substring(0, 11);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        if (ratingDaily['Özel Not'] != null) ...[
+          const Positioned(
+            right: -10,
+            top: -10,
+            child: Icon(
+              Icons.star_outlined,
+              color: Colors.black,
+            ),
+          )
+        ],
+        Container(
+          height: 150,
+          width: 140,
+          decoration: BoxDecoration(
+              border: Border.all(),
+              borderRadius: const BorderRadius.all(Radius.circular(8))),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Flexible(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    date,
+                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                  ),
                 ),
               ),
-            );
-          } else {
-            return const SizedBox();
-          }
-        });
+              Flexible(
+                flex: 4,
+                fit: FlexFit.tight,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: ratingDaily.keys.length,
+                    itemBuilder: (context, i) {
+                      if (ratingDaily.keys.elementAt(i) !=
+                              'Değerlendirme Tarihi' &&
+                          ratingDaily.keys.elementAt(i) != 'Özel Not') {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2.0, horizontal: 2.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    ratingDaily.keys.elementAt(i),
+                                    style: const TextStyle(
+                                        color: Colors.black, fontSize: 8),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: RatingBar(
+                                    itemSize: 8,
+                                    initialRating:
+                                        ratingDaily.values.elementAt(i),
+                                    ignoreGestures: true,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    ratingWidget: RatingWidget(
+                                      full: const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                      half: const Icon(
+                                        Icons.star_half_rounded,
+                                        color: Colors.amber,
+                                      ),
+                                      empty: const Icon(
+                                        Icons.star_border_rounded,
+                                        color: Colors.amber,
+                                      ),
+                                    ),
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 1.0),
+                                    onRatingUpdate: (rating) {},
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    }),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Future getIndividualPhotos() async {
@@ -281,5 +418,13 @@ class _StudentPageState extends State<StudentPage> {
         _userModel.users!.kresCode!,
         _userModel.users!.kresAdi!,
         widget.student.ogrID);
+  }
+
+  void _showRatingDetails(Map<String, dynamic> rating) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return RatingDetailsWidget(rating);
+        });
   }
 }

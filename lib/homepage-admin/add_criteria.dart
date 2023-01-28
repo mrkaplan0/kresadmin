@@ -33,13 +33,13 @@ class _AddCriteriaState extends State<AddCriteria> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text("Kriter Ekle"),
+        title: const Text("Kriter Ekle"),
       ),
       body: Container(
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -48,23 +48,23 @@ class _AddCriteriaState extends State<AddCriteria> {
                       child: TextFormField(
                     controller: kriterController,
                   )),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   _addButton(kriterController.text),
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: kdefaultPadding,
             ),
             Wrap(
               children: [...criteriaItemBuild()],
             ),
-            SizedBox(
+            const SizedBox(
               height: kdefaultPadding,
             ),
-            Align(
+            const Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Kriterleriniz",
@@ -72,7 +72,7 @@ class _AddCriteriaState extends State<AddCriteria> {
               ),
             ),
             Expanded(child: dynamicCriteriaList()),
-            SizedBox(
+            const SizedBox(
               height: kdefaultPadding,
             ),
           ],
@@ -114,9 +114,9 @@ class _AddCriteriaState extends State<AddCriteria> {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return InkWell(
       onTap: () async {
-        if (kriterController.text.length > 0) {
+        if (kriterController.text.isNotEmpty) {
           var sonuc = await _userModel.addCriteria(_userModel.users!.kresCode!,
-              _userModel.users!.kresAdi!, criteria);
+              _userModel.users!.kresAdi!, kriterController.text);
           if (sonuc) {
             kriterController.clear();
             FocusScope.of(context).unfocus();
@@ -133,7 +133,7 @@ class _AddCriteriaState extends State<AddCriteria> {
           color: Colors.green,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),
@@ -149,8 +149,8 @@ class _AddCriteriaState extends State<AddCriteria> {
         builder: (context, sonuc) {
           if (sonuc.hasData) {
             var criteriaList = sonuc.data!;
-            if (criteriaList.length > 0) {
-              return Container(
+            if (criteriaList.isNotEmpty) {
+              return SizedBox(
                 width: double.infinity,
                 child: ListView.builder(
                     shrinkWrap: true,
@@ -163,11 +163,11 @@ class _AddCriteriaState extends State<AddCriteria> {
                             title: Text(
                               criteriaList[i],
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                                  const TextStyle(color: Colors.white, fontSize: 20),
                             ),
                             tileColor: itemColor3,
                             trailing: InkWell(
-                                child: Icon(Icons.remove_circle),
+                                child: const Icon(Icons.remove_circle),
                                 onTap: () {
                                   deleteCriteria(context, criteriaList[i]);
                                 }),
@@ -177,14 +177,15 @@ class _AddCriteriaState extends State<AddCriteria> {
                     }),
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text("Kriter ekleyin."),
               );
             }
-          } else
-            return Center(
+          } else {
+            return const Center(
               child: Text("Kriter ekleyin."),
             );
+          }
         });
   }
 

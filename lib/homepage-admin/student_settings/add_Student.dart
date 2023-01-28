@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +28,7 @@ class _AddStudentState extends State<AddStudent> {
       _veliTelefonNo,
       _ogrID,
       _url;
+bool uploadProcess= false;
 
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _dateController, _ogrIDController;
@@ -43,7 +43,8 @@ class _AddStudentState extends State<AddStudent> {
     _ogrIDController = TextEditingController();
     _userModel
         .takeNewOgrID(_userModel.users!.kresCode!, _userModel.users!.kresAdi!)
-        .then((value) => _ogrIDController.text = value);
+        .then((value) => _ogrIDController.text =_ogrID= value);
+
   }
 
   @override
@@ -55,6 +56,7 @@ class _AddStudentState extends State<AddStudent> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -129,10 +131,25 @@ class _AddStudentState extends State<AddStudent> {
                   const Text('Profil Fotosu Başarıyla Eklendi.')
                 ],
                 const SizedBox(height: kdefaultPadding),
-                SocialLoginButton(
-                    btnText: "Kaydet",
-                    btnColor: Theme.of(context).primaryColor,
-                    onPressed: () => saveStudent(context)),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => uploadProcess==true? null:saveStudent(context),
+                    child: uploadProcess==true? const CircularProgressIndicator(): const Text(
+                      'Kaydet',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: TextButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.orangeAccent.shade100,
+                      shape: const RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orangeAccent),
+                      ),
+                    ),
+                  ),
+                ),
+
               ],
             ),
           ),
@@ -326,7 +343,11 @@ class _AddStudentState extends State<AddStudent> {
                       final XFile? photo = await _picker.pickImage(
                           source: ImageSource.camera, imageQuality: 35);
 
-                      uploadProfilePhoto(photo);
+                      setState(() {uploadProcess=true;});
+
+                    await  uploadProfilePhoto(photo);
+
+                      setState(() {uploadProcess=false;});
                     },
                     child: const Text("Foto Çek")),
                 ElevatedButton(
@@ -336,7 +357,9 @@ class _AddStudentState extends State<AddStudent> {
                       final XFile? image = await _picker.pickImage(
                           source: ImageSource.gallery, imageQuality: 35);
 
-                      uploadProfilePhoto(image);
+                      setState(() {uploadProcess=true;});
+                     await uploadProfilePhoto(image);
+                      setState(() {uploadProcess=false;});
                     },
                     child: const Text("Galeriden Seç"))
               ],
@@ -353,7 +376,7 @@ class _AddStudentState extends State<AddStudent> {
     var url = await _userModel.uploadOgrProfilePhoto(
         _userModel.users!.kresCode!,
         _userModel.users!.kresAdi!,
-        _ogrIDController.text,
+        _ogrID!,
         _ogrAdiSoyadi!,
         "profil_foto",
         file);
@@ -362,6 +385,11 @@ class _AddStudentState extends State<AddStudent> {
       _url = url;
       debugPrint(_url);
       debugPrint(url);
+    }else {
+
+      showDialog(context: context,barrierDismissible: true , builder: (context){
+        return const CircularProgressIndicator();
+      });
     }
     setState(() {});
   }

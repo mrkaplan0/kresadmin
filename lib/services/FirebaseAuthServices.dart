@@ -234,4 +234,25 @@ class FirebaseAuthService implements AuthBase {
     // TODO: implement takeNewOgrID
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> sendNotificationToYonetici(
+      MyUser senderUser, String yoneticiToken) {
+    // TODO: implement sendNotificationToYonetici
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<String> getYoneticiToken(String kresCode, String kresAdi) {
+    // TODO: implement getYoneticiToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi, String teacherUserID) {
+    // TODO: implement updateTeacherAuthorisation
+    throw UnimplementedError();
+  }
+
+ 
 }

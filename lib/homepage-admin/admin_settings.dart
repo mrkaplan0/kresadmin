@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
@@ -7,6 +10,7 @@ import 'package:kresadmin/homepage-admin/homepage_settings/home_settings.dart';
 import 'package:kresadmin/homepage-admin/personel_settings/personel_management.dart';
 import 'package:kresadmin/homepage-admin/send_notification.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_management.dart';
+import 'package:kresadmin/services/messaging_services.dart';
 import 'package:provider/provider.dart';
 
 class AdminSettings extends StatefulWidget {
@@ -17,12 +21,43 @@ class AdminSettings extends StatefulWidget {
 }
 
 class _AdminSettingsState extends State<AdminSettings> {
+
+  final MessagingService _messagingService = MessagingService();
+
+  @override
+  void initState() {
+    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+
+
+    _messagingService
+        .initialize(onSelectNotification, context, _userModel.users!)
+        .then(
+          (value) => firebaseCloudMessagingListeners(),
+    );
+
+    super.initState();
+  }
+  void firebaseCloudMessagingListeners() async {
+    MessagingService.onMessage
+        .listen(_messagingService.invokeLocalNotification);
+    MessagingService.onMessageOpenedApp.listen(_pageOpenForOnLaunch);
+  }
+
+  _pageOpenForOnLaunch(RemoteMessage remoteMessage) {
+    final Map<String, dynamic> message = remoteMessage.data;
+
+    onSelectNotification(jsonEncode(message));
+  }
+
+  Future onSelectNotification(String? payload) async {}
+
+
   @override
   Widget build(BuildContext context) {
     final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    return Scaffold(
+    return Scaffold(backgroundColor:const Color(0xFFF68763),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF68763),
+        backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
           "Yönetim Paneli",
@@ -76,7 +111,7 @@ class _AdminSettingsState extends State<AdminSettings> {
                       itemText: ' Öğrenci İşlemleri',
                       onPress: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => StudentManagement()));
+                            builder: (context) => const StudentManagement()));
                       },
                       icon: Icons.school_rounded,
                     ),
@@ -122,13 +157,14 @@ class _AdminSettingsState extends State<AdminSettings> {
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 45),
       height: 230,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-          color: Color(0xFFF68763),
+      decoration: const BoxDecoration( color: Colors.white,
+          boxShadow: [BoxShadow(blurRadius: 0.6,spreadRadius:0.7,blurStyle: BlurStyle.outer)],
+
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(50))),
       child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            borderRadius: const BorderRadius.only(
+        decoration: const BoxDecoration(
+
+            borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(35),
                 bottomRight: Radius.circular(35))),
         child: Column(

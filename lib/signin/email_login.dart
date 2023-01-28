@@ -9,13 +9,15 @@ import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 class EmailLogin extends StatefulWidget {
+  const EmailLogin({Key? key}) : super(key: key);
+
   @override
   _EmailLoginState createState() => _EmailLoginState();
 }
 
 class _EmailLoginState extends State<EmailLogin> {
   late String _email, _sifre, firma;
-  String _buttonText = "Giriş";
+  final String _buttonText = "Giriş";
 
   final _formKey = GlobalKey<FormState>();
 
@@ -84,7 +86,7 @@ class _EmailLoginState extends State<EmailLogin> {
                               decoration: InputDecoration(
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.always,
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 20),
                                   labelText: 'E-mail',
                                   hintText: 'E-mailinizi giriniz...',
