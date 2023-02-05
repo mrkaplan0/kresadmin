@@ -385,11 +385,7 @@ bool uploadProcess= false;
       _url = url;
       debugPrint(_url);
       debugPrint(url);
-    }else {
 
-      showDialog(context: context,barrierDismissible: true , builder: (context){
-        return const CircularProgressIndicator();
-      });
     }
     setState(() {});
   }

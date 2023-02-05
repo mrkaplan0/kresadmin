@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
 import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/add_announcement.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/image_crop.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/photo_editor.dart';
 import 'package:kresadmin/homepage-visitor/home_page.dart';
 
@@ -37,7 +38,7 @@ class HomeSettings extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => PhotoEditor()));
+                              builder: (context) => const ImageCrop()));
                     },
                     icon: Icons.person,
                   ),

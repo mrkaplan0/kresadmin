@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:image_editor_plus/image_editor_plus.dart';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,24 +8,28 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/constants.dart';
+import 'package:kresadmin/deeeneme.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/image_crop.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class PhotoEditor extends StatefulWidget {
   final Student? student;
+File editedPhoto;
 
-  PhotoEditor({Key? key, this.student}) : super(key: key);
+  PhotoEditor({Key? key, this.student, required this.editedPhoto}) : super(key: key);
 
   @override
   _PhotoEditorState createState() => _PhotoEditorState();
 }
 
 class _PhotoEditorState extends State<PhotoEditor> {
-  final GlobalKey<ExtendedImageEditorState> editorKey = GlobalKey();
+
 
   File? originalImage;
-  Uint8List? imageData, editedImage;
+
   List<Student>? studentList;
   Student? selectedStudent;
   late TextEditingController specialNoteController;
@@ -33,22 +37,27 @@ class _PhotoEditorState extends State<PhotoEditor> {
   bool _addSpecialNote = false;
   bool _tagStudent = false;
 
+
   @override
   void initState() {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     super.initState();
-    _userModel
-        .getStudents(_userModel.users!.kresCode!, _userModel.users!.kresAdi!)
+    userModel
+        .getStudents(userModel.users!.kresCode!, userModel.users!.kresAdi!)
         .listen((event) {
       studentList = event;
     });
     if (widget.student != null) _tagStudent = true;
+
+
     specialNoteController = TextEditingController();
+
   }
 
   @override
   void dispose() {
     specialNoteController.dispose();
+
     super.dispose();
   }
 
@@ -59,93 +68,72 @@ class _PhotoEditorState extends State<PhotoEditor> {
       appBar: AppBar(
         title: const Text('Foto Ekle'),
         actions: <Widget>[
-          originalImage != null
-              ? TextButton(
+          TextButton(
                   child: const Text(
                     'Kaydet',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () async {
-                    await savePhoto(editedImage);
+                    await savePhoto(widget.editedPhoto);
                   },
                 )
-              : Container(),
+              ,
         ],
       ),
-      body: originalImage != null
-          ? SingleChildScrollView(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    // SafeArea(child: buildImage()),
-                    if (imageData != null)
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height / 3,
-                          width: MediaQuery.of(context).size.width / 2,
-                          child: Image.memory(imageData!)),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      child: const Text("Düzenle"),
-                      onPressed: () async {
-                        editedImage = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageEditor(
-                              image: imageData,
-                            ),
-                          ),
-                        );
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              // SafeArea(child: buildImage()),
 
-                        // replace with edited image
-                        if (editedImage != null) {
-                          imageData = editedImage;
-                          setState(() {});
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    CheckboxListTile(
-                      activeColor: Colors.orangeAccent.shade100,
-                      onChanged: (value) => _onChange(value),
-                      value: _showPhotoMainPage,
-                      title: const Text(
-                        "Fotoğraf anasayfada gösterilsin.",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    CheckboxListTile(
-                      activeColor: Colors.orangeAccent.shade100,
-                      onChanged: (value) => _onChangeTagStudent(value),
-                      value: _tagStudent,
-                      title: const Text(
-                        "Öğrenci Etiketle.",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    if (_tagStudent == true && widget.student == null)
-                      tagStudentToPhoto(),
-                    if (_tagStudent == true && widget.student != null)
-                      Text("Etiket: ${widget.student!.adiSoyadi}"),
-                    CheckboxListTile(
-                      activeColor: Colors.orangeAccent.shade100,
-                      onChanged: (value) => _onChangeSpecialNote(value),
-                      value: _addSpecialNote,
-                      title: const Text(
-                        "Not ekle.",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    if (_addSpecialNote == true) specialNoteTextForm(context),
-                  ],
+              SizedBox(
+                  height: MediaQuery.of(context).size.height / 3*1.1,
+                  width: MediaQuery.of(context).size.width / 1.6,
+                  child: Card(elevation: 4,child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.file(widget.editedPhoto ),
+                  ))),
+              const SizedBox(height: 16),
+
+              CheckboxListTile(
+                activeColor: Colors.orangeAccent.shade100,
+                onChanged: (value) => _onChange(value),
+                value: _showPhotoMainPage,
+                title: const Text(
+                  "Fotoğraf anasayfada gösterilsin.",
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
-            )
-          : photoFrom(),
+              CheckboxListTile(
+                activeColor: Colors.orangeAccent.shade100,
+                onChanged: (value) => _onChangeTagStudent(value),
+                value: _tagStudent,
+                title: const Text(
+                  "Öğrenci Etiketle.",
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              if (_tagStudent == true && widget.student == null)
+                tagStudentToPhoto(),
+              if (_tagStudent == true && widget.student != null)
+                Text("Etiket: ${widget.student!.adiSoyadi}"),
+              CheckboxListTile(
+                activeColor: Colors.orangeAccent.shade100,
+                onChanged: (value) => _onChangeSpecialNote(value),
+                value: _addSpecialNote,
+                title: const Text(
+                  "Not ekle.",
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              if (_addSpecialNote == true) specialNoteTextForm(context),
+            ],
+          ),
+        ),
+      ),
       // bottomNavigationBar: _buildFunctions(),
     );
   }
@@ -162,99 +150,9 @@ class _PhotoEditorState extends State<PhotoEditor> {
     });
   }
 
-  Widget photoFrom() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          flex: 1,
-          child: GestureDetector(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              alignment: Alignment.center,
-              child: const Text(
-                "Fotoğraf Çek",
-                style: TextStyle(fontSize: 24),
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.orangeAccent.shade100.withOpacity(0.1),
-                  border: Border.all(color: Colors.orangeAccent.shade100)),
-            ),
-            onTap: () {
-              _pickCamera();
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 2,
-        ),
-        Expanded(
-          flex: 1,
-          child: GestureDetector(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              alignment: Alignment.center,
-              child: const Text(
-                "Galeriden Yükle",
-                style: TextStyle(fontSize: 24),
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.orangeAccent.shade100.withOpacity(0.5),
-                  border: Border.all(color: Colors.orangeAccent.shade100)),
-            ),
-            onTap: () {
-              _pickGallery();
-            },
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget buildImage() {
-    return ExtendedImage.file(
-      originalImage!,
-      height: 300,
-      width: 300,
-      extendedImageEditorKey: editorKey,
-      mode: ExtendedImageMode.editor,
-      fit: BoxFit.contain,
-      cacheRawData: true,
-      initEditorConfigHandler: (_) => EditorConfig(
-        maxScale: 5.0,
-        cropRectPadding: const EdgeInsets.all(20.0),
-        hitTestSize: 10.0,
-      ),
-    );
-  }
 
-  Future<void> _pickCamera() async {
-    final XFile? result = await ImagePicker()
-        .pickImage(source: ImageSource.camera, imageQuality: 45);
 
-    if (result == null) {
-      return;
-    }
-    originalImage = File(result.path);
-
-    var data = await rootBundle.load(result.path);
-    setState(() {
-      imageData = data.buffer.asUint8List();
-    });
-  }
-
-  Future<void> _pickGallery() async {
-    final XFile? result = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 45);
-
-    if (result == null) {
-      return;
-    }
-
-    originalImage = File(result.path);
-    imageData = await originalImage!.readAsBytes();
-    setState(() {});
-  }
 
   Widget tagStudentToPhoto() {
     return DropdownButton<Student>(
@@ -309,16 +207,12 @@ class _PhotoEditorState extends State<PhotoEditor> {
     });
   }
 
-  savePhoto(Uint8List? imagee) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+  savePhoto(File imagee) async {
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     String photoUrl;
     Photo myPhoto;
-    File image;
-    if (imagee != null) {
-      image = File.fromRawPath(imagee);
-    } else {
-      image = originalImage!;
-    }
+
+
     if (selectedStudent != null || widget.student != null) {
       String? ogrID;
       if (selectedStudent == null) {
@@ -326,13 +220,13 @@ class _PhotoEditorState extends State<PhotoEditor> {
       } else {
         ogrID = selectedStudent!.ogrID;
       }
-      photoUrl = await _userModel.uploadPhotoToGallery(
-          _userModel.users!.kresCode!,
-          _userModel.users!.kresAdi!,
+      photoUrl = await userModel.uploadPhotoToGallery(
+          userModel.users!.kresCode!,
+          userModel.users!.kresAdi!,
           ogrID,
           '',
           'Gallery',
-          image);
+          imagee);
       myPhoto = Photo(
           photoUrl: photoUrl,
           time: DateTime.now().toString(),
@@ -341,20 +235,21 @@ class _PhotoEditorState extends State<PhotoEditor> {
               : null,
           ogrID: ogrID,
           isShowed: _showPhotoMainPage);
-      bool sonuc = await _userModel.savePhotoToSpecialGallery(
-          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, myPhoto);
+      bool sonuc = await userModel.savePhotoToSpecialGallery(
+          userModel.users!.kresCode!, userModel.users!.kresAdi!, myPhoto);
       if (sonuc == true) {
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
-        Navigator.pop(context);
+
       }
     } else {
-      photoUrl = await _userModel.uploadPhotoToGallery(
-          _userModel.users!.kresCode!,
-          _userModel.users!.kresAdi!,
+      photoUrl = await userModel.uploadPhotoToGallery(
+          userModel.users!.kresCode!,
+          userModel.users!.kresAdi!,
           'Main',
           '',
           'Gallery',
-          image);
+          imagee);
       myPhoto = Photo(
           photoUrl: photoUrl,
           time: DateTime.now().toString(),
@@ -363,8 +258,8 @@ class _PhotoEditorState extends State<PhotoEditor> {
               : null,
           isShowed: _showPhotoMainPage);
     }
-    bool sonuc = await _userModel.savePhotoToMainGallery(
-        _userModel.users!.kresCode!, _userModel.users!.kresAdi!, myPhoto);
+    bool sonuc = await userModel.savePhotoToMainGallery(
+        userModel.users!.kresCode!, userModel.users!.kresAdi!, myPhoto);
 
     if (sonuc == true && mounted) {
       Navigator.of(context, rootNavigator: true).pop();

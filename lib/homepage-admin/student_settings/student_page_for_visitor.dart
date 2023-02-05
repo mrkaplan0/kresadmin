@@ -6,6 +6,8 @@ import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
 import 'package:kresadmin/common_widget/show_rating_details.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
+import 'package:kresadmin/deeeneme.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/image_crop.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/photo_editor.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_ratings_page.dart';
 import 'package:kresadmin/models/photo.dart';
@@ -66,17 +68,15 @@ class _StudentPageState extends State<StudentPage> {
                                       StudentRating(widget.student),
                                   fullscreenDialog: true)))
                       .paddingSymmetric(horizontal: 10),
-
                   const SizedBox(height: 15),
                   SocialLoginButton(
-                      btnText: 'Foto Ekle',
-                      btnColor: Theme.of(context).primaryColor,
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PhotoEditor(student: widget.student),
-                              fullscreenDialog: true)))
+                          btnText: 'Foto Ekle',
+                          btnColor: Theme.of(context).primaryColor,
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ImageCrop(student: widget.student))))
                       .paddingSymmetric(horizontal: 10),
                   const SizedBox(height: 15),
                   const Padding(
@@ -127,9 +127,9 @@ class _StudentPageState extends State<StudentPage> {
               child: Stack(
                 children: [
                   SizedBox.fromSize(
-                      child: stuProfileImage(context),
                       size: Size(MediaQuery.of(context).size.width,
-                          MediaQuery.of(context).size.height * 3 / 8 + 45)),
+                          MediaQuery.of(context).size.height * 3 / 8 + 45),
+                      child: stuProfileImage(context)),
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(
@@ -194,6 +194,10 @@ class _StudentPageState extends State<StudentPage> {
   }
 
   Widget stuProfileImage(BuildContext context) => Container(
+        decoration: const BoxDecoration(
+          borderRadius:
+              BorderRadius.only(bottomRight: Radius.elliptical(75, 55)),
+        ),
         child: widget.student.fotoUrl != null
             ? ExtendedImage.network(
                 widget.student.fotoUrl!,
@@ -207,10 +211,6 @@ class _StudentPageState extends State<StudentPage> {
                 size: 250,
                 color: Colors.black45,
               )),
-        decoration: const BoxDecoration(
-          borderRadius:
-              BorderRadius.only(bottomRight: Radius.elliptical(75, 55)),
-        ),
       );
 
   Widget studentProfileName() => Align(
@@ -271,10 +271,10 @@ class _StudentPageState extends State<StudentPage> {
   }
 
   Future getRatingsMethod() async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
-    allRatings = await _userModel.getRatings(_userModel.users!.kresCode!,
-        _userModel.users!.kresAdi!, widget.student.ogrID);
+    allRatings = await userModel.getRatings(userModel.users!.kresCode!,
+        userModel.users!.kresAdi!, widget.student.ogrID);
     debugPrint(allRatings.toString());
   }
 
