@@ -7,7 +7,7 @@ class MenuItems extends StatelessWidget {
   final IconData icon;
   final GestureTapCallback onPress;
 
-  MenuItems({
+  const MenuItems({super.key,
     required this.onPress,
     required this.itemText,
     required this.icon,
@@ -19,6 +19,7 @@ class MenuItems extends StatelessWidget {
     return Column(
       children: [
         GestureDetector(
+          onTap: onPress,
           child: Container(
             width: 130,
             height: 130,
@@ -38,7 +39,6 @@ class MenuItems extends StatelessWidget {
               ],
             ),
           ),
-          onTap: onPress,
         )
       ],
     );

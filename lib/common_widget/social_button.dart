@@ -10,7 +10,7 @@ class SocialLoginButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const SocialLoginButton(
-      {required this.btnText,
+      {super.key, required this.btnText,
       required this.btnColor,
       this.textColor: Colors.white,
       this.radius: 10,
@@ -24,16 +24,16 @@ class SocialLoginButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(
-          btnText,
-          style: TextStyle(color: textColor),
-        ),
         style: TextButton.styleFrom(
           elevation: 0,
           backgroundColor: Colors.orangeAccent.shade100,
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.orangeAccent),
+            side: const BorderSide(color: Colors.orangeAccent),
           ),
+        ),
+        child: Text(
+          btnText,
+          style: TextStyle(color: textColor),
         ),
       ),
     );

@@ -10,6 +10,7 @@ class AddAnnouncement extends StatefulWidget {
   const AddAnnouncement({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddAnnouncementState createState() => _AddAnnouncementState();
 }
 

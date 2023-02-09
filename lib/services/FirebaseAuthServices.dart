@@ -129,7 +129,7 @@ class FirebaseAuthService implements AuthBase {
 
   @override
   Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, String fotoUrl) {
+      String kresCode, String kresAdi, String ogrID, List<Photo> fotoUrl) {
     // TODO: implement deletePhoto
     throw UnimplementedError();
   }

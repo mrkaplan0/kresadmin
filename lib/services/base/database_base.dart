@@ -25,7 +25,7 @@ abstract class DBBase {
   Future<bool> uploadPhotoToGallery(
       String kresCode, String kresAdi, String ogrID, String fotoUrl);
   Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, String fotoUrl);
+      String kresCode, String kresAdi, String? ogrID, Photo fotoUrl);
   Future<bool> saveRatings(String kresCode, String kresAdi, String ogrID,
       Map<String, dynamic> ratings, bool showPhotoMainPage);
   Future<List<Map<String, dynamic>>> getRatings(

@@ -325,7 +325,8 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi, String teacherUserID) async{
+  Future<bool> updateTeacherAuthorisation(
+      String kresCode, String kresAdi, String teacherUserID) async {
     await _firestore
         .collection("Users")
         .doc(teacherUserID)
@@ -438,20 +439,30 @@ class FirestoreDBService implements DBBase {
 
   @override
   Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
-    await _firestore
-        .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
-        .collection(kresAdi)
-        .doc(kresAdi)
-        .collection("Students")
-        .doc(ogrID)
-        .collection("Gallery")
-        .doc(ogrID)
-        .update({
-      fotoUrl.substring(fotoUrl.indexOf('token=')): FieldValue.delete()
-    }).then((value) => debugPrint("Silindi."));
-    return true;
+      String kresCode, String kresAdi, String? ogrID, Photo photo) async {
+    if (ogrID !=null) {
+      await _firestore
+          .collection("Kresler")
+          .doc(kresCode + '_' + kresAdi)
+          .collection(kresAdi)
+          .doc(kresAdi)
+          .collection("Students")
+          .doc(photo.ogrID)
+          .collection("Gallery")
+          .doc(photo.ogrID)
+          .set({photo.time: FieldValue.delete()}, SetOptions(merge: true)).then((value) => debugPrint(" Stu foto Silindi."));
+      return true;
+    } else {
+      await _firestore
+          .collection("Kresler")
+          .doc(kresCode + '_' + kresAdi)
+          .collection(kresAdi)
+          .doc(kresAdi)
+          .collection('Main')
+          .doc('Gallery')
+          .set({photo.time: FieldValue.delete()}, SetOptions(merge: true)).then((value) => debugPrint(" Main Galeri foto Silindi."));
+      return true;
+    }
   }
 
   @override
@@ -630,6 +641,4 @@ class FirestoreDBService implements DBBase {
     });
     return duyuruList;
   }
-
-
 }

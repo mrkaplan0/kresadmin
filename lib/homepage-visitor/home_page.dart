@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PhotoGallery(album)));
+                                  builder: (context) => PhotoGallery(album: album,)));
                         },
                         child: const Text(
                           "Tümünü Gör",

@@ -61,7 +61,7 @@ class UserModel with ChangeNotifier implements AuthBase {
       _users = null;
       return sonuc;
     } catch (e) {
-      debugPrint("User Model signout HATAAAA :" + e.toString());
+      debugPrint("User Model signout HATAAAA :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -76,7 +76,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model update user error :" + e.toString());
+      debugPrint("User Model update user error :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -137,7 +137,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model delete hata :" + e.toString());
+      debugPrint("User Model delete hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -152,8 +152,8 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model query kres hata :" + e.toString());
-      return "HATA:" + e.toString();
+      debugPrint("User Model query kres hata :$e");
+      return "HATA:$e";
     } finally {
       state = ViewState.idle;
     }
@@ -169,7 +169,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model saveStudent hata :" + e.toString());
+      debugPrint("User Model saveStudent hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -186,7 +186,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model delStudent hata :" + e.toString());
+      debugPrint("User Model delStudent hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -206,7 +206,7 @@ class UserModel with ChangeNotifier implements AuthBase {
       return await _userRepository.uploadOgrProfilePhoto(
           kresCode, kresAdi, ogrID, ogrAdi, fileType, yuklenecekDosya);
     } catch (e) {
-      debugPrint("User Model profil photo hata :" + e.toString());
+      debugPrint("User Model profil photo hata :$e");
       return '';
     } finally {
       state = ViewState.idle;
@@ -223,7 +223,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model getStudent hata :" + e.toString());
+      debugPrint("User Model getStudent hata :$e");
       return const Stream.empty();
     }
   }
@@ -238,7 +238,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model delStudent hata :" + e.toString());
+      debugPrint("User Model delStudent hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -252,7 +252,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model getteach hata :" + e.toString());
+      debugPrint("User Model getteach hata :$e");
       return const Stream.empty();
     }
   }
@@ -265,7 +265,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model noContorl hata :" + e.toString());
+      debugPrint("User Model noContorl hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -293,7 +293,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model criter hata :" + e.toString());
+      debugPrint("User Model criter hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -310,7 +310,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model criter sil hata :" + e.toString());
+      debugPrint("User Model criter sil hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -324,7 +324,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model criter sil hata :" + e.toString());
+      debugPrint("User Model criter sil hata :$e");
       return List.empty();
     } finally {
       state = ViewState.idle;
@@ -333,7 +333,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
   @override
   Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
+      String kresCode, String kresAdi, String ogrID, List<Photo> fotoUrl) async {
     try {
       state = ViewState.busy;
       bool sonuc =
@@ -341,7 +341,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model foto sil hata :" + e.toString());
+      debugPrint("User Model foto sil hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -363,7 +363,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model foto upload hata :" + e.toString());
+      debugPrint("User Model foto upload hata :$e");
       return 'false';
     } finally {
       state = ViewState.idle;
@@ -376,7 +376,7 @@ class UserModel with ChangeNotifier implements AuthBase {
     try {
       return await _userRepository.getRatings(kresCode, kresAdi, ogrID);
     } catch (e) {
-      debugPrint("User Model criter getir hata :" + e.toString());
+      debugPrint("User Model criter getir hata :$e");
       return List.empty();
     }
   }
@@ -391,7 +391,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model save ratings hata :" + e.toString());
+      debugPrint("User Model save ratings hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -409,7 +409,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model savephoto hata :" + e.toString());
+      debugPrint("User Model savephoto hata :$e");
       return List.empty();
     }
   }
@@ -424,7 +424,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model savephoto hata :" + e.toString());
+      debugPrint("User Model savephoto hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -440,7 +440,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model getphoto hata :" + e.toString());
+      debugPrint("User Model getphoto hata :$e");
       return List.empty();
     }
   }
@@ -455,7 +455,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model savephoto hata :" + e.toString());
+      debugPrint("User Model savephoto hata :$e");
       return false;
     } finally {
       state = ViewState.idle;
@@ -470,7 +470,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model addAnnouncement hata :" + e.toString());
+      debugPrint("User Model addAnnouncement hata :$e");
       return false;
     }
   }
@@ -483,7 +483,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model get announcment hata :" + e.toString());
+      debugPrint("User Model get announcment hata :$e");
       return List.empty();
     } finally {
       state = ViewState.idle;
@@ -499,7 +499,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model sendNotification hata :" + e.toString());
+      debugPrint("User Model sendNotification hata :$e");
       return false;
     }
   }
@@ -511,7 +511,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model takeNewOgrID error:" + e.toString());
+      debugPrint("User Model takeNewOgrID error:$e");
       return "";
     }
   }
@@ -524,7 +524,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model sendNotification hata :" + e.toString());
+      debugPrint("User Model sendNotification hata :$e");
       return false;
     }
   }
@@ -538,7 +538,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model getYoneticiToken error :" + e.toString());
+      debugPrint("User Model getYoneticiToken error :$e");
       return '';
     }
   }
@@ -551,7 +551,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
       return sonuc;
     } catch (e) {
-      debugPrint("User Model updateTeacherAuthorisation error :" + e.toString());
+      debugPrint("User Model updateTeacherAuthorisation error :$e");
       return false;
     }
 

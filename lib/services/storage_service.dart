@@ -25,7 +25,7 @@ class FirebaseStorageService implements StorageBase {
   }
 
   @override
-  Future<bool> deletePhoto(String ogrID, String url) async {
+  Future<bool> deletePhoto(String url) async {
     await _firebaseStorage.refFromURL(url).delete();
     return true;
   }

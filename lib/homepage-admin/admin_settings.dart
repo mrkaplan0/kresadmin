@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
-import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/homepage-admin/add_criteria.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/home_settings.dart';
 import 'package:kresadmin/homepage-admin/personel_settings/personel_management.dart';
@@ -17,6 +16,7 @@ class AdminSettings extends StatefulWidget {
   const AdminSettings({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _AdminSettingsState createState() => _AdminSettingsState();
 }
 
@@ -26,11 +26,11 @@ class _AdminSettingsState extends State<AdminSettings> {
 
   @override
   void initState() {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
 
     _messagingService
-        .initialize(onSelectNotification, context, _userModel.users!)
+        .initialize(onSelectNotification, context, userModel.users!)
         .then(
           (value) => firebaseCloudMessagingListeners(),
     );
@@ -54,7 +54,7 @@ class _AdminSettingsState extends State<AdminSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(backgroundColor:const Color(0xFFF68763),
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -63,7 +63,7 @@ class _AdminSettingsState extends State<AdminSettings> {
           "Yönetim Paneli",
           style: Theme.of(context)
               .textTheme
-              .headline5!
+              .headlineSmall!
               .copyWith(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -83,7 +83,7 @@ class _AdminSettingsState extends State<AdminSettings> {
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
-              infoKres(context, _userModel),
+              infoKres(context, userModel),
               Positioned(
                 top: 200,
                 left: MediaQuery.of(context).size.width * 0.05,
@@ -152,7 +152,7 @@ class _AdminSettingsState extends State<AdminSettings> {
     );
   }
 
-  Widget infoKres(BuildContext context, UserModel _userModel) {
+  Widget infoKres(BuildContext context, UserModel userModel) {
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 45),
       height: 230,
@@ -181,7 +181,7 @@ class _AdminSettingsState extends State<AdminSettings> {
             ),
             const SizedBox(height: 10),
             Text(
-              "${_userModel.users!.kresCode} - ${_userModel.users!.kresAdi}",
+              "${userModel.users!.kresCode} - ${userModel.users!.kresAdi}",
               style: const TextStyle(color: Colors.black, fontSize: 18),
             ),
             const SizedBox(height: 35),
@@ -194,7 +194,7 @@ class _AdminSettingsState extends State<AdminSettings> {
             ),
             const SizedBox(height: 10),
             Text(
-              "${_userModel.users!.username}",
+              "${userModel.users!.username}",
               style: const TextStyle(color: Colors.black, fontSize: 18),
             ),
           ],
@@ -204,8 +204,8 @@ class _AdminSettingsState extends State<AdminSettings> {
   }
 
   Future<bool> _cikisyap(BuildContext context) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    bool sonuc = await _userModel.signOut();
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    bool sonuc = await userModel.signOut();
     return sonuc;
   }
 }

@@ -1,23 +1,24 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class ShowPhotoWidget extends StatelessWidget {
   final String photoUrl;
   late DragStartDetails startVerticalDragDetails;
   late DragUpdateDetails updateVerticalDragDetails;
-  ShowPhotoWidget(this.photoUrl);
+  ShowPhotoWidget(this.photoUrl, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       child: AlertDialog(
         content: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
               color: Colors.white),
           child: ExtendedImage.network(
             photoUrl,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
           ),
         ),
       ),

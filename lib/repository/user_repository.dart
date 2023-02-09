@@ -188,15 +188,26 @@ class UserRepository implements AuthBase {
 
   @override
   Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
+      String kresCode, String kresAdi, String ogrID, List<Photo> fotoUrl) async {
     bool b = false;
-    bool sonuc = await _firebaseStorageService.deletePhoto(ogrID, fotoUrl);
-    if (sonuc == true) {
-      bool result = await _firestoreDBService.deletePhoto(
-          kresCode, kresAdi, ogrID, fotoUrl);
-      b = result;
-    }
-    return b;
+    for (int i=0;i<fotoUrl.length;i++){
+
+     bool sonuc = await _firebaseStorageService.deletePhoto( fotoUrl[i].photoUrl);
+
+     debugPrint("  $i");
+
+     if (sonuc == true) {
+       bool result = await _firestoreDBService.deletePhoto(
+           kresCode, kresAdi, fotoUrl[i].ogrID, fotoUrl[i]);
+
+       debugPrint("  $i");
+       b = result;
+     }
+
+
+   }
+
+   return b;
   }
 
   @override

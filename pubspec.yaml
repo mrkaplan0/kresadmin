@@ -48,6 +48,7 @@ dependencies:
   extended_image: ^6.2.1
   image: ^3.3.0
   image_cropper: ^3.0.1
+  google_mobile_ads: ^2.3.0
 
 
 dev_dependencies:

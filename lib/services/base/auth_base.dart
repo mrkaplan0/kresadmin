@@ -33,7 +33,7 @@ abstract class AuthBase {
   Future<String> uploadPhotoToGallery(String kresCode, String kresAdi,
       String ogrID, String ogrAdi, String fileType, File yuklenecekDosya);
   Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, String fotoUrl);
+      String kresCode, String kresAdi, String ogrID, List<Photo> fotoUrl);
   Future<bool> saveRatings(String kresCode, String kresAdi, String ogrID,
       Map<String, dynamic> ratings, bool showPhotoMainPage);
   Future<List<Map<String, dynamic>>> getRatings(

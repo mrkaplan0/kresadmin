@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/criteria_widget.dart';
@@ -10,6 +9,7 @@ class AddCriteria extends StatefulWidget {
   const AddCriteria({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddCriteriaState createState() => _AddCriteriaState();
 }
 
@@ -82,7 +82,7 @@ class _AddCriteriaState extends State<AddCriteria> {
   }
 
   List<Widget> criteriaItemBuild() {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     List<Widget> ll = [];
 
     for (int i = 0; i < dataList.length; i++) {
@@ -91,8 +91,8 @@ class _AddCriteriaState extends State<AddCriteria> {
         child: CriteriaWidget(
           dataList[i],
           () async {
-            await _userModel.addCriteria(_userModel.users!.kresCode!,
-                _userModel.users!.kresAdi!, dataList[i]);
+            await userModel.addCriteria(userModel.users!.kresCode!,
+                userModel.users!.kresAdi!, dataList[i]);
             setState(() {});
           },
         ),
@@ -111,14 +111,15 @@ class _AddCriteriaState extends State<AddCriteria> {
   ];
 
   Widget _addButton(String criteria) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return InkWell(
       onTap: () async {
         if (kriterController.text.isNotEmpty) {
-          var sonuc = await _userModel.addCriteria(_userModel.users!.kresCode!,
-              _userModel.users!.kresAdi!, kriterController.text);
+          var sonuc = await userModel.addCriteria(userModel.users!.kresCode!,
+              userModel.users!.kresAdi!, kriterController.text);
           if (sonuc) {
             kriterController.clear();
+            // ignore: use_build_context_synchronously
             FocusScope.of(context).unfocus();
             setState(() {});
           }
@@ -142,10 +143,10 @@ class _AddCriteriaState extends State<AddCriteria> {
   }
 
   Widget dynamicCriteriaList() {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return FutureBuilder<List<String>>(
-        future: _userModel.getCriteria(
-            _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
+        future: userModel.getCriteria(
+            userModel.users!.kresCode!, userModel.users!.kresAdi!),
         builder: (context, sonuc) {
           if (sonuc.hasData) {
             var criteriaList = sonuc.data!;
@@ -190,10 +191,10 @@ class _AddCriteriaState extends State<AddCriteria> {
   }
 
   deleteCriteria(BuildContext context, String criteria) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
-    var sonuc = await _userModel.deleteCriteria(
-        _userModel.users!.kresCode!, _userModel.users!.kresAdi!, criteria);
+    var sonuc = await userModel.deleteCriteria(
+        userModel.users!.kresCode!, userModel.users!.kresAdi!, criteria);
 
     if (sonuc == true) {
       setState(() {});
