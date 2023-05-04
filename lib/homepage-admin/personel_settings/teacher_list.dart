@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +10,8 @@ import 'package:kresadmin/models/teacher.dart';
 import 'package:provider/provider.dart';
 
 class TeacherListPage extends StatefulWidget {
+  const TeacherListPage({super.key});
+
   @override
   _TeacherListPageState createState() => _TeacherListPageState();
 }
@@ -19,16 +23,16 @@ class _TeacherListPageState extends State<TeacherListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Öğretmen Listesi",
           style: TextStyle(color: Colors.black),
         ),
       ),
       body: Container(
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: kdefaultPadding,
             ),
             teacherListWidget(context)
@@ -39,99 +43,98 @@ class _TeacherListPageState extends State<TeacherListPage> {
   }
 
   Widget teacherListWidget(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
     return Expanded(
-      child: Container(
-        child: StreamBuilder<List<Teacher>>(
-          stream: _userModel.getTeachers(
-              _userModel.users!.kresCode!, _userModel.users!.kresAdi!),
-          builder: (context, sonuc) {
-            if (sonuc.hasData) {
-              List<Teacher> teacherList = sonuc.data!;
-              print(teacherList.toString());
-              if (teacherList.length > 0) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: teacherList.length,
-                    itemBuilder: (context, i) {
-                      return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 2,
-                            child: ListTile(
-                              leading: Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: primaryColor, width: 3),
-                                        shape: BoxShape.circle,
-                                        color: Colors.orangeAccent.shade100),
-                                    height: 50,
-                                    width: 50,
-                                    child: teacherList[i].fotoUrl == null
-                                        ? Center(child: Icon(Icons.person))
-                                        : ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(40)),
-                                            child: Image.network(
-                                                teacherList[i].fotoUrl!,
-                                                fit: BoxFit.cover),
-                                          ),
-                                  ),
-                                ],
-                              ),
-                              title: Text(teacherList[i].adiSoyadi),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text("Öğr. No: " + teacherList[i].teacherID),
-                                  Divider(
-                                    thickness: 2,
-                                  ),
-                                  Text("Sınıfı: " + teacherList[i].sinifi!),
-                                ],
-                              ),
-                              trailing: Container(
-                                padding: EdgeInsets.only(right: 5),
-                                width: 110,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.edit),
-                                      color: Colors.blueGrey,
-                                      onPressed: () {
-                                        _editPhotoWithDialog(teacherList[i]);
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.remove_circle),
-                                      color: Colors.red,
-                                      onPressed: () async {
-                                        _deletePersonelWithDialog(
-                                            teacherList[i]);
-                                      },
-                                    ),
-                                  ],
+      child: StreamBuilder<List<Teacher>>(
+        stream: userModel.getTeachers(
+            userModel.users!.kresCode!, userModel.users!.kresAdi!),
+        builder: (context, sonuc) {
+          if (sonuc.hasData) {
+            List<Teacher> teacherList = sonuc.data!;
+
+            if (teacherList.length>0) {
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: teacherList.length,
+                  itemBuilder: (context, i) {
+                    return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 2,
+                          child: ListTile(
+                            leading: Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: primaryColor, width: 3),
+                                      shape: BoxShape.circle,
+                                      color: Colors.orangeAccent.shade100),
+                                  height: 50,
+                                  width: 50,
+                                  child: teacherList[i].fotoUrl == null
+                                      ? const Center(child: Icon(Icons.person))
+                                      : ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(40)),
+                                          child: Image.network(
+                                              teacherList[i].fotoUrl!,
+                                              fit: BoxFit.cover),
+                                        ),
                                 ),
+                              ],
+                            ),
+                            title: Text(teacherList[i].adiSoyadi),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text("Öğr. No: ${teacherList[i].teacherID}"),
+                                const Divider(
+                                  thickness: 2,
+                                ),
+                                Text("Sınıfı: ${teacherList[i].sinifi!}"),
+                              ],
+                            ),
+                            trailing: Container(
+                              padding: const EdgeInsets.only(right: 5),
+                              width: 110,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    color: Colors.blueGrey,
+                                    onPressed: () {
+                                      _editPhotoWithDialog(teacherList[i]);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.remove_circle),
+                                    color: Colors.red,
+                                    onPressed: () async {
+                                      _deletePersonelWithDialog(
+                                          teacherList[i]);
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                          ));
-                    });
-              } else {
-                return Center(
-                  child: Text("Lütfen Ayarlara Gidip Masa Değeri Giriniz"),
-                );
-              }
-            } else
-              return Center(
-                child: CircularProgressIndicator(),
+                          ),
+                        ));
+                  });
+            } else {
+              return const Center(
+                child: Text("Kayıtlı öğretmen yok."),
               );
-          },
-        ),
+            }
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
   }
@@ -140,13 +143,13 @@ class _TeacherListPageState extends State<TeacherListPage> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        final UserModel _userModel =
+        final UserModel userModel =
             Provider.of<UserModel>(context, listen: false);
         return SimpleDialog(
           title: const Text('Personel Sil'),
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(' Kişiyi silmek istediğinizden emin misiniz?'),
             ),
             ButtonBar(
@@ -154,9 +157,9 @@ class _TeacherListPageState extends State<TeacherListPage> {
                 ElevatedButton(
                   onPressed: () async {
                     try {
-                      bool sonuc = await _userModel.deleteTeacher(
-                          _userModel.users!.kresCode!,
-                          _userModel.users!.kresAdi!,
+                      bool sonuc = await userModel.deleteTeacher(
+                          userModel.users!.kresCode!,
+                          userModel.users!.kresAdi!,
                           teacher);
 
                       if (sonuc == true) {
@@ -170,13 +173,13 @@ class _TeacherListPageState extends State<TeacherListPage> {
                             'Kişiyi silerken hata oluştu,daha sonra tekrar deneyiniz.');
                       }
                     } catch (e) {
-                      debugPrint('Personel silme hatası ' + e.toString());
+                      debugPrint('Personel silme hatası $e');
                     }
                   },
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.orangeAccent)),
-                  child: Text("Sil"),
+                  child: const Text("Sil"),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -185,7 +188,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.blueGrey)),
-                  child: Text("İptal"),
+                  child: const Text("İptal"),
                 ),
               ],
             ),
@@ -213,7 +216,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
 
                       uploadProfilePhoto(photo, teacher);
                     },
-                    child: Text("Foto Çek")),
+                    child: const Text("Foto Çek")),
                 ElevatedButton(
                     onPressed: () async {
                       Get.back();
@@ -223,7 +226,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
 
                       uploadProfilePhoto(image, teacher);
                     },
-                    child: Text("Galeriden Seç"))
+                    child: const Text("Galeriden Seç"))
               ],
             ),
           ],
@@ -233,20 +236,19 @@ class _TeacherListPageState extends State<TeacherListPage> {
   }
 
   uploadProfilePhoto(XFile? photo, Teacher teacher) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     File file = File(photo!.path);
-    var url = await _userModel.uploadOgrProfilePhoto(
-        _userModel.users!.kresCode!,
-        _userModel.users!.kresAdi!,
+    var url = await userModel.uploadOgrProfilePhoto(
+        userModel.users!.kresCode!,
+        userModel.users!.kresAdi!,
         teacher.teacherID,
         teacher.adiSoyadi,
-        "profil_foto",
+        "teacher_profile",
         file);
 
     if (url != null) {
       teacher.fotoUrl = url;
 
-      print(url);
     }
     setState(() {});
   }

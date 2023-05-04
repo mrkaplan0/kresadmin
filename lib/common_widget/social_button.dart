@@ -12,8 +12,8 @@ class SocialLoginButton extends StatelessWidget {
   const SocialLoginButton(
       {super.key, required this.btnText,
       required this.btnColor,
-      this.textColor: Colors.white,
-      this.radius: 10,
+      this.textColor = Colors.white,
+      this.radius = 10,
       this.yukseklik,
       this.btnIcon,
       required this.onPressed});
@@ -27,8 +27,8 @@ class SocialLoginButton extends StatelessWidget {
         style: TextButton.styleFrom(
           elevation: 0,
           backgroundColor: Colors.orangeAccent.shade100,
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(color: Colors.orangeAccent),
+          shape: const RoundedRectangleBorder(
+            side: BorderSide(color: Colors.orangeAccent),
           ),
         ),
         child: Text(

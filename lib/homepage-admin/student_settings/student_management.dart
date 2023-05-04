@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
 import 'package:kresadmin/constants.dart';
-import 'package:kresadmin/homepage-admin/student_settings/add_Student.dart';
+import 'package:kresadmin/homepage-admin/student_settings/add_student.dart';
 import 'package:kresadmin/homepage-admin/student_settings/fast_rating_page.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_list.dart';
 import 'package:kresadmin/models/student.dart';

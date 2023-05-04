@@ -1,10 +1,11 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_if_null_operators
+
 import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
 import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/hata_exception.dart';
 import 'package:kresadmin/landing_page.dart';
-import 'package:kresadmin/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
@@ -24,30 +25,28 @@ class _EmailLoginState extends State<EmailLogin> {
   _formSubmit(BuildContext context) async {
     _formKey.currentState!.save();
 
-    final _userModel = Provider.of<UserModel>(context, listen: false);
+    final userModel = Provider.of<UserModel>(context, listen: false);
 
     try {
-      MyUser _girisYapanUser =
-          (await _userModel.signingWithEmailAndPassword(_email, _sifre))!;
-      print("Giriş yapan Kullanıcı $_girisYapanUser");
+      await userModel.signingWithEmailAndPassword(_email, _sifre);
+
       Navigator.popAndPushNamed(context, '/LandingPage');
     } catch (e) {
-      debugPrint('Hata Giriş yaparken hata çıktı: ' + e.toString());
-      Get.snackbar('Hata', 'HATA: ' + Hatalar.goster(e.toString()),
+      Get.snackbar('Hata', 'HATA: ${Hatalar.goster(e.toString())}',
           snackPosition: SnackPosition.BOTTOM);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context);
+    final UserModel userModel = Provider.of<UserModel>(context);
 
-    if (_userModel.state == ViewState.idle) {
-      if (_userModel.users != null) {
-        return LandingPage();
+    if (userModel.state == ViewState.idle) {
+      if (userModel.users != null) {
+        return const LandingPage();
       }
     } else {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -68,13 +67,13 @@ class _EmailLoginState extends State<EmailLogin> {
                 "Giriş Yap",
                 style: Theme.of(context)
                     .textTheme
-                    .headline5!
+                    .headlineSmall!
                     .copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
-              _userModel.state == ViewState.idle
+              userModel.state == ViewState.idle
                   ? SingleChildScrollView(
                       child: Form(
                         key: _formKey,
@@ -90,11 +89,11 @@ class _EmailLoginState extends State<EmailLogin> {
                                       horizontal: 40, vertical: 20),
                                   labelText: 'E-mail',
                                   hintText: 'E-mailinizi giriniz...',
-                                  errorText: _userModel.emailHataMesaj != null
-                                      ? _userModel.emailHataMesaj
+                                  errorText: userModel.emailHataMesaj != null
+                                      ? userModel.emailHataMesaj
                                       : null,
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
+                                  suffixIcon: const Padding(
+                                    padding: EdgeInsets.fromLTRB(
                                         0, 10, 10, 10),
                                     child: Icon(Icons.mail_outline_rounded),
                                   )),
@@ -102,7 +101,7 @@ class _EmailLoginState extends State<EmailLogin> {
                                 _email = gelenMail!;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             TextFormField(
@@ -111,15 +110,15 @@ class _EmailLoginState extends State<EmailLogin> {
                               decoration: InputDecoration(
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.always,
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 20),
                                   labelText: 'Şifre',
                                   hintText: 'Şifrenizi giriniz...',
-                                  errorText: _userModel.sifreHataMesaj != null
-                                      ? _userModel.sifreHataMesaj
+                                  errorText: userModel.sifreHataMesaj != null
+                                      ? userModel.sifreHataMesaj
                                       : null,
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
+                                  suffixIcon: const Padding(
+                                    padding: EdgeInsets.fromLTRB(
                                         0, 10, 10, 10),
                                     child: Icon(Icons.lock_outline_rounded),
                                   )),
@@ -127,10 +126,10 @@ class _EmailLoginState extends State<EmailLogin> {
                                 _sifre = gelenSifre!;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
-                            Container(
+                            SizedBox(
                               width: 150,
                               child: SocialLoginButton(
                                 btnText: _buttonText,
@@ -142,7 +141,7 @@ class _EmailLoginState extends State<EmailLogin> {
                         ),
                       ),
                     )
-                  : Center(
+                  : const Center(
                       child: CircularProgressIndicator(),
                     ),
             ],

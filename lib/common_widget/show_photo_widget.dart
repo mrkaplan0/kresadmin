@@ -38,7 +38,7 @@ class ShowPhotoWidget extends StatelessWidget {
         if (dx < 0) dx = -dx;
         if (dy < 0) dy = -dy;
 
-        if (velocity! < 0) {
+        if (velocity! < -10) {
           Navigator.of(context).pop();
         }
       },

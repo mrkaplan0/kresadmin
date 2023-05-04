@@ -12,16 +12,13 @@ class LoginPage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/splash.png'), fit: BoxFit.fill),
+              image: AssetImage('assets/images/splash.png'), fit: BoxFit.cover),
         ),
         child: Stack(
           fit: StackFit.expand,
           children: [
             const SizedBox(height: 100),
-            const Image(
-              alignment: Alignment.topCenter,
-              image: AssetImage('assets/images/logo.png'),
-            ),
+
             const SizedBox(
               height: 250,
             ),
@@ -56,7 +53,7 @@ class LoginPage extends StatelessWidget {
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => EmailLogin(),
+                                builder: (context) => const EmailLogin(),
                                 fullscreenDialog: true)),
                         style: TextButton.styleFrom(
                           elevation: 0,

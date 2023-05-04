@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
-import 'package:kresadmin/homepage-admin/admin_settings.dart';
+import 'package:kresadmin/homepage-admin/admin_homepage.dart';
 import 'package:kresadmin/homepage-visitor/home_page.dart';
 import 'package:kresadmin/homepage_teacher/teacher_homepage.dart';
 import 'package:kresadmin/signin/teacher_approval_process.dart';
@@ -12,19 +12,19 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: true);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: true);
 
-    if (_userModel.state == ViewState.idle) {
-      if (_userModel.users == null) {
+    if (userModel.state == ViewState.idle) {
+      if (userModel.users == null) {
         return const LoginPage();
       }
-      else if(_userModel.users!.isAdmin! ==false)
+      else if(userModel.users!.isAdmin! ==false)
       {
-        return  TeacherLandingPage( user:_userModel.users!);
+        return  TeacherLandingPage( user:userModel.users!);
       } else {
-        switch (_userModel.users!.position) {
+        switch (userModel.users!.position) {
           case 'Admin':
-            return const AdminSettings();
+            return const AdminHomepage();
           case 'Teacher':
             return  const TeacherHomePage();
           case 'visitor':

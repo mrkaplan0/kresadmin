@@ -6,9 +6,7 @@ import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
 import 'package:kresadmin/common_widget/show_rating_details.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
-import 'package:kresadmin/deeeneme.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/image_crop.dart';
-import 'package:kresadmin/homepage-admin/homepage_settings/photo_editor.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_ratings_page.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
@@ -27,6 +25,9 @@ class _StudentPageState extends State<StudentPage> {
   bool isExpanded = false;
   DateTime dateTime = DateTime.now();
   List<Map<String, dynamic>> allRatings = [];
+  bool isEditButtonClicked = false;
+  List<bool>? _isChanged;
+  List<Photo> willBeDeletedUrlList = [];
 
   List<Photo> album = [];
 
@@ -35,6 +36,7 @@ class _StudentPageState extends State<StudentPage> {
     super.initState();
     getRatingsMethod().then((value) => setState(() {}));
     getIndividualPhotos().then((value) => setState(() {}));
+
   }
 
   @override
@@ -91,11 +93,17 @@ class _StudentPageState extends State<StudentPage> {
                           "Henüz değerlendirme yok!",
                         ),
                   allRatings.isNotEmpty ? last3Ratings() : Container(),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text("Kişisel Galeri",
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold)),
+                  Row(mainAxisAlignment: MainAxisAlignment.end ,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Kişisel Galeri",
+                            style: TextStyle(
+                                fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      ),
+                    const SizedBox(width: 70,),
+                    ...  editingButtonForAdmin(),
+                    ],
                   ),
                   album.isNotEmpty
                       ? photoGalleryWidget()
@@ -237,17 +245,47 @@ class _StudentPageState extends State<StudentPage> {
           itemCount: album.length,
           itemBuilder: (context, i) {
             return GestureDetector(
-              child: Container(
-                margin: const EdgeInsets.all(6),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  child: ExtendedImage.network(
-                    album[i].photoUrl,
-                    fit: BoxFit.cover,
-                    mode: ExtendedImageMode.gesture,
-                    cache: true,
+              child: Stack(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(6),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      child: ExtendedImage.network(
+                        album[i].photoUrl,
+                        fit: BoxFit.cover,
+                        mode: ExtendedImageMode.gesture,
+                        cache: true,
+                      ),
+                    ),
                   ),
-                ),
+
+                  if (isEditButtonClicked == true) ...[
+                    //if Admin wants to delete Photos, he can use this CheckBox.
+                    Checkbox(
+                      value: _isChanged![i],
+                      onChanged: (v) {
+                        setState(() {
+                          _isChanged![i] = v!;
+                          if (v == true) {
+                            willBeDeletedUrlList.add(album[i]);
+                            debugPrint(willBeDeletedUrlList.toString());
+                          } else {
+                            willBeDeletedUrlList
+                                .remove(album[i]);
+                            debugPrint(willBeDeletedUrlList.toString());
+                          }
+                        });
+                        debugPrint("${_isChanged![i]}");
+                      },
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(4.0),
+                        ),
+                      ),
+                    )
+                  ]
+                ],
               ),
               onTap: () {
                 showDialog(
@@ -418,6 +456,9 @@ class _StudentPageState extends State<StudentPage> {
         _userModel.users!.kresCode!,
         _userModel.users!.kresAdi!,
         widget.student.ogrID);
+    if (album.isNotEmpty) {
+      _isChanged = List<bool>.filled(album.length, false);
+    }
   }
 
   void _showRatingDetails(Map<String, dynamic> rating) {
@@ -426,5 +467,57 @@ class _StudentPageState extends State<StudentPage> {
         builder: (context) {
           return RatingDetailsWidget(rating);
         });
+  }
+
+  List<Widget> editingButtonForAdmin() {
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    return [
+      if (isEditButtonClicked == true) ...[
+        IconButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text('Silmek istediğinizden emin misiniz?'),
+                action: SnackBarAction(
+                    label: "Evet",
+                    onPressed: () {
+                      userModel
+                          .deletePhoto(
+                          userModel.users!.kresCode!,
+                          userModel.users!.kresAdi!,
+                          '',
+                          willBeDeletedUrlList)
+                          .then((value) {
+                        if (value) {
+                          setState(() {
+                            isEditButtonClicked = false;
+                            _isChanged =
+                            List<bool>.filled(album.length, false);
+                          });
+                        }
+                      });
+                    }),
+              ));
+            },
+            icon: const Icon(Icons.check_rounded)),
+        IconButton(
+            onPressed: () {
+              setState(() {
+                willBeDeletedUrlList.clear();
+                _isChanged = List<bool>.filled(album.length, false);
+                isEditButtonClicked = false;
+              });
+            },
+            icon: const Icon(Icons.clear_rounded)),
+      ],
+      if (isEditButtonClicked == false) ...[
+        IconButton(
+            onPressed: () {
+              setState(() {
+                isEditButtonClicked = true;
+              });
+            },
+            icon: const Icon(Icons.mode_edit_outline_rounded))
+      ],
+    ];
   }
 }

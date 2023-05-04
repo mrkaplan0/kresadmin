@@ -1,15 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/constants.dart';
-import 'package:kresadmin/deeeneme.dart';
-import 'package:kresadmin/homepage-admin/homepage_settings/image_crop.dart';
+
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +15,7 @@ File editedPhoto;
   PhotoEditor({Key? key, this.student, required this.editedPhoto}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _PhotoEditorState createState() => _PhotoEditorState();
 }
 
@@ -63,7 +57,6 @@ class _PhotoEditorState extends State<PhotoEditor> {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Foto Ekle'),

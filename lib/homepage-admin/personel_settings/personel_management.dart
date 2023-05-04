@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
 import 'package:kresadmin/constants.dart';
-import 'package:kresadmin/homepage-admin/personel_settings/add_teacher.dart';
 import 'package:kresadmin/homepage-admin/personel_settings/teacher_list.dart';
 
 class PersonelManagement extends StatelessWidget {
@@ -15,7 +14,7 @@ class PersonelManagement extends StatelessWidget {
           "Personel Yönetim Ekranı",
           style: Theme.of(context)
               .textTheme
-              .headline5!
+              .headlineSmall!
               .copyWith(fontWeight: FontWeight.bold),
         ),
       ),
@@ -32,18 +31,10 @@ class PersonelManagement extends StatelessWidget {
                 shrinkWrap: true,
                 children: [
                   MenuItems(
-                    itemText: ' Öğretmen Ekle',
-                    onPress: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddTeacher()));
-                    },
-                    icon: Icons.person_add_alt_1_rounded,
-                  ),
-                  MenuItems(
                     itemText: 'Öğretmen Listesi',
                     onPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => TeacherListPage()));
+                          builder: (context) => const TeacherListPage()));
                     },
                     icon: Icons.people_alt_rounded,
                   ),

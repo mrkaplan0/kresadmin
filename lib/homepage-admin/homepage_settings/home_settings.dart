@@ -2,44 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
 import 'package:kresadmin/constants.dart';
-import 'package:kresadmin/homepage-admin/homepage_settings/add_announcement.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/image_crop.dart';
-import 'package:kresadmin/homepage-admin/homepage_settings/photo_editor.dart';
 import 'package:kresadmin/homepage-visitor/home_page.dart';
 import 'package:kresadmin/homepage-visitor/photo_gallery.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:provider/provider.dart';
 
-class HomeSettings extends StatefulWidget {
-  const HomeSettings({Key? key}) : super(key: key);
+
+class GallerySettings extends StatefulWidget {
+  const GallerySettings({Key? key}) : super(key: key);
 
   @override
-  State<HomeSettings> createState() => _HomeSettingsState();
+  State<GallerySettings> createState() => _GallerySettingsState();
 }
 
-class _HomeSettingsState extends State<HomeSettings> {
-/*  List<Photo>? album = [];
+class _GallerySettingsState extends State<GallerySettings> {
+  List<Photo>? album = [];
 
-  @override
+@override
   void initState() {
+  final UserModel userModel = Provider.of<UserModel>(context, listen: false);
+  userModel
+      .getPhotoToMainGallery(
+      userModel.users!.kresCode!, userModel.users!.kresAdi!)
+      .then((value) {album = value;
+  });
     super.initState();
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    _userModel
-        .getPhotoToMainGallery(
-        _userModel.users!.kresCode!, _userModel.users!.kresAdi!)
-        .then((value) {
-      setState(() {
-        album = value;
-      });
-    });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Anasayfa İşlemleri",
+          "Galeri İşlemleri",
           style: Theme.of(context)
               .textTheme
               .headlineSmall!
@@ -65,7 +61,7 @@ class _HomeSettingsState extends State<HomeSettings> {
                           MaterialPageRoute(
                               builder: (context) => const ImageCrop()));
                     },
-                    icon: Icons.person,
+                    icon: Icons.add_a_photo_outlined,
                   ),
                   MenuItems(
                     itemText: 'Galeriyi Düzenle',
@@ -75,27 +71,18 @@ class _HomeSettingsState extends State<HomeSettings> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>  const PhotoGallery()));
+                              builder: (context) =>  PhotoGallery(album)));
                     },
-                    icon: Icons.person,
+                    icon: Icons.photo_library_outlined,
                   ),
-                  MenuItems(
-                    itemText: ' Duyuru Ekle',
-                    onPress: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AddAnnouncement()));
-                    },
-                    icon: Icons.school_rounded,
-                  ),
+
                   MenuItems(
                     itemText: 'Anasayfa',
                     onPress: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => HomePage()));
                     },
-                    icon: Icons.star_half_rounded,
+                    icon: Icons.home_outlined,
                   ),
                 ],
               )

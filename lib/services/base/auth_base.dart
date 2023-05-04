@@ -53,4 +53,8 @@ abstract class AuthBase {
   Future<bool> sendNotificationToYonetici(
       MyUser senderUser, String yoneticiToken);
   Future<String> getYoneticiToken(String kresCode, String kresAdi);
+  Future<int> getUploadCounts(String kresCode, String kresAdi);
+  Future<void> updateUploadCounts(String kresCode, String kresAdi);
+
+
 }

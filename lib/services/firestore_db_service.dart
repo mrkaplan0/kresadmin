@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,14 +26,6 @@ class FirestoreDBService implements DBBase {
         .then((value) => debugPrint("User Kaydedildi."))
         .catchError((error) => debugPrint("Kullanıcı kayıt hatası: $error"));
 
-    DocumentSnapshot _okunanUser =
-        await _firestore.doc('Users/${users.userID}').get();
-
-    Map<String, dynamic> map = _okunanUser.data() as Map<String, dynamic>;
-    MyUser _okunanUserNesnesi = MyUser.fromMap(map);
-
-    debugPrint("Okunan user nesnesi" + _okunanUserNesnesi.toString());
-
     return true;
   }
 
@@ -42,7 +36,7 @@ class FirestoreDBService implements DBBase {
     Map<String, dynamic> map = _okunanUser.data() as Map<String, dynamic>;
     MyUser _okunanUserNesnesi = MyUser.fromMap(map);
 
-    debugPrint("Okunan user nesnesi" + map.toString());
+    debugPrint("Okunan user nesnesi$map");
     return _okunanUserNesnesi;
   }
 
@@ -69,7 +63,7 @@ class FirestoreDBService implements DBBase {
             authorisation: false);
         await _firestore
             .collection("Kresler")
-            .doc(user.kresCode! + '_' + user.kresAdi!)
+            .doc('${user.kresCode!}_${user.kresAdi!}')
             .collection(user.kresAdi!)
             .doc(user.kresAdi)
             .collection("Teachers")
@@ -103,7 +97,7 @@ class FirestoreDBService implements DBBase {
     String? t = await _messaging.getToken();
     await _firestore
         .collection("KreslerChecking")
-        .doc(user.kresCode! + '_' + user.kresAdi!)
+        .doc('${user.kresCode!}_${user.kresAdi!}')
         .set({
       "kresCode": user.kresCode,
       "kresAdi": user.kresAdi,
@@ -111,13 +105,23 @@ class FirestoreDBService implements DBBase {
     }, SetOptions(merge: true));
     await _firestore
         .collection("Kresler")
-        .doc(user.kresCode! + '_' + user.kresAdi!)
+        .doc('${user.kresCode!}_${user.kresAdi!}')
         .collection(user.kresAdi!)
         .doc(user.kresAdi)
         .set({
       "kresCode": user.kresCode,
       "kresAdi": user.kresAdi,
       "yoneticiToken": t
+    }, SetOptions(merge: true));
+ await _firestore
+        .collection("Kresler")
+        .doc('${user.kresCode!}_${user.kresAdi!}')
+     .collection(user.kresAdi!)
+     .doc(user.kresAdi!)
+     .collection("UploadCounts")
+     .doc("UploadCounts")
+        .set({
+      "Counts": 5,
     }, SetOptions(merge: true));
 
     await _firestore.collection("Admins").doc(user.kresCode).set(user.toMap());
@@ -159,7 +163,7 @@ class FirestoreDBService implements DBBase {
   Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID) async {
     QuerySnapshot querySnapshot = await _firestore
         .collection("KreslerChecking")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection("Students")
         .get();
     List<int> list = [];
@@ -176,12 +180,12 @@ class FirestoreDBService implements DBBase {
   Future<String> getYoneticiToken(String kresCode, String kresAdi) async {
     DocumentSnapshot documentSnapshot = await _firestore
         .collection("KreslerChecking")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .get();
 
     Map<String, dynamic> map = documentSnapshot.data()! as Map<String, dynamic>;
     String tkn = map['yoneticiToken'];
-    debugPrint("db yön tokn : " + tkn);
+    debugPrint("db yön tokn : $tkn");
     return tkn;
   }
 
@@ -189,7 +193,7 @@ class FirestoreDBService implements DBBase {
   Future<String> takeNewOgrID(String kresCode, String kresAdi) async {
     QuerySnapshot querySnapshot = await _firestore
         .collection("KreslerChecking")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection("Students")
         .get();
     List<int> list = [];
@@ -211,7 +215,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, Student student) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Students")
@@ -222,7 +226,7 @@ class FirestoreDBService implements DBBase {
 
     await _firestore
         .collection("KreslerChecking")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection("Students")
         .doc(student.ogrID)
         .set({
@@ -236,7 +240,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, Student student) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Students")
@@ -246,7 +250,7 @@ class FirestoreDBService implements DBBase {
         .catchError((error) => debugPrint("Öğrenci silme hatası: $error"));
     await _firestore
         .collection("KreslerChecking")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection("Students")
         .doc(student.ogrID)
         .delete()
@@ -260,7 +264,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, String ogrNo) async {
     DocumentSnapshot docSnapshot = await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection('Students')
@@ -279,7 +283,7 @@ class FirestoreDBService implements DBBase {
   Stream<List<Student>> getStudents(String kresCode, String kresAdi) {
     var snapShot = _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection('Students')
@@ -295,7 +299,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi) async {
     QuerySnapshot querySnapshot = await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection('Students')
@@ -316,7 +320,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, String ogrID, String url) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection('Students')
@@ -324,6 +328,17 @@ class FirestoreDBService implements DBBase {
         .update({'fotoUrl': url});
   }
 
+  updateTeacherProfilePhoto(
+      String kresCode, String kresAdi, String ogrID, String url) async {
+    await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection('Teachers')
+        .doc(ogrID)
+        .update({'fotoUrl': url});
+  }
   @override
   Future<bool> updateTeacherAuthorisation(
       String kresCode, String kresAdi, String teacherUserID) async {
@@ -345,10 +360,10 @@ class FirestoreDBService implements DBBase {
 
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
-        .collection("Teacher")
+        .collection("Teachers")
         .doc(teacher.teacherID)
         .delete();
     return true;
@@ -358,10 +373,10 @@ class FirestoreDBService implements DBBase {
   Stream<List<Teacher>> getTeachers(String kresCode, String kresAdi) {
     var snapShot = _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
-        .collection('Teacher')
+        .collection('Teachers')
         .snapshots();
 
     return snapShot.map((ogrList) => ogrList.docs
@@ -374,7 +389,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, String criteria) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Criteria")
@@ -390,7 +405,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, String criteria) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Criteria")
@@ -405,7 +420,7 @@ class FirestoreDBService implements DBBase {
   Future<List<String>> getCriteria(String kresCode, String kresAdi) async {
     DocumentSnapshot documentSnapshot = await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Criteria")
@@ -425,7 +440,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, String ogrID, String fotoUrl) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Students")
@@ -443,7 +458,7 @@ class FirestoreDBService implements DBBase {
     if (ogrID !=null) {
       await _firestore
           .collection("Kresler")
-          .doc(kresCode + '_' + kresAdi)
+          .doc('${kresCode}_$kresAdi')
           .collection(kresAdi)
           .doc(kresAdi)
           .collection("Students")
@@ -455,7 +470,7 @@ class FirestoreDBService implements DBBase {
     } else {
       await _firestore
           .collection("Kresler")
-          .doc(kresCode + '_' + kresAdi)
+          .doc('${kresCode}_$kresAdi')
           .collection(kresAdi)
           .doc(kresAdi)
           .collection('Main')
@@ -470,7 +485,7 @@ class FirestoreDBService implements DBBase {
       Map<String, dynamic> ratings, bool showPhotoMainPage) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Students")
@@ -493,7 +508,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, String ogrID) async {
     QuerySnapshot querySnapshot = await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection('Students')
@@ -514,7 +529,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, Photo myPhoto) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection('Main')
@@ -522,17 +537,9 @@ class FirestoreDBService implements DBBase {
         .set({myPhoto.time: myPhoto.toMap()}, SetOptions(merge: true));
 
     if (myPhoto.ogrID != null) {
-      await _firestore
-          .collection("Kresler")
-          .doc(kresCode + '_' + kresAdi)
-          .collection(kresAdi)
-          .doc(kresAdi)
-          .collection("Students")
-          .doc(myPhoto.ogrID)
-          .collection("Gallery")
-          .doc(myPhoto.ogrID)
-          .set({myPhoto.time: myPhoto.toMap()}, SetOptions(merge: true));
+     await savePhotoToSpecialGallery(kresCode, kresAdi, myPhoto);
     }
+    await decreaseUploadCount(kresCode, kresAdi);
     return true;
   }
 
@@ -541,7 +548,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi) async {
     DocumentSnapshot documentSnapshot = await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection('Main')
@@ -563,7 +570,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, String ogrID) async {
     DocumentSnapshot documentSnapshot = await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Students")
@@ -587,7 +594,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, Photo myPhoto) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Students")
@@ -596,7 +603,31 @@ class FirestoreDBService implements DBBase {
         .doc(myPhoto.ogrID)
         .set({myPhoto.time: myPhoto.toMap()}, SetOptions(merge: true));
 
+await decreaseUploadCount(kresCode, kresAdi);
+
     return true;
+  }
+
+  Future decreaseUploadCount( String kresCode, String kresAdi) async{
+    DocumentSnapshot d=  await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("UploadCounts")
+        .doc("UploadCounts").get();
+
+    Map<String, dynamic> map =  d.data()! as   Map<String, dynamic>;
+    int newCount=map['Counts']-1;
+
+    await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("UploadCounts")
+        .doc("UploadCounts").update({'Counts': newCount});
+
   }
 
   @override
@@ -604,7 +635,7 @@ class FirestoreDBService implements DBBase {
       String kresCode, String kresAdi, Map<String, dynamic> map) async {
     await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Announcement")
@@ -621,7 +652,7 @@ class FirestoreDBService implements DBBase {
   ) async {
     DocumentSnapshot documentSnapshot = await _firestore
         .collection("Kresler")
-        .doc(kresCode + '_' + kresAdi)
+        .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("Announcement")
@@ -640,5 +671,31 @@ class FirestoreDBService implements DBBase {
           .compareTo(DateTime.parse(a['Duyuru Tarihi']));
     });
     return duyuruList;
+  }
+
+  @override
+  Future<int> getUploadCounts(String kresCode, String kresAdi) async {
+  DocumentSnapshot documentSnapshot= await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("UploadCounts")
+        .doc("UploadCounts").get();
+   Map<String, dynamic> maps =documentSnapshot.data()! as Map<String, dynamic>;
+  int counts= maps['Counts'];
+  return counts;
+  }
+
+  @override
+  Future<void> updateUploadCounts(String kresCode, String kresAdi)  async {
+await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("UploadCounts")
+        .doc("UploadCounts").update({'Counts':5});
+
   }
 }

@@ -17,32 +17,43 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Photo>? album = [];
+  List<Map<String, dynamic>> announcements = [];
+
   @override
   void initState() {
     super.initState();
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    _userModel
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    userModel
         .getPhotoToMainGallery(
-            _userModel.users!.kresCode!, _userModel.users!.kresAdi!)
+            userModel.users!.kresCode!, userModel.users!.kresAdi!)
         .then((value) {
       setState(() {
         album = value;
       });
     });
+    userModel
+        .getAnnouncements(
+        userModel.users!.kresCode!, userModel.users!.kresAdi!)
+        .then((value) {
+      if (value.isNotEmpty) {setState(() {
+        announcements = value;
+      });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-          //centerTitle: true,
+//centerTitle: true,
           automaticallyImplyLeading: false,
           title: Text(
-            "${_userModel.users!.kresAdi}",
+            "${userModel.users!.kresAdi}",
             style: Theme.of(context)
                 .textTheme
-                .headline6!
+                .titleLarge!
                 .copyWith(fontWeight: FontWeight.bold, color: Colors.grey),
           ),
           actions: [
@@ -70,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                         "Fotoğraf Galerisi",
                         style: Theme.of(context)
                             .textTheme
-                            .headline5!
+                            .headlineSmall!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                       TextButton(
@@ -78,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PhotoGallery(album: album,)));
+                                  builder: (context) => PhotoGallery(album)));
                         },
                         child: const Text(
                           "Tümünü Gör",
@@ -111,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                         "Duyurular",
                         style: Theme.of(context)
                             .textTheme
-                            .headline5!
+                            .headlineSmall!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -130,21 +141,54 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Text("31.10.2021 - Hoşgeldin Yeni Anasayfa!"),
+                 Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: announcementList(),
                 ),
               ],
             )),
       ),
     );
   }
-
+  Widget announcementList() {
+    if (announcements.isNotEmpty) {
+      return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: announcements.length > 3 ? 3 : announcements.length,
+          itemBuilder: (context, i) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                      "${announcements[i]['Duyuru Tarihi']}      ${announcements[i]['Duyuru Başlığı']}"),
+                  /*  Text(
+                            "Detayı Gör",
+                            style: TextStyle(
+                                // fontStyle: FontStyle.italic,
+                                color: Colors.black26),
+                          )*/
+                  IconButton(
+                    icon: const Icon(Icons.keyboard_double_arrow_right_outlined),
+                    onPressed: () => _showAnnouncementDetail(
+                        announcements[i]['Duyuru Başlığı'],
+                        announcements[i]['Duyuru']),
+                  )
+                ],
+              ),
+            );
+          });
+    } else {
+      return const Text("Henüz duyuru yok.");
+    }
+  }
   Widget photoGalleryWidget() {
     if (album!.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(left: 10.0, right: 15),
-        child: Container(
+        child: SizedBox(
           height: 160,
           child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -174,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                         width: 180,
                         decoration: BoxDecoration(
                             borderRadius: const BorderRadius.all(
-                                const Radius.circular(8)),
+                                 Radius.circular(8)),
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
@@ -191,12 +235,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                       album![i].info != null
                           ? Positioned(
+                              bottom: 35,
+                              left: 13,
                               child: Text(
                                 album![i].info!,
                                 style: const TextStyle(color: Colors.grey),
                               ),
-                              bottom: 35,
-                              left: 13,
                             )
                           : const Text(""),
                     ],
@@ -221,10 +265,34 @@ class _HomePageState extends State<HomePage> {
       );
     }
   }
+  _showAnnouncementDetail(
+      String announcementTitle, String? announcementDetail) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(announcementTitle),
+            content: SingleChildScrollView(
+              child: Text(announcementDetail != null
+                  ? announcementDetail
+                  : "Detay Yok"),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Kapat'),
+              )
+            ],
+          );
+        });
+  }
+
 
   Future<bool> _cikisyap(BuildContext context) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    bool sonuc = await _userModel.signOut();
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    bool sonuc = await userModel.signOut();
     return sonuc;
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kresadmin/models/photo.dart';
@@ -63,7 +65,6 @@ class UserRepository implements AuthBase {
 
   @override
   Future<bool> deleteUser(MyUser user) async {
-    
     bool _sonuc = await _firebaseAuthService.deleteUser(user);
 
     return _sonuc;
@@ -96,13 +97,20 @@ class UserRepository implements AuthBase {
       File yuklenecekDosya) async {
     var url = await _firebaseStorageService.uploadPhoto(
         kresCode, kresAdi, ogrID, fileType, yuklenecekDosya);
-    print(url);
-    if (url.isNotEmpty) {
+    if (url.isNotEmpty&&fileType=='profil_foto') {
       try {
         await _firestoreDBService.updateOgrProfilePhoto(
             kresCode, kresAdi, ogrID, url);
       } catch (e) {
         debugPrint(" db de ogr yok!");
+      }
+    } else if (url.isNotEmpty&&fileType=='teacher_profile'){
+
+      try {
+        await _firestoreDBService.updateTeacherProfilePhoto(
+            kresCode, kresAdi, ogrID, url);
+      } catch (e) {
+        debugPrint(" db de teacher yok!");
       }
     }
     return url;
@@ -187,27 +195,25 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, List<Photo> fotoUrl) async {
+  Future<bool> deletePhoto(String kresCode, String kresAdi, String ogrID,
+      List<Photo> fotoUrl) async {
     bool b = false;
-    for (int i=0;i<fotoUrl.length;i++){
+    for (int i = 0; i < fotoUrl.length; i++) {
+      bool sonuc =
+          await _firebaseStorageService.deletePhoto(fotoUrl[i].photoUrl);
 
-     bool sonuc = await _firebaseStorageService.deletePhoto( fotoUrl[i].photoUrl);
+      debugPrint("  $i");
 
-     debugPrint("  $i");
+      if (sonuc == true) {
+        bool result = await _firestoreDBService.deletePhoto(
+            kresCode, kresAdi, fotoUrl[i].ogrID, fotoUrl[i]);
 
-     if (sonuc == true) {
-       bool result = await _firestoreDBService.deletePhoto(
-           kresCode, kresAdi, fotoUrl[i].ogrID, fotoUrl[i]);
+        debugPrint("  $i");
+        b = result;
+      }
+    }
 
-       debugPrint("  $i");
-       b = result;
-     }
-
-
-   }
-
-   return b;
+    return b;
   }
 
   @override
@@ -274,7 +280,19 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi, String teacherUserID) async {
-    return await _firestoreDBService.updateTeacherAuthorisation(kresCode, kresAdi, teacherUserID);
+  Future<bool> updateTeacherAuthorisation(
+      String kresCode, String kresAdi, String teacherUserID) async {
+    return await _firestoreDBService.updateTeacherAuthorisation(
+        kresCode, kresAdi, teacherUserID);
+  }
+
+  @override
+  Future<int> getUploadCounts(String kresCode, String kresAdi) async {
+    return await _firestoreDBService.getUploadCounts(kresCode, kresAdi);
+  }
+
+  @override
+  Future<void> updateUploadCounts(String kresCode, String kresAdi)  async {
+     await _firestoreDBService.updateUploadCounts(kresCode, kresAdi);
   }
 }

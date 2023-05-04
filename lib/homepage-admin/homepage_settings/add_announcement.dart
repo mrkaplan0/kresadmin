@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
 import 'package:provider/provider.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import '../../constants.dart';
 
@@ -110,7 +111,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
   }
 
   Future addAnnouncement(BuildContext context) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       DateTime dateTime = DateTime.now();
@@ -124,8 +125,8 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
         'Duyuru Tarihi': formattedTime
       };
 
-      var sonuc = await _userModel.addAnnouncement(_userModel.users!.kresCode!,
-          _userModel.users!.kresAdi!, announcement);
+      var sonuc = await userModel.addAnnouncement(userModel.users!.kresCode!,
+          userModel.users!.kresAdi!, announcement);
 
       if (sonuc) Navigator.pop(context);
       Get.snackbar('Başarılı', 'Duyuru Eklendi.',

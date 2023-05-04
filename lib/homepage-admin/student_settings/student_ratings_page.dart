@@ -173,8 +173,8 @@ class _StudentRatingState extends State<StudentRating> {
                             widget.student.adiSoyadi,
                             style: const TextStyle(fontSize: 24),
                           ),
-                          Text("Öğrenci No: " + widget.student.ogrID),
-                          Text("Tarih: " + formattedTime)
+                          Text("Öğrenci No: ${widget.student.ogrID}"),
+                          Text("Tarih: $formattedTime")
                         ],
                       )
                     ],

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_if_null_operators
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
@@ -168,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget checkKresCodeWidget(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context);
+    final UserModel userModel = Provider.of<UserModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -191,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: IconButton(
                   icon: const Icon(Icons.arrow_forward_rounded),
                   onPressed: () async {
-                    _kresAdi = await _userModel.queryKresList(_controller.text);
+                    _kresAdi = await userModel.queryKresList(_controller.text);
                     debugPrint(_kresAdi);
 
                     if (_kresAdi.isNotEmpty) {
@@ -262,7 +264,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget emailTextForm(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context);
+    final UserModel userModel = Provider.of<UserModel>(context);
     return TextFormField(
       initialValue: 'kaplan@kaplan.com',
       keyboardType: TextInputType.emailAddress,
@@ -272,8 +274,8 @@ class _RegisterPageState extends State<RegisterPage> {
               const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           labelText: 'E-mail',
           hintText: 'E-Mailinizi giriniz...',
-          errorText: _userModel.emailHataMesaj != null
-              ? _userModel.emailHataMesaj
+          errorText: userModel.emailHataMesaj != null
+              ? userModel.emailHataMesaj
               : null,
           suffixIcon: const Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
@@ -340,43 +342,43 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _formSubmit(BuildContext context, GlobalKey<FormState> formkey) async {
-    final _userModel = Provider.of<UserModel>(context, listen: false);
+    final userModel = Provider.of<UserModel>(context, listen: false);
 
     if (formkey.currentState!.validate()) {
       formkey.currentState!.save();
       try {
-        MyUser? _olusturulanUser =
-            await _userModel.createUserEmailAndPassword(_email, _sifre);
+        MyUser? olusturulanUser =
+            await userModel.createUserEmailAndPassword(_email, _sifre);
 
-        if (_olusturulanUser != null) {
-          _olusturulanUser.kresAdi = _kresAdi;
-          _olusturulanUser.username = _username;
-          _olusturulanUser.phone = _phone;
+        if (olusturulanUser != null) {
+          olusturulanUser.kresAdi = _kresAdi;
+          olusturulanUser.username = _username;
+          olusturulanUser.phone = _phone;
 
           if (formkey == _formKeyAdmin) {
            
-            _olusturulanUser.position = 'Admin';
-            _olusturulanUser.isAdmin = true;
+            olusturulanUser.position = 'Admin';
+            olusturulanUser.isAdmin = true;
           } else {
-            _olusturulanUser.position = 'Teacher';
-            _olusturulanUser.isAdmin = false;
-            _olusturulanUser.kresCode = _controller.text;
-            _olusturulanUser.kresAdi = _kresAdi;
+            olusturulanUser.position = 'Teacher';
+            olusturulanUser.isAdmin = false;
+            olusturulanUser.kresCode = _controller.text;
+            olusturulanUser.kresAdi = _kresAdi;
           }
-          bool result = await _userModel.updateUser(_olusturulanUser);
+          bool result = await userModel.updateUser(olusturulanUser);
         
           if (result == true) {
-            debugPrint("Giriş yapan Kullanıcı $_olusturulanUser");
+            debugPrint("Giriş yapan Kullanıcı $olusturulanUser");
             Navigator.popAndPushNamed(context, '/LandingPage');
           } else {
-            _userModel.deleteUser(_olusturulanUser);
+            userModel.deleteUser(olusturulanUser);
             Get.snackbar('HATA', 'Hata Kullanıcı oluştururken hata çıktı.',
                 snackPosition: SnackPosition.BOTTOM);
           }
         }
       } catch (e) {
-        debugPrint('Hata Kullanıcı oluştururken hata çıktı: ' + e.toString());
-        Get.snackbar('Hata', 'HATA: ' + Hatalar.goster(e.toString()),
+        debugPrint('Hata Kullanıcı oluştururken hata çıktı: $e');
+        Get.snackbar('Hata', 'HATA: ${Hatalar.goster(e.toString())}',
             snackPosition: SnackPosition.BOTTOM);
       }
     }

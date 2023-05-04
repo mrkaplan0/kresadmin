@@ -42,4 +42,6 @@ abstract class DBBase {
   Future<List<Map<String, dynamic>>> getAnnouncements(
       String kresCode, String kresAdi);
   Future<String> getYoneticiToken(String kresCode, String kresAdi);
+  Future<int> getUploadCounts(String kresCode, String kresAdi);
+  Future<void> updateUploadCounts(String kresCode, String kresAdi);
 }

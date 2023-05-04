@@ -1,20 +1,16 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/menu_items.dart';
-import 'package:kresadmin/constants.dart';
-import 'package:kresadmin/homepage-admin/add_criteria.dart';
-import 'package:kresadmin/homepage-admin/homepage_settings/home_settings.dart';
-import 'package:kresadmin/homepage-admin/personel_settings/personel_management.dart';
 import 'package:kresadmin/homepage-admin/send_notification.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_list.dart';
-import 'package:kresadmin/homepage-admin/student_settings/student_management.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/services/messaging_services.dart';
 import 'package:provider/provider.dart';
-
 import '../homepage-admin/student_settings/fast_rating_page.dart';
 
 class TeacherHomePage extends StatefulWidget {
@@ -30,11 +26,11 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
 
   @override
   void initState() {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
 
     _messagingService
-        .initialize(onSelectNotification, context, _userModel.users!)
+        .initialize(onSelectNotification, context, userModel.users!)
         .then(
           (value) => firebaseCloudMessagingListeners(),
     );
@@ -58,18 +54,12 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(backgroundColor:const Color(0xFFF68763),
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text(
-          "Öğretmen Paneli",
-          style: Theme.of(context)
-              .textTheme
-              .headline5!
-              .copyWith(fontWeight: FontWeight.bold),
-        ),
+
         actions: [
           TextButton.icon(
             style: ButtonStyle(
@@ -87,7 +77,7 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
-              infoKres(context, _userModel),
+              infoKres(context, userModel),
               Positioned(
                 top: 200,
                 left: MediaQuery.of(context).size.width * 0.05,
@@ -112,13 +102,13 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                     MenuItems(
                       itemText: '      Öğrenci \n Değerlendirme',
                       onPress: () async {
-                        final UserModel _userModel =
+                        final UserModel userModel =
                         Provider.of<UserModel>(context, listen: false);
 
                         List<Student> stuList=[];
-                        await _userModel
-                            .getStudentFuture(_userModel.users!.kresCode!,
-                            _userModel.users!.kresAdi!)
+                        await userModel
+                            .getStudentFuture(userModel.users!.kresCode!,
+                            userModel.users!.kresAdi!)
                             .then((value) => stuList = value);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => FastRating(stuList)));
@@ -147,7 +137,7 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
     );
   }
 
-  Widget infoKres(BuildContext context, UserModel _userModel) {
+  Widget infoKres(BuildContext context, UserModel userModel) {
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 45),
       height: 230,
@@ -176,7 +166,7 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
             ),
             const SizedBox(height: 10),
             Text(
-              "${_userModel.users!.kresCode} - ${_userModel.users!.kresAdi}",
+              "${userModel.users!.kresCode} - ${userModel.users!.kresAdi}",
               style: const TextStyle(color: Colors.black, fontSize: 18),
             ),
             const SizedBox(height: 35),
@@ -189,8 +179,8 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
             ),
             const SizedBox(height: 10),
             Text(
-              "${_userModel.users!.username}",
-              style: const TextStyle(color: Colors.black, fontSize: 18),
+              "${userModel.users!.username}",
+              style: const TextStyle(color: Colors.black, fontSize: 18),textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -199,8 +189,8 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
   }
 
   Future<bool> _cikisyap(BuildContext context) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    bool sonuc = await _userModel.signOut();
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    bool sonuc = await userModel.signOut();
     return sonuc;
   }
 }

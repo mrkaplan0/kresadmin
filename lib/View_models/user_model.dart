@@ -19,6 +19,7 @@ class UserModel with ChangeNotifier implements AuthBase {
 
   // ignore: unnecessary_getters_setters
   MyUser? get users => _users;
+
   // ignore: unnecessary_getters_setters
   set users(MyUser? value) {
     _users = value;
@@ -27,7 +28,9 @@ class UserModel with ChangeNotifier implements AuthBase {
   UserModel() {
     currentUser();
   }
+
   var _state = ViewState.idle;
+
   ViewState get state => _state;
 
   set state(ViewState value) {
@@ -332,8 +335,8 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> deletePhoto(
-      String kresCode, String kresAdi, String ogrID, List<Photo> fotoUrl) async {
+  Future<bool> deletePhoto(String kresCode, String kresAdi, String ogrID,
+      List<Photo> fotoUrl) async {
     try {
       state = ViewState.busy;
       bool sonuc =
@@ -515,12 +518,13 @@ class UserModel with ChangeNotifier implements AuthBase {
       return "";
     }
   }
-  
+
   @override
-  Future<bool> sendNotificationToYonetici(MyUser senderUser,String yoneticiToken)  async {
+  Future<bool> sendNotificationToYonetici(
+      MyUser senderUser, String yoneticiToken) async {
     try {
-      var sonuc =
-          await _userRepository.sendNotificationToYonetici(senderUser,yoneticiToken);
+      var sonuc = await _userRepository.sendNotificationToYonetici(
+          senderUser, yoneticiToken);
 
       return sonuc;
     } catch (e) {
@@ -528,13 +532,11 @@ class UserModel with ChangeNotifier implements AuthBase {
       return false;
     }
   }
-  
+
   @override
-  Future<String> getYoneticiToken(String kresCode, String kresAdi) 
-   async {
+  Future<String> getYoneticiToken(String kresCode, String kresAdi) async {
     try {
-      var sonuc =
-          await _userRepository.getYoneticiToken(kresCode, kresAdi);
+      var sonuc = await _userRepository.getYoneticiToken(kresCode, kresAdi);
 
       return sonuc;
     } catch (e) {
@@ -544,16 +546,38 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi, String teacherUserID)  async {
+  Future<bool> updateTeacherAuthorisation(
+      String kresCode, String kresAdi, String teacherUserID) async {
     try {
-      var sonuc =
-      await _userRepository.updateTeacherAuthorisation(kresCode, kresAdi, teacherUserID);
+      var sonuc = await _userRepository.updateTeacherAuthorisation(
+          kresCode, kresAdi, teacherUserID);
 
       return sonuc;
     } catch (e) {
       debugPrint("User Model updateTeacherAuthorisation error :$e");
       return false;
     }
+  }
 
+  @override
+  Future<int> getUploadCounts(String kresCode, String kresAdi) async {
+    try {
+      var sonuc = await _userRepository.getUploadCounts(kresCode, kresAdi);
+
+      return sonuc;
+    } catch (e) {
+      debugPrint("User Model uploadcounts error :$e");
+      return Future.error(e);
+    }
+  }
+
+  @override
+  Future<void> updateUploadCounts(String kresCode, String kresAdi) async {
+    try {
+      await _userRepository.updateUploadCounts(kresCode, kresAdi);
+    } catch (e) {
+      debugPrint("User Model uploadcounts error :$e");
+      return Future.error(e);
+    }
   }
 }

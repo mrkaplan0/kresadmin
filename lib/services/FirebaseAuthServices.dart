@@ -255,4 +255,7 @@ class FirebaseAuthService implements AuthBase {
   }
 
  
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

@@ -132,7 +132,7 @@ class _StudentListPageState extends State<StudentListPage> {
                   });
             } else {
               return const Center(
-                child: Text("Lütfen Ayarlara Gidip Masa Değeri Giriniz"),
+                child: Text("Öğrenci listesi yok."),
               );
             }
           } else {

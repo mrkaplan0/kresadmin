@@ -47,7 +47,6 @@ class MessagingService {
   }
 
   invokeLocalNotification(RemoteMessage remoteMessage) async {
-    print("Received notification ${remoteMessage.data}");
     RemoteNotification? notification = remoteMessage.notification;
     AndroidNotification? android = remoteMessage.notification?.android;
     if (notification != null && android != null) {
@@ -93,9 +92,9 @@ class MessagingService {
                     onPressed: () async {
                       try {
 
-                        final UserModel _userModel =
+                        final UserModel userModel =
                             Provider.of<UserModel>(context, listen: false);
-                        bool sonuc = await _userModel.updateTeacherAuthorisation(_userModel.users!.kresCode!, _userModel.users!.kresAdi!, remoteMessage.data['gonderenUserID'],);
+                        bool sonuc = await userModel.updateTeacherAuthorisation(userModel.users!.kresCode!, userModel.users!.kresAdi!, remoteMessage.data['gonderenUserID'],);
 
                         if (sonuc == true) {
                           Navigator.of(context).pop();
@@ -110,7 +109,7 @@ class MessagingService {
                         }
                       } catch (e) {
                         debugPrint(
-                            'Personel ekleme arama hatası ' + e.toString());
+                            'Personel ekleme arama hatası $e');
                       }
                     },
                     style: ButtonStyle(
@@ -140,7 +139,7 @@ class MessagingService {
         barrierDismissible: false,
         context: myContext!,
         builder: (BuildContext context) {
-          final UserModel _userModel =
+          final UserModel userModel =
               Provider.of<UserModel>(context, listen: false);
           return SimpleDialog(
             title: Text(remoteMessage.data['title']),
@@ -153,7 +152,7 @@ class MessagingService {
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: ElevatedButton(
                   onPressed: () async {
-                    await _userModel.signOut();
+                    await userModel.signOut();
                     Navigator.pop(context);
                   },
                   style: ButtonStyle(

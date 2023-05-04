@@ -32,7 +32,7 @@ class MenuItems extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  size: 40,
+                  size: 70,color: Colors.white54,
                 ),
                 const SizedBox(height: 10),
                 Center(child: Text(itemText))

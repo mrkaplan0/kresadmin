@@ -1,8 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/models/user.dart';
 import 'package:kresadmin/services/messaging_services.dart';
@@ -26,21 +27,21 @@ class _TeacherLandingPageState extends State<TeacherLandingPage> {
 
   @override
   void initState() {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
-    _userModel
+    userModel
         .getYoneticiToken(
-            _userModel.users!.kresCode!, _userModel.users!.kresAdi!)
+            userModel.users!.kresCode!, userModel.users!.kresAdi!)
         .then((value) {
 debugPrint("mesaj gönder token init $value");
       tk = value;
-      _userModel
-          .sendNotificationToYonetici(_userModel.users!, tk!)
+      userModel
+          .sendNotificationToYonetici(userModel.users!, tk!)
           .then((value) =>   setState(() {checking=true;}));
 
     });
     _messagingService
-        .initialize(onSelectNotification, context, _userModel.users!)
+        .initialize(onSelectNotification, context, userModel.users!)
         .then(
           (value) => firebaseCloudMessagingListeners(),
         );
@@ -67,11 +68,10 @@ debugPrint("mesaj gönder token init $value");
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
 
 
 
-     if(checking==true){ return Scaffold(
+     if(checking==true){ return Scaffold(appBar: AppBar(actions: [IconButton(onPressed:()=> _cikisyap, icon: const Icon(Icons.logout))],),
         body: Container(
             alignment: Alignment.center,
             child: const Padding(
@@ -91,8 +91,8 @@ debugPrint("mesaj gönder token init $value");
   }
 
   Future<bool> _cikisyap(BuildContext context) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
-    bool sonuc = await _userModel.signOut();
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    bool sonuc = await userModel.signOut();
     return sonuc;
   }
 }

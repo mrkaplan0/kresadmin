@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
-import 'package:kresadmin/common_widget/social_button.dart';
 import 'package:kresadmin/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:kresadmin/models/student.dart';
@@ -37,12 +36,12 @@ bool uploadProcess= false;
 
   @override
   void initState() {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     super.initState();
     _dateController = TextEditingController();
     _ogrIDController = TextEditingController();
-    _userModel
-        .takeNewOgrID(_userModel.users!.kresCode!, _userModel.users!.kresAdi!)
+    userModel
+        .takeNewOgrID(userModel.users!.kresCode!, userModel.users!.kresAdi!)
         .then((value) => _ogrIDController.text =_ogrID= value);
 
   }
@@ -160,7 +159,7 @@ bool uploadProcess= false;
 
   Widget adiSoyadiTextForm(BuildContext context) {
     return TextFormField(
-      initialValue: 'Ömer Kaplan',
+
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -205,7 +204,7 @@ bool uploadProcess= false;
 
   Widget veliAdiSoyadiTextForm(BuildContext context) {
     return TextFormField(
-      initialValue: 'Ömer Kaplan',
+
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -226,7 +225,7 @@ bool uploadProcess= false;
 
   Widget veliTelefonNoTextForm(BuildContext context) {
     return TextFormField(
-      initialValue: '3203942830',
+
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -234,13 +233,13 @@ bool uploadProcess= false;
           hintText: 'Telefon No giriniz...',
           suffixIcon: Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Icon(Icons.person),
+            child: Icon(Icons.phone_android_outlined),
           )),
       onSaved: (String? velitel) {
         _veliTelefonNo = velitel!;
       },
-      validator: (String? _veliTelefonNo) {
-        if (_veliTelefonNo!.isEmpty) return 'Veli telefonu boş geçilemez!';
+      validator: (String? veliTelefonNo) {
+        if (veliTelefonNo!.isEmpty) return 'Veli telefonu boş geçilemez!';
       },
     );
   }
@@ -269,12 +268,12 @@ bool uploadProcess= false;
             lastDate: DateTime.now());
         var dt = DateTime(picked!.year, picked.month, picked.day);
         final DateFormat formatter = DateFormat('yyyy-MM-dd');
-        final String _formattedTime = formatter.format(dt);
+        final String formattedTime = formatter.format(dt);
 
         if (picked != null && picked != time) {
-          _dateController.text = _formattedTime; // add this line.
+          _dateController.text = formattedTime;
           setState(() {
-            _dogumTarihi = _formattedTime;
+            _dogumTarihi = formattedTime;
             time = picked;
           });
         }
@@ -286,13 +285,12 @@ bool uploadProcess= false;
         if (value!.isEmpty) {
           return 'Doğum tarihi boş olamaz!';
         }
-        return null;
       },
     );
   }
 
   saveStudent(BuildContext context) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -303,8 +301,8 @@ bool uploadProcess= false;
       }
 
       Student newStu = Student(
-          kresCode: _userModel.users!.kresCode,
-          kresAdi: _userModel.users!.kresAdi,
+          kresCode: userModel.users!.kresCode,
+          kresAdi: userModel.users!.kresAdi,
           ogrID: _ogrID!,
           adiSoyadi: _ogrAdiSoyadi!,
           dogumTarihi: _dogumTarihi,
@@ -313,8 +311,8 @@ bool uploadProcess= false;
           veliTelefonNo: _veliTelefonNo,
           sinifi: _sinifi,
           fotoUrl: _url ?? "");
-      bool sonuc = await _userModel.saveStudent(
-          _userModel.users!.kresCode!, _userModel.users!.kresAdi!, newStu);
+      bool sonuc = await userModel.saveStudent(
+          userModel.users!.kresCode!, userModel.users!.kresAdi!, newStu);
 
       if (sonuc == true) {
         Navigator.pop(context);
@@ -371,11 +369,11 @@ bool uploadProcess= false;
   }
 
   uploadProfilePhoto(XFile? photo) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     File file = File(photo!.path);
-    var url = await _userModel.uploadOgrProfilePhoto(
-        _userModel.users!.kresCode!,
-        _userModel.users!.kresAdi!,
+    var url = await userModel.uploadOgrProfilePhoto(
+        userModel.users!.kresCode!,
+        userModel.users!.kresAdi!,
         _ogrID!,
         _ogrAdiSoyadi!,
         "profil_foto",

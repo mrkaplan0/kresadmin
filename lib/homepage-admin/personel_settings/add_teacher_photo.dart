@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
 import 'package:kresadmin/models/teacher.dart';
 import 'dart:io';
@@ -11,9 +13,10 @@ import 'package:provider/provider.dart';
 class AddTeacherPhoto extends StatefulWidget {
   final Teacher teacher;
 
-  AddTeacherPhoto(this.teacher);
+  const AddTeacherPhoto(this.teacher, {super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddTeacherPhotoState createState() => _AddTeacherPhotoState();
 }
 
@@ -30,14 +33,14 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: kdefaultPadding + 10),
-              Text("Öğretmen profil foto ekleyin"),
-              SizedBox(height: kdefaultPadding),
+              const SizedBox(height: kdefaultPadding + 10),
+              const Text("Öğretmen profil foto ekleyin"),
+              const SizedBox(height: kdefaultPadding),
               photoWidget(context),
-              SizedBox(height: kdefaultPadding),
+              const SizedBox(height: kdefaultPadding),
               ogrenciBilgileriWidget(context),
-              SizedBox(height: kdefaultPadding),
-              SizedBox(height: kdefaultPadding),
+              const SizedBox(height: kdefaultPadding),
+              const SizedBox(height: kdefaultPadding),
               SocialLoginButton(
                   btnText: 'Kaydet',
                   btnColor: Theme.of(context).primaryColor,
@@ -61,9 +64,9 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
           children: [
             Text(
               "Öğretmen Bilgileri",
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: kdefaultPadding),
+            const SizedBox(height: kdefaultPadding),
             Text("Öğretmen No       : ${widget.teacher.teacherID}"),
             Text("Adı Soyadı            : ${widget.teacher.adiSoyadi}"),
             Text("Telefon No            : ${widget.teacher.telefonNo}"),
@@ -88,14 +91,14 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
             width: 150,
             child: showPhoto(),
           ),
-          Positioned(
+          const Positioned(
+            bottom: 7,
+            right: 7,
             child: Icon(
               Icons.add_a_photo_rounded,
               color: primaryColor,
               size: 40,
             ),
-            bottom: 7,
-            right: 7,
           )
         ],
       ),
@@ -118,7 +121,7 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
 
                   uploadProfilePhoto(photo);
                 },
-                child: Text("Foto Çek")),
+                child: const Text("Foto Çek")),
             ElevatedButton(
                 onPressed: () async {
                   Get.back();
@@ -128,7 +131,7 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
 
                   uploadProfilePhoto(image);
                 },
-                child: Text("Galeriden Seç"))
+                child: const Text("Galeriden Seç"))
           ],
         );
       },
@@ -136,11 +139,11 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
   }
 
   uploadProfilePhoto(XFile? photo) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     File file = File(photo!.path);
-    var url = await _userModel.uploadOgrProfilePhoto(
-        _userModel.users!.kresCode!,
-        _userModel.users!.kresAdi!,
+    var url = await userModel.uploadOgrProfilePhoto(
+        userModel.users!.kresCode!,
+        userModel.users!.kresAdi!,
         widget.teacher.teacherID,
         widget.teacher.adiSoyadi,
         "profil_foto",
@@ -148,13 +151,12 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
 
     if (url != null) {
       widget.teacher.fotoUrl = url;
-      print(url);
     }
     setState(() {});
   }
 
   saveTeacher(BuildContext context) async {
-    final UserModel _userModel = Provider.of<UserModel>(context, listen: false);
+    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     try {
       if (widget.teacher.fotoUrl != null) {
         //TODO: düzenlenecek bölüm.
@@ -175,15 +177,14 @@ class _AddTeacherPhotoState extends State<AddTeacherPhoto> {
   }
 
   showPhoto() {
-    print(widget.teacher.fotoUrl);
     return widget.teacher.fotoUrl == null
-        ? Center(
+        ? const Center(
             child: Text(
             "Foto Ekle",
             style: TextStyle(fontSize: 22, color: Colors.white),
           ))
         : ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(90)),
+            borderRadius: const BorderRadius.all(Radius.circular(90)),
             child: Image.network(widget.teacher.fotoUrl!, fit: BoxFit.cover));
   }
 }

@@ -5,7 +5,8 @@ import 'package:get/get.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_list.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_management.dart';
 import 'package:kresadmin/landing_page.dart';
-
+import 'package:kresadmin/services/admob_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'View_models/user_model.dart';
 import 'constants.dart';
@@ -15,20 +16,21 @@ import 'locator.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 
-  print(
-      "Handling a background message: ${message.messageId} ve ${message.data}");
 }
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   setupLocator();
-  runApp(MyApp());
+  AdmobService.adMobinitialize();
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
 
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +49,16 @@ class MyApp extends StatelessWidget {
             create: (context) => UserModel(),
             child: GetMaterialApp(
               routes: {
-                '/LandingPage': (context) => LandingPage(),
-                '/StudentManagement': (context) => StudentManagement(),
+                '/LandingPage': (context) => const LandingPage(),
+                '/StudentManagement': (context) => const StudentManagement(),
                 '/StudentListPage': (context) => StudentListPage(),
               },
               theme: ThemeData(
                   primarySwatch: primarySwatch,
                   primaryColor: primaryColor,
-                  textTheme: Theme.of(context)
-                      .textTheme
-                      .apply(displayColor: textColor),
-                  elevatedButtonTheme: ElevatedButtonThemeData(
+                  textTheme:  GoogleFonts.montserratTextTheme(
+                  Theme.of(context).textTheme),
+                elevatedButtonTheme: ElevatedButtonThemeData(
                     style: TextButton.styleFrom(
                       backgroundColor: primaryColor,
                       padding: const EdgeInsets.all(kdefaultPadding),
