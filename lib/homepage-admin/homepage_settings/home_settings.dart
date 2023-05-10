@@ -22,13 +22,17 @@ class _GallerySettingsState extends State<GallerySettings> {
 @override
   void initState() {
   final UserModel userModel = Provider.of<UserModel>(context, listen: false);
-  userModel
+  getPhoto(userModel);
+    super.initState();
+  }
+
+void getPhoto(UserModel userModel) {
+   userModel
       .getPhotoToMainGallery(
       userModel.users!.kresCode!, userModel.users!.kresAdi!)
       .then((value) {album = value;
   });
-    super.initState();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +75,7 @@ class _GallerySettingsState extends State<GallerySettings> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>  PhotoGallery(album)));
+                              builder: (context) =>  PhotoGallery(album:album,)));
                     },
                     icon: Icons.photo_library_outlined,
                   ),

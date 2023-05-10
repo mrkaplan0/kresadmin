@@ -80,7 +80,7 @@ class _EmailLoginState extends State<EmailLogin> {
                         child: Column(
                           children: [
                             TextFormField(
-                              initialValue: 'kaplan@kaplan.com',
+
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                   floatingLabelBehavior:
@@ -88,7 +88,7 @@ class _EmailLoginState extends State<EmailLogin> {
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 20),
                                   labelText: 'E-mail',
-                                  hintText: 'E-mailinizi giriniz...',
+                                  hintText: 'E-mailinizi giriniz.',
                                   errorText: userModel.emailHataMesaj != null
                                       ? userModel.emailHataMesaj
                                       : null,
@@ -105,15 +105,14 @@ class _EmailLoginState extends State<EmailLogin> {
                               height: 10,
                             ),
                             TextFormField(
-                              initialValue: "123456",
-                              //obscureText: true,
+                             obscureText: true,
                               decoration: InputDecoration(
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.always,
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 20),
                                   labelText: 'Şifre',
-                                  hintText: 'Şifrenizi giriniz...',
+                                  hintText: 'Şifrenizi giriniz.',
                                   errorText: userModel.sifreHataMesaj != null
                                       ? userModel.sifreHataMesaj
                                       : null,

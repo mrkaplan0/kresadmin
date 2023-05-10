@@ -220,7 +220,6 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget phoneTextForm() {
     return TextFormField(
       keyboardType: TextInputType.phone,
-      initialValue: '123454546',
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -242,8 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget passwordTextForm() {
     return TextFormField(
-      initialValue: "123456",
-      //obscureText: true,
+      obscureText: true,
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -266,7 +264,6 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget emailTextForm(BuildContext context) {
     final UserModel userModel = Provider.of<UserModel>(context);
     return TextFormField(
-      initialValue: 'kaplan@kaplan.com',
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,

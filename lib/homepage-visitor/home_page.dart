@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
 import 'package:kresadmin/constants.dart';
+import 'package:kresadmin/homepage-visitor/announcement_page.dart';
 import 'package:kresadmin/homepage-visitor/photo_gallery.dart';
 import 'package:kresadmin/models/photo.dart';
 
@@ -47,7 +48,7 @@ class _HomePageState extends State<HomePage> {
     final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-//centerTitle: true,
+
           automaticallyImplyLeading: false,
           title: Text(
             "${userModel.users!.kresAdi}",
@@ -89,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PhotoGallery(album)));
+                                  builder: (context) => PhotoGallery(album: album)));
                         },
                         child: const Text(
                           "Tümünü Gör",
@@ -129,7 +130,10 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.only(right: 11.0),
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () { Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AnnouncementPage()));},
                         child: const Text(
                           "Tümünü Gör",
                           style: TextStyle(color: Colors.black26),
@@ -164,12 +168,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                       "${announcements[i]['Duyuru Tarihi']}      ${announcements[i]['Duyuru Başlığı']}"),
-                  /*  Text(
-                            "Detayı Gör",
-                            style: TextStyle(
-                                // fontStyle: FontStyle.italic,
-                                color: Colors.black26),
-                          )*/
+
                   IconButton(
                     icon: const Icon(Icons.keyboard_double_arrow_right_outlined),
                     onPressed: () => _showAnnouncementDetail(
