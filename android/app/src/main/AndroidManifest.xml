@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.kresadmin">
    <application
-        android:label="kresadmin"
+        android:label="Mamini Yönetim"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
