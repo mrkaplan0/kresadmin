@@ -15,7 +15,6 @@ import 'locator.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-
 }
 
 void main() {
@@ -23,11 +22,10 @@ void main() {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   setupLocator();
   AdmobService.adMobinitialize();
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   MyApp({super.key});
@@ -56,9 +54,9 @@ class MyApp extends StatelessWidget {
               theme: ThemeData(
                   primarySwatch: primarySwatch,
                   primaryColor: primaryColor,
-                  textTheme:  GoogleFonts.montserratTextTheme(
-                  Theme.of(context).textTheme),
-                elevatedButtonTheme: ElevatedButtonThemeData(
+                  textTheme: GoogleFonts.montserratTextTheme(
+                      Theme.of(context).textTheme),
+                  elevatedButtonTheme: ElevatedButtonThemeData(
                     style: TextButton.styleFrom(
                       backgroundColor: primaryColor,
                       padding: const EdgeInsets.all(kdefaultPadding),
@@ -78,7 +76,8 @@ class MyApp extends StatelessWidget {
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
-        return const CircularProgressIndicator();
+        return Container(
+            color: Colors.white, child: const CircularProgressIndicator());
       },
     );
   }

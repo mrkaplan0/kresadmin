@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +29,7 @@ class _AddStudentState extends State<AddStudent> {
       _veliTelefonNo,
       _ogrID,
       _url;
-bool uploadProcess= false;
+  bool uploadProcess = false;
 
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _dateController, _ogrIDController;
@@ -42,8 +44,7 @@ bool uploadProcess= false;
     _ogrIDController = TextEditingController();
     userModel
         .takeNewOgrID(userModel.users!.kresCode!, userModel.users!.kresAdi!)
-        .then((value) => _ogrIDController.text =_ogrID= value);
-
+        .then((value) => _ogrIDController.text = _ogrID = value);
   }
 
   @override
@@ -55,7 +56,6 @@ bool uploadProcess= false;
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -130,15 +130,17 @@ bool uploadProcess= false;
                   const Text('Profil Fotosu Başarıyla Eklendi.')
                 ],
                 const SizedBox(height: kdefaultPadding),
-
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => uploadProcess==true? null:saveStudent(context),
-                    child: uploadProcess==true? const CircularProgressIndicator(): const Text(
-                      'Kaydet',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    onPressed: () =>
+                        uploadProcess == true ? null : saveStudent(context),
+                    child: uploadProcess == true
+                        ? const CircularProgressIndicator()
+                        : const Text(
+                            'Kaydet',
+                            style: TextStyle(color: Colors.white),
+                          ),
                     style: TextButton.styleFrom(
                       elevation: 0,
                       backgroundColor: Colors.orangeAccent.shade100,
@@ -148,7 +150,6 @@ bool uploadProcess= false;
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -159,7 +160,6 @@ bool uploadProcess= false;
 
   Widget adiSoyadiTextForm(BuildContext context) {
     return TextFormField(
-
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -204,7 +204,6 @@ bool uploadProcess= false;
 
   Widget veliAdiSoyadiTextForm(BuildContext context) {
     return TextFormField(
-
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -225,7 +224,6 @@ bool uploadProcess= false;
 
   Widget veliTelefonNoTextForm(BuildContext context) {
     return TextFormField(
-
       decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -341,11 +339,15 @@ bool uploadProcess= false;
                       final XFile? photo = await _picker.pickImage(
                           source: ImageSource.camera, imageQuality: 35);
 
-                      setState(() {uploadProcess=true;});
+                      setState(() {
+                        uploadProcess = true;
+                      });
 
-                    await  uploadProfilePhoto(photo);
+                      await uploadProfilePhoto(photo);
 
-                      setState(() {uploadProcess=false;});
+                      setState(() {
+                        uploadProcess = false;
+                      });
                     },
                     child: const Text("Foto Çek")),
                 ElevatedButton(
@@ -355,9 +357,13 @@ bool uploadProcess= false;
                       final XFile? image = await _picker.pickImage(
                           source: ImageSource.gallery, imageQuality: 35);
 
-                      setState(() {uploadProcess=true;});
-                     await uploadProfilePhoto(image);
-                      setState(() {uploadProcess=false;});
+                      setState(() {
+                        uploadProcess = true;
+                      });
+                      await uploadProfilePhoto(image);
+                      setState(() {
+                        uploadProcess = false;
+                      });
                     },
                     child: const Text("Galeriden Seç"))
               ],
@@ -383,7 +389,6 @@ bool uploadProcess= false;
       _url = url;
       debugPrint(_url);
       debugPrint(url);
-
     }
     setState(() {});
   }

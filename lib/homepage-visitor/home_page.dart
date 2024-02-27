@@ -1,24 +1,42 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'dart:convert';
+
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
 import 'package:kresadmin/constants.dart';
+import 'package:kresadmin/homepage-admin/add_criteria.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/add_announcement.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/gallery_settings.dart';
+import 'package:kresadmin/homepage-admin/personel_settings/personel_management.dart';
+import 'package:kresadmin/homepage-admin/send_notification.dart';
+import 'package:kresadmin/homepage-admin/student_settings/fast_rating_page.dart';
+import 'package:kresadmin/homepage-admin/student_settings/student_list.dart';
+import 'package:kresadmin/homepage-admin/student_settings/student_management.dart';
 import 'package:kresadmin/homepage-visitor/announcement_page.dart';
 import 'package:kresadmin/homepage-visitor/photo_gallery.dart';
 import 'package:kresadmin/models/photo.dart';
+import 'package:kresadmin/models/student.dart';
+import 'package:kresadmin/services/messaging_services.dart';
 
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage();
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final MessagingService _messagingService = MessagingService();
   List<Photo>? album = [];
   List<Map<String, dynamic>> announcements = [];
+  Drawer myDrawer = const Drawer();
 
   @override
   void initState() {
@@ -33,14 +51,50 @@ class _HomePageState extends State<HomePage> {
       });
     });
     userModel
-        .getAnnouncements(
-        userModel.users!.kresCode!, userModel.users!.kresAdi!)
+        .getAnnouncements(userModel.users!.kresCode!, userModel.users!.kresAdi!)
         .then((value) {
-      if (value.isNotEmpty) {setState(() {
-        announcements = value;
-      });
+      if (value.isNotEmpty) {
+        setState(() {
+          announcements = value;
+        });
       }
     });
+
+    _messagingService
+        .initialize(onSelectNotification, context, userModel.users!)
+        .then(
+          (value) => firebaseCloudMessagingListeners(),
+        );
+
+    switchDrawer(userModel);
+    super.initState();
+  }
+
+  void firebaseCloudMessagingListeners() async {
+    MessagingService.onMessage
+        .listen(_messagingService.invokeLocalNotification);
+    MessagingService.onMessageOpenedApp.listen(_pageOpenForOnLaunch);
+  }
+
+  _pageOpenForOnLaunch(RemoteMessage remoteMessage) {
+    final Map<String, dynamic> message = remoteMessage.data;
+
+    onSelectNotification(jsonEncode(message));
+  }
+
+  Future onSelectNotification(String? payload) async {}
+
+  switchDrawer(UserModel userModel) {
+    switch (userModel.users!.position) {
+      case 'Admin':
+        return myDrawer = _teacherDrawerMenu(context, userModel);
+      case 'Teacher':
+        return myDrawer = _teacherDrawerMenu(context, userModel);
+      case 'visitor':
+        return null;
+      default:
+        return Container();
+    }
   }
 
   @override
@@ -48,21 +102,9 @@ class _HomePageState extends State<HomePage> {
     final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-
-          automaticallyImplyLeading: false,
-          title: Text(
-            "${userModel.users!.kresAdi}",
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(fontWeight: FontWeight.bold, color: Colors.grey),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () => _cikisyap(context),
-              icon: const Icon(Icons.logout),
-            ),
-          ]),
+        title: Image.asset("assets/images/logo.png"),
+      ),
+      drawer: myDrawer,
       body: SingleChildScrollView(
         child: SizedBox(
             width: double.infinity,
@@ -90,7 +132,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PhotoGallery(album: album)));
+                                  builder: (context) =>
+                                      PhotoGallery(album: album)));
                         },
                         child: const Text(
                           "Tümünü Gör",
@@ -130,10 +173,13 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.only(right: 11.0),
                       child: TextButton(
-                        onPressed: () { Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AnnouncementPage()));},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AnnouncementPage()));
+                        },
                         child: const Text(
                           "Tümünü Gör",
                           style: TextStyle(color: Colors.black26),
@@ -145,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 10,
                 ),
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: announcementList(),
                 ),
@@ -154,6 +200,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
   Widget announcementList() {
     if (announcements.isNotEmpty) {
       return ListView.builder(
@@ -168,9 +215,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                       "${announcements[i]['Duyuru Tarihi']}      ${announcements[i]['Duyuru Başlığı']}"),
-
                   IconButton(
-                    icon: const Icon(Icons.keyboard_double_arrow_right_outlined),
+                    icon:
+                        const Icon(Icons.keyboard_double_arrow_right_outlined),
                     onPressed: () => _showAnnouncementDetail(
                         announcements[i]['Duyuru Başlığı'],
                         announcements[i]['Duyuru']),
@@ -183,6 +230,7 @@ class _HomePageState extends State<HomePage> {
       return const Text("Henüz duyuru yok.");
     }
   }
+
   Widget photoGalleryWidget() {
     if (album!.isNotEmpty) {
       return Padding(
@@ -216,8 +264,8 @@ class _HomePageState extends State<HomePage> {
                         height: 130,
                         width: 180,
                         decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(
-                                 Radius.circular(8)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(8)),
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
@@ -264,6 +312,7 @@ class _HomePageState extends State<HomePage> {
       );
     }
   }
+
   _showAnnouncementDetail(
       String announcementTitle, String? announcementDetail) {
     showDialog(
@@ -272,6 +321,7 @@ class _HomePageState extends State<HomePage> {
           return AlertDialog(
             title: Text(announcementTitle),
             content: SingleChildScrollView(
+              // ignore: prefer_if_null_operators
               child: Text(announcementDetail != null
                   ? announcementDetail
                   : "Detay Yok"),
@@ -288,10 +338,217 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-
   Future<bool> _cikisyap(BuildContext context) async {
     final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     bool sonuc = await userModel.signOut();
     return sonuc;
+  }
+
+  Drawer _adminDrawerMenu(BuildContext context, UserModel userModel) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          _drawerHeaderWidget(userModel),
+          ListTile(
+            title: const Text('Personel Islemleri'),
+            leading: const Icon(Icons.person),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PersonelManagement()));
+            },
+          ),
+          ListTile(
+            title: const Text('Öğrenci İşlemleri'),
+            leading: const Icon(Icons.school_rounded),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const StudentManagement()));
+            },
+          ),
+          ListTile(
+            title: const Text('Kriter Ekle'),
+            leading: const Icon(Icons.star_half_rounded),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const AddCriteria()));
+            },
+          ),
+          ListTile(
+            title: const Text('Bildirim Gönder'),
+            leading: const Icon(Icons.phone_android_outlined),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SendNotification()));
+            },
+          ),
+          ListTile(
+            title: const Text('Galeri İşlemleri'),
+            leading: const Icon(Icons.photo_library),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const GallerySettings()));
+            },
+          ),
+          ListTile(
+            title: const Text('Duyuru Ekle'),
+            leading: const Icon(Icons.announcement),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddAnnouncement()));
+            },
+          ),
+          ListTile(
+            title: const Text('Cikis Yap'),
+            leading: const Icon(Icons.logout),
+            onTap: () {
+              Navigator.pop(context);
+              _cikisyap(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Drawer _teacherDrawerMenu(BuildContext context, UserModel userModel) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          _drawerHeaderWidget(userModel),
+          ListTile(
+            title: const Text('Öğrenci Listesi'),
+            leading: const Icon(Icons.people),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => StudentListPage()));
+            },
+          ),
+          ListTile(
+            title: const Text('Öğrenci Değerlendirme'),
+            leading: const Icon(Icons.star_rate_outlined),
+            onTap: () async {
+              Navigator.pop(context);
+              List<Student> stuList = [];
+              await userModel
+                  .getStudentFuture(
+                      userModel.users!.kresCode!, userModel.users!.kresAdi!)
+                  .then((value) => stuList = value);
+
+              // ignore: use_build_context_synchronously
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => FastRating(stuList)));
+            },
+          ),
+          ListTile(
+            title: const Text('Bildirim Gönder'),
+            leading: const Icon(Icons.phone_android_outlined),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SendNotification()));
+            },
+          ),
+          ListTile(
+            title: const Text('Galeri İşlemleri'),
+            leading: const Icon(Icons.photo_library),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const GallerySettings()));
+            },
+          ),
+          ListTile(
+            title: const Text('Duyuru Ekle'),
+            leading: const Icon(Icons.announcement),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddAnnouncement()));
+            },
+          ),
+          ListTile(
+            title: const Text('Cikis Yap'),
+            leading: const Icon(Icons.logout),
+            onTap: () {
+              Navigator.pop(context);
+              _cikisyap(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  DrawerHeader _drawerHeaderWidget(UserModel userModel) {
+    return DrawerHeader(
+      decoration: const BoxDecoration(
+        color: Colors.blueGrey,
+      ),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Opacity(
+                opacity: 0.2,
+                child: Icon(
+                  Icons.manage_accounts,
+                  size: 165,
+                  color: Colors.grey.shade200,
+                )),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Kreş Adı",
+                  style: GoogleFonts.montserrat(
+                      color: Colors.grey.shade300,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
+              Text("${userModel.users!.kresAdi}",
+                  style: GoogleFonts.montserrat(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
+              Text("Kreş Kodu",
+                  style: GoogleFonts.montserrat(
+                      color: Colors.grey.shade300,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
+              Text("${userModel.users!.kresCode}",
+                  style: GoogleFonts.montserrat(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

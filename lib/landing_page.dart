@@ -17,31 +17,16 @@ class LandingPage extends StatelessWidget {
     if (userModel.state == ViewState.idle) {
       if (userModel.users == null) {
         return const LoginPage();
-      }
-      else if(userModel.users!.isAdmin! ==false)
-      {
-        return  TeacherLandingPage( user:userModel.users!);
+      } else if (userModel.users!.isAdmin! == false) {
+        return TeacherLandingPage(user: userModel.users!);
       } else {
-        switch (userModel.users!.position) {
-          case 'Admin':
-            return const AdminHomepage();
-          case 'Teacher':
-            return  const TeacherHomePage();
-          case 'visitor':
-            return HomePage();
-          default:
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-        }
+        return const HomePage();
       }
     } else {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+      return Scaffold(
+        body: Container(
+            color: Colors.white,
+            child: const Center(child: CircularProgressIndicator())),
       );
     }
   }

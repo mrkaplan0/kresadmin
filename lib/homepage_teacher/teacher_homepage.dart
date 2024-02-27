@@ -21,22 +21,21 @@ class TeacherHomePage extends StatefulWidget {
 }
 
 class _TeacherHomePageState extends State<TeacherHomePage> {
-
   final MessagingService _messagingService = MessagingService();
 
   @override
   void initState() {
     final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
-
     _messagingService
         .initialize(onSelectNotification, context, userModel.users!)
         .then(
           (value) => firebaseCloudMessagingListeners(),
-    );
+        );
 
     super.initState();
   }
+
   void firebaseCloudMessagingListeners() async {
     MessagingService.onMessage
         .listen(_messagingService.invokeLocalNotification);
@@ -51,25 +50,12 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
 
   Future onSelectNotification(String? payload) async {}
 
-
   @override
   Widget build(BuildContext context) {
     final UserModel userModel = Provider.of<UserModel>(context, listen: false);
-    return Scaffold(backgroundColor:const Color(0xFFF68763),
+    return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         centerTitle: true,
-
-        actions: [
-          TextButton.icon(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all(Colors.black38),
-            ),
-            onPressed: () => _cikisyap(context),
-            icon: const Icon(Icons.logout),
-            label: const Text("Çıkış"),
-          ),
-        ],
       ),
       resizeToAvoidBottomInset: true,
       body: SafeArea(
@@ -90,12 +76,11 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                   ),
                   shrinkWrap: true,
                   children: [
-
                     MenuItems(
                       itemText: ' Öğrenci Listesi',
                       onPress: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>  StudentListPage()));
+                            builder: (context) => StudentListPage()));
                       },
                       icon: Icons.school_rounded,
                     ),
@@ -103,12 +88,12 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                       itemText: '      Öğrenci \n Değerlendirme',
                       onPress: () async {
                         final UserModel userModel =
-                        Provider.of<UserModel>(context, listen: false);
+                            Provider.of<UserModel>(context, listen: false);
 
-                        List<Student> stuList=[];
+                        List<Student> stuList = [];
                         await userModel
                             .getStudentFuture(userModel.users!.kresCode!,
-                            userModel.users!.kresAdi!)
+                                userModel.users!.kresAdi!)
                             .then((value) => stuList = value);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => FastRating(stuList)));
@@ -122,11 +107,10 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                const SendNotification()));
+                                    const SendNotification()));
                       },
                       icon: Icons.phone_android_outlined,
                     ),
-
                   ],
                 ),
               )
@@ -142,13 +126,15 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 45),
       height: 230,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration( color: Colors.white,
-          boxShadow: [BoxShadow(blurRadius: 0.6,spreadRadius:0.7,blurStyle: BlurStyle.outer)],
-
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+                blurRadius: 0.6, spreadRadius: 0.7, blurStyle: BlurStyle.outer)
+          ],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(50))),
       child: Container(
         decoration: const BoxDecoration(
-
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(35),
                 bottomRight: Radius.circular(35))),
@@ -180,7 +166,8 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
             const SizedBox(height: 10),
             Text(
               "${userModel.users!.username}",
-              style: const TextStyle(color: Colors.black, fontSize: 18),textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.black, fontSize: 18),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
