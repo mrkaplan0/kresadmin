@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:kresadmin/models/events.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/models/teacher.dart';
@@ -97,15 +98,14 @@ class UserRepository implements AuthBase {
       File yuklenecekDosya) async {
     var url = await _firebaseStorageService.uploadPhoto(
         kresCode, kresAdi, ogrID, fileType, yuklenecekDosya);
-    if (url.isNotEmpty&&fileType=='profil_foto') {
+    if (url.isNotEmpty && fileType == 'profil_foto') {
       try {
         await _firestoreDBService.updateOgrProfilePhoto(
             kresCode, kresAdi, ogrID, url);
       } catch (e) {
         debugPrint(" db de ogr yok!");
       }
-    } else if (url.isNotEmpty&&fileType=='teacher_profile'){
-
+    } else if (url.isNotEmpty && fileType == 'teacher_profile') {
       try {
         await _firestoreDBService.updateTeacherProfilePhoto(
             kresCode, kresAdi, ogrID, url);
@@ -292,7 +292,26 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<void> updateUploadCounts(String kresCode, String kresAdi)  async {
-     await _firestoreDBService.updateUploadCounts(kresCode, kresAdi);
+  Future<void> updateUploadCounts(String kresCode, String kresAdi) async {
+    await _firestoreDBService.updateUploadCounts(kresCode, kresAdi);
+  }
+
+  @override
+  Future<bool> addNewEvents(
+      String kresCode, String kresAdi, Event newEvent) async {
+    return await _firestoreDBService.addNewEvents(kresCode, kresAdi, newEvent);
+  }
+
+  @override
+  Future<bool> deleteEvent(
+      String kresCode, String kresAdi, Event eventWillBeDeleted) async {
+    return await _firestoreDBService.deleteEvent(
+        kresCode, kresAdi, eventWillBeDeleted);
+  }
+
+  @override
+  Future<Map<DateTime, List<Event>>> fetchEvents(
+      String kresCode, String kresAdi) async {
+    return await _firestoreDBService.fetchEvents(kresCode, kresAdi);
   }
 }

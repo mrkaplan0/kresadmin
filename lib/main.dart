@@ -2,6 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kresadmin/homepage-admin/announcement_page.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/calender_page.dart';
+import 'package:kresadmin/homepage-admin/photo_gallery.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_list.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_management.dart';
 import 'package:kresadmin/landing_page.dart';
@@ -50,8 +53,13 @@ class MyApp extends StatelessWidget {
                 '/LandingPage': (context) => const LandingPage(),
                 '/StudentManagement': (context) => const StudentManagement(),
                 '/StudentListPage': (context) => StudentListPage(),
+                "/PhotoGallery": (context) => const PhotoGallery(),
+                "/AnnouncementPage": (context) => const AnnouncementPage(),
+                "/CalenderPage": (context) => const CalenderPage()
               },
               theme: ThemeData(
+                  colorScheme: ColorScheme.fromSeed(
+                      seedColor: Colors.blueGrey, background: Colors.white),
                   primarySwatch: primarySwatch,
                   primaryColor: primaryColor,
                   textTheme: GoogleFonts.montserratTextTheme(
@@ -77,7 +85,14 @@ class MyApp extends StatelessWidget {
 
         // Otherwise, show something whilst waiting for initialization to complete
         return Container(
-            color: Colors.white, child: const CircularProgressIndicator());
+          color: Colors.white,
+          child: const Center(
+            child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Image(image: AssetImage('assets/images/logo.png'))),
+          ),
+        );
       },
     );
   }

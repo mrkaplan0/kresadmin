@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:kresadmin/models/events.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/models/teacher.dart';
@@ -14,7 +15,8 @@ abstract class AuthBase {
   Future<bool> signOut();
   Future<bool> updateUser(MyUser user);
   Future<bool> deleteUser(MyUser user);
-  Future<bool> updateTeacherAuthorisation(String kresCode, String kresAdi,String teacherUserID);
+  Future<bool> updateTeacherAuthorisation(
+      String kresCode, String kresAdi, String teacherUserID);
   Future<String> queryKresList(String kresCode);
 
   Future<bool> queryOgrID(String kresCode, String kresAdi, String ogrID);
@@ -55,6 +57,9 @@ abstract class AuthBase {
   Future<String> getYoneticiToken(String kresCode, String kresAdi);
   Future<int> getUploadCounts(String kresCode, String kresAdi);
   Future<void> updateUploadCounts(String kresCode, String kresAdi);
-
-
+  Future<bool> addNewEvents(String kresCode, String kresAdi, Event newEvent);
+  Future<Map<DateTime, List<Event>>> fetchEvents(
+      String kresCode, String kresAdi);
+  Future<bool> deleteEvent(
+      String kresCode, String kresAdi, Event eventWillBeDeleted);
 }

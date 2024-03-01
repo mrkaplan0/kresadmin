@@ -1,12 +1,17 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:kresadmin/models/events.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/models/teacher.dart';
 import 'package:kresadmin/models/user.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'base/database_base.dart';
 
 class FirestoreDBService implements DBBase {
@@ -113,13 +118,13 @@ class FirestoreDBService implements DBBase {
       "kresAdi": user.kresAdi,
       "yoneticiToken": t
     }, SetOptions(merge: true));
- await _firestore
+    await _firestore
         .collection("Kresler")
         .doc('${user.kresCode!}_${user.kresAdi!}')
-     .collection(user.kresAdi!)
-     .doc(user.kresAdi!)
-     .collection("UploadCounts")
-     .doc("UploadCounts")
+        .collection(user.kresAdi!)
+        .doc(user.kresAdi!)
+        .collection("UploadCounts")
+        .doc("UploadCounts")
         .set({
       "Counts": 5,
     }, SetOptions(merge: true));
@@ -339,6 +344,7 @@ class FirestoreDBService implements DBBase {
         .doc(ogrID)
         .update({'fotoUrl': url});
   }
+
   @override
   Future<bool> updateTeacherAuthorisation(
       String kresCode, String kresAdi, String teacherUserID) async {
@@ -455,7 +461,7 @@ class FirestoreDBService implements DBBase {
   @override
   Future<bool> deletePhoto(
       String kresCode, String kresAdi, String? ogrID, Photo photo) async {
-    if (ogrID !=null) {
+    if (ogrID != null) {
       await _firestore
           .collection("Kresler")
           .doc('${kresCode}_$kresAdi')
@@ -465,7 +471,8 @@ class FirestoreDBService implements DBBase {
           .doc(photo.ogrID)
           .collection("Gallery")
           .doc(photo.ogrID)
-          .set({photo.time: FieldValue.delete()}, SetOptions(merge: true)).then((value) => debugPrint(" Stu foto Silindi."));
+          .set({photo.time: FieldValue.delete()}, SetOptions(merge: true)).then(
+              (value) => debugPrint(" Stu foto Silindi."));
       return true;
     } else {
       await _firestore
@@ -475,7 +482,8 @@ class FirestoreDBService implements DBBase {
           .doc(kresAdi)
           .collection('Main')
           .doc('Gallery')
-          .set({photo.time: FieldValue.delete()}, SetOptions(merge: true)).then((value) => debugPrint(" Main Galeri foto Silindi."));
+          .set({photo.time: FieldValue.delete()}, SetOptions(merge: true)).then(
+              (value) => debugPrint(" Main Galeri foto Silindi."));
       return true;
     }
   }
@@ -537,7 +545,7 @@ class FirestoreDBService implements DBBase {
         .set({myPhoto.time: myPhoto.toMap()}, SetOptions(merge: true));
 
     if (myPhoto.ogrID != null) {
-     await savePhotoToSpecialGallery(kresCode, kresAdi, myPhoto);
+      await savePhotoToSpecialGallery(kresCode, kresAdi, myPhoto);
     }
     await decreaseUploadCount(kresCode, kresAdi);
     return true;
@@ -603,22 +611,23 @@ class FirestoreDBService implements DBBase {
         .doc(myPhoto.ogrID)
         .set({myPhoto.time: myPhoto.toMap()}, SetOptions(merge: true));
 
-await decreaseUploadCount(kresCode, kresAdi);
+    await decreaseUploadCount(kresCode, kresAdi);
 
     return true;
   }
 
-  Future decreaseUploadCount( String kresCode, String kresAdi) async{
-    DocumentSnapshot d=  await _firestore
+  Future decreaseUploadCount(String kresCode, String kresAdi) async {
+    DocumentSnapshot d = await _firestore
         .collection("Kresler")
         .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("UploadCounts")
-        .doc("UploadCounts").get();
+        .doc("UploadCounts")
+        .get();
 
-    Map<String, dynamic> map =  d.data()! as   Map<String, dynamic>;
-    int newCount=map['Counts']-1;
+    Map<String, dynamic> map = d.data()! as Map<String, dynamic>;
+    int newCount = map['Counts'] - 1;
 
     await _firestore
         .collection("Kresler")
@@ -626,8 +635,8 @@ await decreaseUploadCount(kresCode, kresAdi);
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("UploadCounts")
-        .doc("UploadCounts").update({'Counts': newCount});
-
+        .doc("UploadCounts")
+        .update({'Counts': newCount});
   }
 
   @override
@@ -647,9 +656,7 @@ await decreaseUploadCount(kresCode, kresAdi);
 
   @override
   Future<List<Map<String, dynamic>>> getAnnouncements(
-    String kresCode,
-    String kresAdi,
-  ) async {
+      String kresCode, String kresAdi) async {
     DocumentSnapshot documentSnapshot = await _firestore
         .collection("Kresler")
         .doc('${kresCode}_$kresAdi')
@@ -675,27 +682,86 @@ await decreaseUploadCount(kresCode, kresAdi);
 
   @override
   Future<int> getUploadCounts(String kresCode, String kresAdi) async {
-  DocumentSnapshot documentSnapshot= await _firestore
+    DocumentSnapshot documentSnapshot = await _firestore
         .collection("Kresler")
         .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("UploadCounts")
-        .doc("UploadCounts").get();
-   Map<String, dynamic> maps =documentSnapshot.data()! as Map<String, dynamic>;
-  int counts= maps['Counts'];
-  return counts;
+        .doc("UploadCounts")
+        .get();
+    Map<String, dynamic> maps =
+        documentSnapshot.data()! as Map<String, dynamic>;
+    int counts = maps['Counts'];
+    return counts;
   }
 
   @override
-  Future<void> updateUploadCounts(String kresCode, String kresAdi)  async {
-await _firestore
+  Future<void> updateUploadCounts(String kresCode, String kresAdi) async {
+    await _firestore
         .collection("Kresler")
         .doc('${kresCode}_$kresAdi')
         .collection(kresAdi)
         .doc(kresAdi)
         .collection("UploadCounts")
-        .doc("UploadCounts").update({'Counts':5});
+        .doc("UploadCounts")
+        .update({'Counts': 5});
+  }
 
+  @override
+  Future<bool> addNewEvents(
+      String kresCode, String kresAdi, Event newEvent) async {
+    await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Events")
+        .doc(newEvent.eventsID)
+        .set(newEvent.toMap(), SetOptions(merge: true));
+
+    return true;
+  }
+
+  @override
+  Future<bool> deleteEvent(
+      String kresCode, String kresAdi, Event eventWillBeDeleted) async {
+    await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Events")
+        .doc(eventWillBeDeleted.eventsID)
+        .delete();
+    return true;
+  }
+
+  @override
+  Future<Map<DateTime, List<Event>>> fetchEvents(
+      String kresCode, String kresAdi) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("Kresler")
+        .doc('${kresCode}_$kresAdi')
+        .collection(kresAdi)
+        .doc(kresAdi)
+        .collection("Events")
+        .get();
+    List<Event> eventList = [];
+    Map<DateTime, List<Event>> groupedEvents = {};
+
+    for (DocumentSnapshot event in querySnapshot.docs) {
+      Event e = Event.fromMap((event.data()! as Map<String, dynamic>));
+      eventList.add(e);
+    }
+    for (Event event in eventList) {
+      if (groupedEvents.containsKey(event.eventDate)) {
+        groupedEvents[event.eventDate]!.add(event);
+      } else {
+        groupedEvents[event.eventDate] = [event];
+      }
+    }
+
+    return groupedEvents;
   }
 }

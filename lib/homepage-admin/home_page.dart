@@ -4,25 +4,29 @@ import 'dart:convert';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kresadmin/View_models/user_model.dart';
+import 'package:kresadmin/common_widget/homepage_header.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
 import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/homepage-admin/add_criteria.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/add_announcement.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/calender_page.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/gallery_settings.dart';
 import 'package:kresadmin/homepage-admin/personel_settings/personel_management.dart';
 import 'package:kresadmin/homepage-admin/send_notification.dart';
 import 'package:kresadmin/homepage-admin/student_settings/fast_rating_page.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_list.dart';
 import 'package:kresadmin/homepage-admin/student_settings/student_management.dart';
-import 'package:kresadmin/homepage-visitor/announcement_page.dart';
-import 'package:kresadmin/homepage-visitor/photo_gallery.dart';
+import 'package:kresadmin/homepage-admin/announcement_page.dart';
+import 'package:kresadmin/homepage-admin/photo_gallery.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/services/messaging_services.dart';
-
+import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,6 +41,12 @@ class _HomePageState extends State<HomePage> {
   List<Photo>? album = [];
   List<Map<String, dynamic>> announcements = [];
   Drawer myDrawer = const Drawer();
+
+  String announceTitle = "Duyurular";
+
+  String galleryTitle = "Fotograf Galerisi";
+
+  String calendarTitle = "Etkinlik Takvimi";
 
   @override
   void initState() {
@@ -87,7 +97,7 @@ class _HomePageState extends State<HomePage> {
   switchDrawer(UserModel userModel) {
     switch (userModel.users!.position) {
       case 'Admin':
-        return myDrawer = _teacherDrawerMenu(context, userModel);
+        return myDrawer = _adminDrawerMenu(context, userModel);
       case 'Teacher':
         return myDrawer = _teacherDrawerMenu(context, userModel);
       case 'visitor':
@@ -99,218 +109,79 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset("assets/images/logo.png"),
+        title: ClipOval(
+          child: Image.asset(
+            "assets/images/logo.png",
+            width: 50,
+            height: 50,
+          ),
+        ),
+        centerTitle: true,
       ),
       drawer: myDrawer,
       body: SingleChildScrollView(
         child: SizedBox(
             width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: kdefaultPadding,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Fotoğraf Galerisi",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      PhotoGallery(album: album)));
-                        },
-                        child: const Text(
-                          "Tümünü Gör",
-                          style: TextStyle(color: Colors.black26),
-                        ),
-                      ),
-                    ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: kdefaultPadding,
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                photoGalleryWidget(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                  child: GestureDetector(
-                    child: Image.asset("assets/images/gallery7.png"),
-                    onTap: () {},
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text(
-                        "Duyurular",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 11.0),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AnnouncementPage()));
-                        },
-                        child: const Text(
-                          "Tümünü Gör",
-                          style: TextStyle(color: Colors.black26),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: announcementList(),
-                ),
-              ],
+                  _galleryPart(),
+                  _calenderPart(),
+                  announcementList(),
+                ],
+              ),
             )),
       ),
     );
   }
 
   Widget announcementList() {
-    if (announcements.isNotEmpty) {
-      return ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: announcements.length > 3 ? 3 : announcements.length,
-          itemBuilder: (context, i) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 0.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                      "${announcements[i]['Duyuru Tarihi']}      ${announcements[i]['Duyuru Başlığı']}"),
-                  IconButton(
-                    icon:
-                        const Icon(Icons.keyboard_double_arrow_right_outlined),
-                    onPressed: () => _showAnnouncementDetail(
-                        announcements[i]['Duyuru Başlığı'],
-                        announcements[i]['Duyuru']),
-                  )
-                ],
-              ),
-            );
-          });
-    } else {
-      return const Text("Henüz duyuru yok.");
-    }
-  }
-
-  Widget photoGalleryWidget() {
-    if (album!.isNotEmpty) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 10.0, right: 15),
-        child: SizedBox(
-          height: 160,
-          child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: album!.length > 3 ? 3 : album!.length,
-              itemBuilder: (context, i) {
-                return GestureDetector(
-                  child: Stack(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        height: 130,
-                        width: 180,
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8)),
-                          child: ExtendedImage.network(
-                            album![i].photoUrl,
-                            fit: BoxFit.cover,
-                            mode: ExtendedImageMode.gesture,
-                            cache: true,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        height: 130,
-                        width: 180,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.grey.shade200.withOpacity(0.1),
-                                  Colors.black12.withOpacity(0.3),
-                                  Colors.black26.withOpacity(0.5),
-                                ],
-                                stops: const [
-                                  0.4,
-                                  0.8,
-                                  1,
-                                ])),
-                      ),
-                      album![i].info != null
-                          ? Positioned(
-                              bottom: 35,
-                              left: 13,
-                              child: Text(
-                                album![i].info!,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            )
-                          : const Text(""),
-                    ],
-                  ),
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ShowPhotoWidget(album![i].photoUrl);
-                        });
-                  },
-                );
-              }),
+    return Column(
+      children: [
+        HomepageHeader(
+            headerTitle: announceTitle,
+            onPressed: (() => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AnnouncementPage())))),
+        const SizedBox(
+          height: 10,
         ),
-      );
-    } else {
-      return Padding(
-        padding: const EdgeInsets.only(left: 14.0, right: 14),
-        child: Container(
-          height: 200,
-        ),
-      );
-    }
+        announcements.isNotEmpty
+            ? ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: announcements.length > 3 ? 3 : announcements.length,
+                itemBuilder: (context, i) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 0.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                            "${announcements[i]['Duyuru Tarihi']}      ${announcements[i]['Duyuru Başlığı']}"),
+                        IconButton(
+                          icon: const Icon(
+                              Icons.keyboard_double_arrow_right_outlined),
+                          onPressed: () => _showAnnouncementDetail(
+                              announcements[i]['Duyuru Başlığı'],
+                              announcements[i]['Duyuru']),
+                        )
+                      ],
+                    ),
+                  );
+                })
+            : const Text("Henüz duyuru yok.")
+      ],
+    );
   }
 
   _showAnnouncementDetail(
@@ -549,6 +420,142 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _galleryPart() {
+    return Column(
+      children: [
+        HomepageHeader(
+            headerTitle: galleryTitle,
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PhotoGallery(album: album)))),
+        const SizedBox(
+          height: 10,
+        ),
+        _photoGalleryWidget(),
+      ],
+    );
+  }
+
+  Widget _photoGalleryWidget() {
+    if (album!.isNotEmpty) {
+      return SizedBox(
+        height: 160,
+        child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: album!.length > 3 ? 3 : album!.length,
+            itemBuilder: (context, i) {
+              return GestureDetector(
+                child: Stack(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 6),
+                      height: 130,
+                      width: 180,
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                        child: ExtendedImage.network(
+                          album![i].photoUrl,
+                          fit: BoxFit.cover,
+                          mode: ExtendedImageMode.gesture,
+                          cache: true,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 6),
+                      height: 130,
+                      width: 180,
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8)),
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.grey.shade200.withOpacity(0.1),
+                                Colors.black12.withOpacity(0.3),
+                                Colors.black26.withOpacity(0.5),
+                              ],
+                              stops: const [
+                                0.4,
+                                0.8,
+                                1,
+                              ])),
+                    ),
+                    album![i].info != null
+                        ? Positioned(
+                            bottom: 35,
+                            left: 13,
+                            child: Text(
+                              album![i].info!,
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          )
+                        : const Text(""),
+                  ],
+                ),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return ShowPhotoWidget(album![i].photoUrl);
+                      });
+                },
+              );
+            }),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 14.0, right: 14),
+        child: Container(
+          height: 200,
+        ),
+      );
+    }
+  }
+
+  Widget _calenderPart() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HomepageHeader(headerTitle: calendarTitle, onPressed: null),
+        GestureDetector(
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const CalenderPage())),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                child: SizedBox(
+                  child: Image.asset(
+                    "assets/images/calender.png",
+                    width: 130,
+                    height: 130,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              const Text(
+                "    Sie \n \n                       verfolgen \n \nActivities.",
+                style: TextStyle(color: Colors.black26),
+                overflow: TextOverflow.fade,
+                softWrap: true,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
     );
   }
 }

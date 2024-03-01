@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kresadmin/locator.dart';
+import 'package:kresadmin/models/events.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:kresadmin/models/teacher.dart';
@@ -577,6 +578,40 @@ class UserModel with ChangeNotifier implements AuthBase {
       await _userRepository.updateUploadCounts(kresCode, kresAdi);
     } catch (e) {
       debugPrint("User Model uploadcounts error :$e");
+      return Future.error(e);
+    }
+  }
+
+  @override
+  Future<bool> addNewEvents(
+      String kresCode, String kresAdi, Event newEvent) async {
+    try {
+      return await _userRepository.addNewEvents(kresCode, kresAdi, newEvent);
+    } catch (e) {
+      debugPrint("User Model addNewEvents error :$e");
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deleteEvent(
+      String kresCode, String kresAdi, Event eventWillBeDeleted) async {
+    try {
+      return await _userRepository.deleteEvent(
+          kresCode, kresAdi, eventWillBeDeleted);
+    } catch (e) {
+      debugPrint("User Model deleteEvent error :$e");
+      return false;
+    }
+  }
+
+  @override
+  Future<Map<DateTime, List<Event>>> fetchEvents(
+      String kresCode, String kresAdi) async {
+    try {
+      return await _userRepository.fetchEvents(kresCode, kresAdi);
+    } catch (e) {
+      debugPrint("User Model fetchEvents error :$e");
       return Future.error(e);
     }
   }
