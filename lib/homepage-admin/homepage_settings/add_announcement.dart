@@ -1,5 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +55,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
                 const SizedBox(
                   height: kdefaultPadding,
                 ),
-                SocialLoginButton(
+                CustomButton(
                     btnText: 'Duyuru Ekle',
                     btnColor: Theme.of(context).primaryColor,
                     onPressed: () => addAnnouncement(context)),
@@ -125,12 +126,13 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
         'Duyuru Tarihi': formattedTime
       };
 
-      var sonuc = await userModel.addAnnouncement(userModel.users!.kresCode!,
-          userModel.users!.kresAdi!, announcement);
+      var sonuc = await userModel.addAnnouncement(
+          userModel.users!.kresCode!, userModel.users!.kresAdi!, announcement);
 
       if (sonuc) Navigator.pop(context);
-      Get.snackbar('Başarılı', 'Duyuru Eklendi.',
-          snackPosition: SnackPosition.BOTTOM);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Duyuru eklendi.'),
+      ));
     }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:kresadmin/homepage-admin/announcement_page.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/calender_page.dart';
 import 'package:kresadmin/homepage-admin/photo_gallery.dart';
@@ -48,7 +47,7 @@ class MyApp extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           return ChangeNotifierProvider(
             create: (context) => UserModel(),
-            child: GetMaterialApp(
+            child: MaterialApp(
               routes: {
                 '/LandingPage': (context) => const LandingPage(),
                 '/StudentManagement': (context) => const StudentManagement(),
@@ -66,6 +65,7 @@ class MyApp extends StatelessWidget {
                       Theme.of(context).textTheme),
                   elevatedButtonTheme: ElevatedButtonThemeData(
                     style: TextButton.styleFrom(
+                      textStyle: const TextStyle(color: Colors.white),
                       backgroundColor: primaryColor,
                       padding: const EdgeInsets.all(kdefaultPadding),
                     ),

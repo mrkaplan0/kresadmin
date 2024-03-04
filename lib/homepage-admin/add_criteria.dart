@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/criteria_widget.dart';
 import 'package:kresadmin/constants.dart';
@@ -124,7 +123,9 @@ class _AddCriteriaState extends State<AddCriteria> {
             setState(() {});
           }
         } else {
-          Get.snackbar('Hata', 'Lütfen kriter girin.');
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Lütfen kriter girin.'),
+          ));
         }
       },
       child: Container(
@@ -163,8 +164,8 @@ class _AddCriteriaState extends State<AddCriteria> {
                           child: ListTile(
                             title: Text(
                               criteriaList[i],
-                              style:
-                                  const TextStyle(color: Colors.white, fontSize: 20),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 20),
                             ),
                             tileColor: itemColor3,
                             trailing: InkWell(

@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_if_null_operators
+// ignore_for_file: library_private_types_in_public_api, prefer_if_null_operators, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
@@ -7,7 +7,6 @@ import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/hata_exception.dart';
 import 'package:kresadmin/landing_page.dart';
 import 'package:provider/provider.dart';
-import 'package:get/get.dart';
 
 class EmailLogin extends StatefulWidget {
   const EmailLogin({Key? key}) : super(key: key);
@@ -18,7 +17,7 @@ class EmailLogin extends StatefulWidget {
 
 class _EmailLoginState extends State<EmailLogin> {
   late String _email, _sifre, firma;
-  final String _buttonText = "Giriş";
+  final String _buttonText = "Giriş Yap";
 
   final _formKey = GlobalKey<FormState>();
 
@@ -32,8 +31,9 @@ class _EmailLoginState extends State<EmailLogin> {
 
       Navigator.popAndPushNamed(context, '/LandingPage');
     } catch (e) {
-      Get.snackbar('Hata', 'HATA: ${Hatalar.goster(e.toString())}',
-          snackPosition: SnackPosition.BOTTOM);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(Hatalar.goster(e.toString())),
+      ));
     }
   }
 
@@ -56,31 +56,40 @@ class _EmailLoginState extends State<EmailLogin> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: backgroundColor,
+          surfaceTintColor: backgroundColor,
         ),
-        backgroundColor: backgroundColor,
-        body: Container(
-          margin: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Giriş Yap",
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              userModel.state == ViewState.idle
-                  ? SingleChildScrollView(
-                      child: Form(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 50.0),
+                  child: Center(
+                    child: SizedBox(
+                        height: 150,
+                        width: 150,
+                        child:
+                            Image(image: AssetImage('assets/images/logo.png'))),
+                  ),
+                ),
+                Text(
+                  "Giriş Yap",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                userModel.state == ViewState.idle
+                    ? Form(
                         key: _formKey,
                         child: Column(
                           children: [
                             TextFormField(
-
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                   floatingLabelBehavior:
@@ -93,9 +102,11 @@ class _EmailLoginState extends State<EmailLogin> {
                                       ? userModel.emailHataMesaj
                                       : null,
                                   suffixIcon: const Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        0, 10, 10, 10),
-                                    child: Icon(Icons.mail_outline_rounded),
+                                    padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                                    child: Icon(
+                                      Icons.mail_outline_rounded,
+                                      color: primarySwatch,
+                                    ),
                                   )),
                               onSaved: (String? gelenMail) {
                                 _email = gelenMail!;
@@ -105,7 +116,7 @@ class _EmailLoginState extends State<EmailLogin> {
                               height: 10,
                             ),
                             TextFormField(
-                             obscureText: true,
+                              obscureText: true,
                               decoration: InputDecoration(
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.always,
@@ -117,9 +128,9 @@ class _EmailLoginState extends State<EmailLogin> {
                                       ? userModel.sifreHataMesaj
                                       : null,
                                   suffixIcon: const Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        0, 10, 10, 10),
-                                    child: Icon(Icons.lock_outline_rounded),
+                                    padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                                    child: Icon(Icons.lock_outline_rounded,
+                                        color: primarySwatch),
                                   )),
                               onSaved: (String? gelenSifre) {
                                 _sifre = gelenSifre!;
@@ -130,7 +141,7 @@ class _EmailLoginState extends State<EmailLogin> {
                             ),
                             SizedBox(
                               width: 150,
-                              child: SocialLoginButton(
+                              child: CustomButton(
                                 btnText: _buttonText,
                                 btnColor: Theme.of(context).primaryColor,
                                 onPressed: () => _formSubmit(context),
@@ -138,12 +149,15 @@ class _EmailLoginState extends State<EmailLogin> {
                             ),
                           ],
                         ),
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    )
-                  : const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-            ],
+                SizedBox(
+                  height: 150,
+                )
+              ],
+            ),
           ),
         ));
   }

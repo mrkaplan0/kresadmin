@@ -243,7 +243,7 @@ class _CalenderPageState extends State<CalenderPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  SocialLoginButton(
+                  CustomButton(
                       btnText: "Kaydet",
                       btnColor: Theme.of(context).primaryColor,
                       onPressed: () async {

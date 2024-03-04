@@ -1,7 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
 import 'package:kresadmin/common_widget/show_rating_details.dart';
@@ -36,7 +35,6 @@ class _StudentPageState extends State<StudentPage> {
     super.initState();
     getRatingsMethod().then((value) => setState(() {}));
     getIndividualPhotos().then((value) => setState(() {}));
-
   }
 
   @override
@@ -56,62 +54,66 @@ class _StudentPageState extends State<StudentPage> {
                   background: studentProfile(context))),
           SliverList(
               delegate: SliverChildListDelegate([
-            Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(height: 15),
-                  SocialLoginButton(
-                          btnText: 'Değerlendir',
-                          btnColor: Theme.of(context).primaryColor,
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      StudentRating(widget.student),
-                                  fullscreenDialog: true)))
-                      .paddingSymmetric(horizontal: 10),
-                  const SizedBox(height: 15),
-                  SocialLoginButton(
-                          btnText: 'Foto Ekle',
-                          btnColor: Theme.of(context).primaryColor,
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ImageCrop(student: widget.student))))
-                      .paddingSymmetric(horizontal: 10),
-                  const SizedBox(height: 15),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text("Performans Değerlendirmeleri",
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold)),
-                  ),
-                  allRatings.isNotEmpty
-                      ? const SizedBox(height: 10)
-                      : const Text(
-                          "Henüz değerlendirme yok!",
-                        ),
-                  allRatings.isNotEmpty ? last3Ratings() : Container(),
-                  Row(mainAxisAlignment: MainAxisAlignment.end ,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("Kişisel Galeri",
-                            style: TextStyle(
-                                fontSize: 20.0, fontWeight: FontWeight.bold)),
-                      ),
-                    const SizedBox(width: 70,),
-                    ...  editingButtonForAdmin(),
-                    ],
-                  ),
-                  album.isNotEmpty
-                      ? photoGalleryWidget()
-                      : const Padding(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(height: 15),
+                    CustomButton(
+                        btnText: 'Değerlendir',
+                        btnColor: Theme.of(context).primaryColor,
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    StudentRating(widget.student),
+                                fullscreenDialog: true))),
+                    const SizedBox(height: 15),
+                    CustomButton(
+                        btnText: 'Foto Ekle',
+                        btnColor: Theme.of(context).primaryColor,
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ImageCrop(student: widget.student)))),
+                    const SizedBox(height: 15),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Performans Değerlendirmeleri",
+                          style: TextStyle(
+                              fontSize: 20.0, fontWeight: FontWeight.bold)),
+                    ),
+                    allRatings.isNotEmpty
+                        ? const SizedBox(height: 10)
+                        : const Text(
+                            "Henüz değerlendirme yok!",
+                          ),
+                    allRatings.isNotEmpty ? last3Ratings() : Container(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text("Galeride henüz fotoğraf yok!"),
+                          child: Text("Kişisel Galeri",
+                              style: TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.bold)),
                         ),
-                ])
+                        const SizedBox(
+                          width: 70,
+                        ),
+                        ...editingButtonForAdmin(),
+                      ],
+                    ),
+                    album.isNotEmpty
+                        ? photoGalleryWidget()
+                        : const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text("Galeride henüz fotoğraf yok!"),
+                          ),
+                  ]),
+            )
           ]))
         ],
       ),
@@ -259,7 +261,6 @@ class _StudentPageState extends State<StudentPage> {
                       ),
                     ),
                   ),
-
                   if (isEditButtonClicked == true) ...[
                     //if Admin wants to delete Photos, he can use this CheckBox.
                     Checkbox(
@@ -271,8 +272,7 @@ class _StudentPageState extends State<StudentPage> {
                             willBeDeletedUrlList.add(album[i]);
                             debugPrint(willBeDeletedUrlList.toString());
                           } else {
-                            willBeDeletedUrlList
-                                .remove(album[i]);
+                            willBeDeletedUrlList.remove(album[i]);
                             debugPrint(willBeDeletedUrlList.toString());
                           }
                         });
@@ -482,16 +482,15 @@ class _StudentPageState extends State<StudentPage> {
                     onPressed: () {
                       userModel
                           .deletePhoto(
-                          userModel.users!.kresCode!,
-                          userModel.users!.kresAdi!,
-                          '',
-                          willBeDeletedUrlList)
+                              userModel.users!.kresCode!,
+                              userModel.users!.kresAdi!,
+                              '',
+                              willBeDeletedUrlList)
                           .then((value) {
                         if (value) {
                           setState(() {
                             isEditButtonClicked = false;
-                            _isChanged =
-                            List<bool>.filled(album.length, false);
+                            _isChanged = List<bool>.filled(album.length, false);
                           });
                         }
                       });

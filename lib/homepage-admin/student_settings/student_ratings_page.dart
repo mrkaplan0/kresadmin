@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -87,8 +86,7 @@ class _StudentRatingState extends State<StudentRating> {
                                 itemPadding:
                                     const EdgeInsets.symmetric(horizontal: 4.0),
                                 onRatingUpdate: (rating) {
-                                  ratingMap
-                                      .addAll({criteriaList[i]: rating});
+                                  ratingMap.addAll({criteriaList[i]: rating});
                                 },
                               ),
                             ),
@@ -254,7 +252,9 @@ class _StudentRatingState extends State<StudentRating> {
         _showPhotoMainPage);
 
     if (ss == true) {
-      Get.snackbar("Başarılı", "Değerlendirme Kaydedildi");
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Degerlendirme kaydedildi.'),
+      ));
       Navigator.pop(context);
       Navigator.pop(context);
     }

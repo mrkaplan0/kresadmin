@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/locator.dart';
 import 'package:kresadmin/models/user.dart';
@@ -87,29 +86,26 @@ class MessagingService {
               ),
               ButtonBar(
                 children: [
-
                   ElevatedButton(
                     onPressed: () async {
                       try {
-
                         final UserModel userModel =
                             Provider.of<UserModel>(context, listen: false);
-                        bool sonuc = await userModel.updateTeacherAuthorisation(userModel.users!.kresCode!, userModel.users!.kresAdi!, remoteMessage.data['gonderenUserID'],);
+                        bool sonuc = await userModel.updateTeacherAuthorisation(
+                          userModel.users!.kresCode!,
+                          userModel.users!.kresAdi!,
+                          remoteMessage.data['gonderenUserID'],
+                        );
 
                         if (sonuc == true) {
                           Navigator.of(context).pop();
-                          Get.snackbar('İşlem Tamam!', 'Kayıt Tamamlandı.',
-                              snackPosition: SnackPosition.BOTTOM);
-                          _sendingNotificationService
-                              .sendNotificationToTeacher(
-                                  remoteMessage.data['gönderenUserToken'], " Kaydınız tamamlandı.");
-                        } else {
-                          Get.snackbar('HATA',
-                              'Kayıt işlemi başarısız, lütfen tekrar deneyiniz.');
+
+                          _sendingNotificationService.sendNotificationToTeacher(
+                              remoteMessage.data['gönderenUserToken'],
+                              " Kaydınız tamamlandı.");
                         }
                       } catch (e) {
-                        debugPrint(
-                            'Personel ekleme arama hatası $e');
+                        debugPrint('Personel ekleme hatası $e');
                       }
                     },
                     style: ButtonStyle(
@@ -117,7 +113,6 @@ class MessagingService {
                             MaterialStateProperty.all(Colors.orangeAccent)),
                     child: const Text("Kaydet"),
                   ),
-
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -187,7 +182,6 @@ class MessagingService {
     if (initialMessage?.data != null) {
       _handleMessage(initialMessage!);
     }
-
 
     // Stream listener
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);

@@ -1,7 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/constants.dart';
@@ -92,11 +93,11 @@ class _StudentListPageState extends State<StudentListPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Text("Öğr. No: " + ogrList[i].ogrID),
+                                Text("Öğr. No: ${ogrList[i].ogrID}"),
                                 const Divider(
                                   thickness: 2,
                                 ),
-                                Text("Sınıfı: " + ogrList[i].sinifi!),
+                                Text("Sınıfı: ${ogrList[i].sinifi!}"),
                               ],
                             ),
                             trailing: Container(
@@ -172,14 +173,18 @@ class _StudentListPageState extends State<StudentListPage> {
                         Navigator.of(context).pop();
                         setState(() {});
 
-                        Get.snackbar('İşlem Tamam!', 'Silme Başarılı.',
-                            snackPosition: SnackPosition.BOTTOM);
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Silindi.'),
+                        ));
                       } else {
-                        Get.snackbar('HATA',
-                            'Kişiyi silerken hata oluştu,daha sonra tekrar deneyiniz.');
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Silme isleminde hata çıktı.'),
+                        ));
                       }
                     } catch (e) {
-                      debugPrint('Personel silme hatası ' + e.toString());
+                      debugPrint('Personel silme hatası $e');
                     }
                   },
                   style: ButtonStyle(
@@ -189,7 +194,7 @@ class _StudentListPageState extends State<StudentListPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Get.back();
+                    Navigator.pop(context);
                   },
                   style: ButtonStyle(
                       backgroundColor:
@@ -215,7 +220,7 @@ class _StudentListPageState extends State<StudentListPage> {
               children: [
                 ElevatedButton(
                     onPressed: () async {
-                      Get.back();
+                      Navigator.pop(context);
                       // Capture a photo
                       final XFile? photo =
                           await _picker.pickImage(source: ImageSource.camera);
@@ -225,7 +230,7 @@ class _StudentListPageState extends State<StudentListPage> {
                     child: const Text("Foto Çek")),
                 ElevatedButton(
                     onPressed: () async {
-                      Get.back();
+                      Navigator.pop(context);
                       // Pick an image
                       final XFile? image =
                           await _picker.pickImage(source: ImageSource.gallery);

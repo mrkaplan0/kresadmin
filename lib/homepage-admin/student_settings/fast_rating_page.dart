@@ -1,6 +1,7 @@
+// ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/models/student.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,7 @@ class _FastRatingState extends State<FastRating> {
   DateTime dateTime = DateTime.now();
   bool addSpecialNote = false;
   late TextEditingController specialNoteController;
-  bool _showPhotoMainPage = false;
+  final bool _showPhotoMainPage = false;
 
   PageController controller = PageController();
   var currentPageValue = 0.0;
@@ -127,8 +128,8 @@ class _FastRatingState extends State<FastRating> {
                             student.adiSoyadi,
                             style: const TextStyle(fontSize: 24),
                           ),
-                          Text("Öğrenci No: " + student.ogrID),
-                          Text("Tarih: " + formattedTime)
+                          Text("Öğrenci No: ${student.ogrID}"),
+                          Text("Tarih: $formattedTime")
                         ],
                       )
                     ],
@@ -244,10 +245,11 @@ class _FastRatingState extends State<FastRating> {
                 child: Text("Kriter ekleyin."),
               );
             }
-          } else
+          } else {
             return const Center(
               child: Text("Kriter ekleyin."),
             );
+          }
         });
   }
 
@@ -280,7 +282,9 @@ class _FastRatingState extends State<FastRating> {
     if (ss == true) {
       specialNoteController.clear();
 
-      Get.snackbar("Başarılı", "(${stu.adiSoyadi}) Değerlendirme Kaydedildi");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('(${stu.adiSoyadi}) Kaydedildi.'),
+      ));
       controller.nextPage(
           duration: const Duration(seconds: 1), curve: Curves.decelerate);
     }

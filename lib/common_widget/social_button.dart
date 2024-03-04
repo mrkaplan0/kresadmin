@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kresadmin/constants.dart';
 
-class SocialLoginButton extends StatelessWidget {
+class CustomButton extends StatelessWidget {
   final String btnText;
   final Color btnColor;
   final Color? textColor;
@@ -9,8 +10,9 @@ class SocialLoginButton extends StatelessWidget {
   final Widget? btnIcon;
   final VoidCallback onPressed;
 
-  const SocialLoginButton(
-      {super.key, required this.btnText,
+  const CustomButton(
+      {super.key,
+      required this.btnText,
       required this.btnColor,
       this.textColor = Colors.white,
       this.radius = 10,
@@ -24,12 +26,8 @@ class SocialLoginButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: TextButton.styleFrom(
-          elevation: 0,
-          backgroundColor: Colors.orangeAccent.shade100,
-          shape: const RoundedRectangleBorder(
-            side: BorderSide(color: Colors.orangeAccent),
-          ),
+        style: ElevatedButton.styleFrom(
+          elevation: 2,
         ),
         child: Text(
           btnText,

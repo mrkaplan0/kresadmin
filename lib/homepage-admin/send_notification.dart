@@ -1,5 +1,6 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/social_button.dart';
 import 'package:kresadmin/models/student.dart';
@@ -44,7 +45,7 @@ class _SendNotificationState extends State<SendNotification> {
             height: 10,
           ),
           specialNoteTextForm(context),
-          SocialLoginButton(
+          CustomButton(
               btnText: 'Bildirim Gönder',
               btnColor: Theme.of(context).primaryColor,
               onPressed: () => sendNotification(context)),
@@ -115,8 +116,9 @@ class _SendNotificationState extends State<SendNotification> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       _userModel.sendNotificationToParent(selectedStudent!.token!, message!);
-      Get.snackbar('Başarılı', 'Duyuru Eklendi.',
-          snackPosition: SnackPosition.BOTTOM);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Islem Tamam.'),
+      ));
     }
   }
 }

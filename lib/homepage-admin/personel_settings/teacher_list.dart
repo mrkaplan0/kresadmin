@@ -1,8 +1,7 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/constants.dart';
@@ -53,7 +52,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
           if (sonuc.hasData) {
             List<Teacher> teacherList = sonuc.data!;
 
-            if (teacherList.length>0) {
+            if (teacherList.length > 0) {
               return ListView.builder(
                   shrinkWrap: true,
                   itemCount: teacherList.length,
@@ -114,8 +113,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
                                     icon: const Icon(Icons.remove_circle),
                                     color: Colors.red,
                                     onPressed: () async {
-                                      _deletePersonelWithDialog(
-                                          teacherList[i]);
+                                      _deletePersonelWithDialog(teacherList[i]);
                                     },
                                   ),
                                 ],
@@ -166,11 +164,15 @@ class _TeacherListPageState extends State<TeacherListPage> {
                         Navigator.of(context).pop();
                         setState(() {});
 
-                        Get.snackbar('İşlem Tamam!', 'Silme Başarılı.',
-                            snackPosition: SnackPosition.BOTTOM);
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Silindi.'),
+                        ));
                       } else {
-                        Get.snackbar('HATA',
-                            'Kişiyi silerken hata oluştu,daha sonra tekrar deneyiniz.');
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Kisi silmede hata çıktı.'),
+                        ));
                       }
                     } catch (e) {
                       debugPrint('Personel silme hatası $e');
@@ -183,7 +185,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Get.back();
+                    Navigator.pop(context);
                   },
                   style: ButtonStyle(
                       backgroundColor:
@@ -209,7 +211,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
               children: [
                 ElevatedButton(
                     onPressed: () async {
-                      Get.back();
+                      Navigator.pop(context);
                       // Capture a photo
                       final XFile? photo =
                           await _picker.pickImage(source: ImageSource.camera);
@@ -219,7 +221,7 @@ class _TeacherListPageState extends State<TeacherListPage> {
                     child: const Text("Foto Çek")),
                 ElevatedButton(
                     onPressed: () async {
-                      Get.back();
+                      Navigator.pop(context);
                       // Pick an image
                       final XFile? image =
                           await _picker.pickImage(source: ImageSource.gallery);
@@ -248,7 +250,6 @@ class _TeacherListPageState extends State<TeacherListPage> {
 
     if (url != null) {
       teacher.fotoUrl = url;
-
     }
     setState(() {});
   }
