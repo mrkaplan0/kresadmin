@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kresadmin/constants.dart';
 
 class MenuItems extends StatelessWidget {
   final String itemText;
@@ -7,7 +8,8 @@ class MenuItems extends StatelessWidget {
   final IconData icon;
   final GestureTapCallback onPress;
 
-  const MenuItems({super.key,
+  const MenuItems({
+    super.key,
     required this.onPress,
     required this.itemText,
     required this.icon,
@@ -24,18 +26,28 @@ class MenuItems extends StatelessWidget {
             width: 130,
             height: 130,
             decoration: const BoxDecoration(
-                boxShadow: [BoxShadow(blurRadius: 0.8,spreadRadius:0.5,blurStyle: BlurStyle.outer)],
-                color: Colors.amber,
+                boxShadow: [
+                  BoxShadow(
+                      blurRadius: 0.8,
+                      spreadRadius: 0.5,
+                      blurStyle: BlurStyle.outer)
+                ],
+                color: primarySwatch,
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   icon,
-                  size: 70,color: Colors.white54,
+                  size: 70,
+                  color: Colors.white54,
                 ),
                 const SizedBox(height: 10),
-                Center(child: Text(itemText))
+                Center(
+                    child: Text(
+                  itemText,
+                  style: const TextStyle(color: Colors.white),
+                ))
               ],
             ),
           ),

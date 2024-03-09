@@ -1,12 +1,16 @@
 // ignore_for_file: library_private_types_in_public_api
 import 'dart:convert';
-import 'package:extended_image/extended_image.dart';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kresadmin/View_models/user_model.dart';
-import 'package:kresadmin/common_widget/homepage_header.dart';
-import 'package:kresadmin/common_widget/show_photo_widget.dart';
+import 'package:kresadmin/common_widget/home_calendar_widget.dart';
+import 'package:kresadmin/common_widget/home_student_widget.dart';
+import 'package:kresadmin/common_widget/home_photo_gallery_widget.dart';
+import 'package:kresadmin/common_widget/home_header_widget.dart';
+
 import 'package:kresadmin/constants.dart';
 import 'package:kresadmin/homepage-admin/add_criteria.dart';
 import 'package:kresadmin/homepage-admin/homepage_settings/add_announcement.dart';
@@ -42,6 +46,8 @@ class _HomePageState extends State<HomePage> {
   String galleryTitle = "Fotograf Galerisi";
 
   String calendarTitle = "Etkinlik Takvimi";
+
+  String childProfileTitle = "Cocugum";
 
   @override
   void initState() {
@@ -129,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                     height: kdefaultPadding,
                   ),
                   _galleryPart(),
-                  _calenderPart(),
+                  _calendarAndProfilePart(),
                   announcementList(),
                 ],
               ),
@@ -430,122 +436,22 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(
           height: 10,
         ),
-        _photoGalleryWidget(),
+        HomepagePhotoGalleryWidget(album: album),
       ],
     );
   }
 
-  Widget _photoGalleryWidget() {
-    if (album!.isNotEmpty) {
-      return SizedBox(
-        height: 160,
-        child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: album!.length > 3 ? 3 : album!.length,
-            itemBuilder: (context, i) {
-              return GestureDetector(
-                child: Stack(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 6),
-                      height: 130,
-                      width: 180,
-                      child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
-                        child: ExtendedImage.network(
-                          album![i].photoUrl,
-                          fit: BoxFit.cover,
-                          mode: ExtendedImageMode.gesture,
-                          cache: true,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 6),
-                      height: 130,
-                      width: 180,
-                      decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8)),
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.grey.shade200.withOpacity(0.1),
-                                Colors.black12.withOpacity(0.3),
-                                Colors.black26.withOpacity(0.5),
-                              ],
-                              stops: const [
-                                0.4,
-                                0.8,
-                                1,
-                              ])),
-                    ),
-                    album![i].info != null
-                        ? Positioned(
-                            bottom: 35,
-                            left: 13,
-                            child: Text(
-                              album![i].info!,
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          )
-                        : const Text(""),
-                  ],
-                ),
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return ShowPhotoWidget(album![i].photoUrl);
-                      });
-                },
-              );
-            }),
-      );
-    } else {
-      return Padding(
-        padding: const EdgeInsets.only(left: 14.0, right: 14),
-        child: Container(
-          height: 200,
-        ),
-      );
-    }
-  }
-
-  Widget _calenderPart() {
+  Widget _calendarAndProfilePart() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HomepageHeader(headerTitle: calendarTitle, onPressed: null),
-        GestureDetector(
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const CalenderPage())),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                child: SizedBox(
-                  child: Image.asset(
-                    "assets/images/calender.png",
-                    width: 130,
-                    height: 130,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 30,
-              ),
-              const Text(
-                "    Sie \n \n                       verfolgen \n \nActivities.",
-                style: TextStyle(color: Colors.black26),
-                overflow: TextOverflow.fade,
-                softWrap: true,
-              ),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            HomeCalendarWidget(calendarTitle: calendarTitle),
+            HomeStudentWidget(
+                context: context, childProfileTitle: childProfileTitle)
+          ],
         ),
         const SizedBox(
           height: 10,

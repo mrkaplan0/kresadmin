@@ -1,7 +1,10 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kresadmin/View_models/user_model.dart';
 import 'package:kresadmin/common_widget/show_photo_widget.dart';
+import 'package:kresadmin/homepage-admin/homepage_settings/image_crop.dart';
 import 'package:kresadmin/models/photo.dart';
 import 'package:provider/provider.dart';
 
@@ -15,24 +18,25 @@ class PhotoGallery extends StatefulWidget {
 }
 
 class _PhotoGalleryState extends State<PhotoGallery> {
-  List<Photo> album=[];
+  List<Photo> album = [];
   bool isEditButtonClicked = false;
   List<bool>? _isChanged;
   List<Photo> willBeDeletedUrlList = [];
 
   @override
   void initState() {
-
     final UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
     userModel
         .getPhotoToMainGallery(
-        userModel.users!.kresCode!, userModel.users!.kresAdi!)
-        .then((value) {album.addAll(value);
-    if (album.isNotEmpty) {
-      _isChanged = List<bool>.filled(album.length, false);
-    }
-    }); super.initState();
+            userModel.users!.kresCode!, userModel.users!.kresAdi!)
+        .then((value) {
+      album.addAll(value);
+      if (album.isNotEmpty) {
+        _isChanged = List<bool>.filled(album.length, false);
+      }
+    });
+    super.initState();
   }
 
   @override
@@ -49,8 +53,16 @@ class _PhotoGalleryState extends State<PhotoGallery> {
         ),
         actions: actionButtonForAdmin(),
       ),
+      floatingActionButton: userModel.users!.position == 'Admin' ||
+              userModel.users!.position == 'Teacher'
+          ? FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const ImageCrop())),
+            )
+          : null,
       body: userModel.users!.position == 'Admin' ||
-          userModel.users!.position == 'Teacher'
+              userModel.users!.position == 'Teacher'
           ? photoGallery()
           : photoGalleryWidget(),
     );
@@ -59,6 +71,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
   List<Widget> actionButtonForAdmin() {
     final UserModel userModel = Provider.of<UserModel>(context, listen: false);
     return [
+      //approve deleting wıth dialog button
       if (isEditButtonClicked == true) ...[
         IconButton(
             onPressed: () {
@@ -69,16 +82,15 @@ class _PhotoGalleryState extends State<PhotoGallery> {
                     onPressed: () {
                       userModel
                           .deletePhoto(
-                          userModel.users!.kresCode!,
-                          userModel.users!.kresAdi!,
-                          '',
-                          willBeDeletedUrlList)
+                              userModel.users!.kresCode!,
+                              userModel.users!.kresAdi!,
+                              '',
+                              willBeDeletedUrlList)
                           .then((value) {
                         if (value) {
                           setState(() {
                             isEditButtonClicked = false;
-                            _isChanged =
-                            List<bool>.filled(album.length, false);
+                            _isChanged = List<bool>.filled(album.length, false);
                           });
                         }
                       });
@@ -86,6 +98,8 @@ class _PhotoGalleryState extends State<PhotoGallery> {
               ));
             },
             icon: const Icon(Icons.check_rounded)),
+
+        //cancel button
         IconButton(
             onPressed: () {
               setState(() {
@@ -96,6 +110,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
             },
             icon: const Icon(Icons.clear_rounded)),
       ],
+      //edit button
       if (isEditButtonClicked == false) ...[
         IconButton(
             onPressed: () {
@@ -107,8 +122,6 @@ class _PhotoGalleryState extends State<PhotoGallery> {
       ],
     ];
   }
-
-
 
   Widget photoGalleryWidget() {
     if (widget.album!.isNotEmpty) {
@@ -161,7 +174,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
       child: StreamBuilder<List<Photo>>(
           stream: userModel
               .getPhotoToMainGallery(
-              userModel.users!.kresCode!, userModel.users!.kresAdi!)
+                  userModel.users!.kresCode!, userModel.users!.kresAdi!)
               .asStream(),
           builder: (context, snapshot) {
             if (snapshot.data != null) {
@@ -179,7 +192,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
                             width: 200,
                             child: ClipRRect(
                               borderRadius:
-                              const BorderRadius.all(Radius.circular(8)),
+                                  const BorderRadius.all(Radius.circular(8)),
                               child: ExtendedImage.network(
                                 snapshot.data![i].photoUrl,
                                 fit: BoxFit.cover,
@@ -216,12 +229,26 @@ class _PhotoGalleryState extends State<PhotoGallery> {
                         ],
                       ),
                       onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ShowPhotoWidget(
-                                  snapshot.data![i].photoUrl);
-                            });
+                        if (isEditButtonClicked == true) {
+                          setState(() {
+                            _isChanged![i] = !_isChanged![i];
+                            if (_isChanged![i] == true) {
+                              willBeDeletedUrlList.add(snapshot.data![i]);
+                              debugPrint(willBeDeletedUrlList.toString());
+                            } else {
+                              willBeDeletedUrlList.remove(snapshot.data![i]);
+                              debugPrint(willBeDeletedUrlList.toString());
+                            }
+                          });
+                          debugPrint("${_isChanged![i]}");
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ShowPhotoWidget(
+                                    snapshot.data![i].photoUrl);
+                              });
+                        }
                       });
                 },
               );
@@ -236,6 +263,4 @@ class _PhotoGalleryState extends State<PhotoGallery> {
           }),
     );
   }
-
-
 }
